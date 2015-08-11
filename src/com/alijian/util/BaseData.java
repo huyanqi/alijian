@@ -2,6 +2,8 @@ package com.alijian.util;
 
 public class BaseData {
 
+	public static final String SESSION_USER = "user";
+	
 	public static final String MODELS = "models";
 	public static final String RESULT = "result";
 	public static final String DATA = "data";

@@ -51,6 +51,12 @@
       <label for="email">地址:</label>
       <input type="text" id="address" value="" required>
       <br>
+      <label for="email">所属领域(按住ctrl可多选):</label>
+      <div class="controls">
+          <select id="inputSelectMulti" multiple="multiple">
+          </select>
+      </div>
+      <br>
       <label for="email">联系人电话:</label>
       <input type="text" id="mobile" value="" class="js-pattern-mobile" placeholder="声音甜美的阿里健工作人员将会与您联系" required>
       <br>
@@ -87,6 +93,7 @@
 				return false;
 			}
 		});
+		getTypeModelByType();
 	});
 	
 	function toSubmit(){
@@ -97,8 +104,12 @@
 		var mobile = $("#mobile").val();
 		var username = $("#username").val();
 		var password = $("#password").val();
+		var group_list = "";
+		$('#inputSelectMulti option:selected').each(function(){
+			group_list += $(this).val()+",";
+		});
 		
-		var data = '{"username":"'+username+'","password":"'+password+'","name":"'+name+'","address":"'+address+'","mobile":"'+mobile+'","type":1}';
+		var data = JSON.stringify({username:username,password:password,name:name,address:address,mobile:mobile,type:1,types:group_list});
 		var path = "<%=basePath%>regUser";
 		var data = data;
 		$.ajax({
@@ -114,6 +125,27 @@
 					window.location.replace("login.jsp");
 				} else {
 					alert(result.data);
+				}
+			},
+			dataType : "json"
+		});
+	}
+	
+	function getTypeModelByType(){
+		$.AMUI.progress.start();
+		var path = "<%=basePath%>getTypeModelByType";
+		var data = {"type":1};
+		$.ajax({
+			type : 'POST',
+			data : data,
+			url : path,
+			success : function(result) {
+				$.AMUI.progress.done();
+				if(result.result == "ok"){
+					$("#inputSelectMulti").empty();
+					$.each(result.data, function(n, value) {
+						$("#inputSelectMulti").append("<option value="+value.id+">"+value.name+"</option>");
+					});
 				}
 			},
 			dataType : "json"

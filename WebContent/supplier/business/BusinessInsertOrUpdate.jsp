@@ -10,7 +10,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>讲师管理页</title>
+<title>模式管理页</title>
 <!-- base -->
 <link href='<%=basePath%>assets/stylesheets/bootstrap/bootstrap.css' media='all' rel='stylesheet' type='text/css' />
 <link href='<%=basePath%>assets/stylesheets/jquery_ui/jquery-ui-1.10.0.custom.css' media='all' rel='stylesheet' type='text/css' />
@@ -26,7 +26,7 @@
         <div class="box-header red-background">
             <div class="title">
                 <i class="icon-coffee"></i>
-                商品信息编辑表单
+                模式信息编辑表单
             </div>
         </div>
         <div class="box-content box-double-padding">
@@ -35,38 +35,21 @@
                     <div class="span4">
                         <div class="lead">
                             <i class="icon-github text-contrast"></i>
-                            商品基本信息
+                            模式基本信息
                         </div>
                         <input accept="image/jpeg" type="file" name="upload" id="fileupload_input" style="visibility: hidden;"/>
                         <a href="javascript:toUpload();"><img id="thum" src="<%=basePath%>assets/images/avatar_default.png" width="260px" height="300px" /></a>
                     </div>
                     <div class="span7 offset1">
                         <div class="control-group">
-                            <label class="control-label">商品名称</label>
+                            <label class="control-label">模式标题</label>
                             <div class="controls">
                                 <input class="span12" id="full-name" type="text">
-                                </div>
+                                <p class="help-block">
+                            </p></div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">单价</label>
-                            <div class="controls">
-                                <input class="span12" id="price" type="text" placeholder="如:10">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">单位</label>
-                            <div class="controls">
-                                <input class="span12" id="units" type="text" placeholder="如:箱">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">运费</label>
-                            <div class="controls">
-                                <input class="span12" id="freight" type="text" placeholder="如:包邮、10箱包邮、10元/箱">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">商品所属类型(按住ctrl可多选)</label>
+                            <label class="control-label">领域(按住ctrl可多选)</label>
                             <div class="controls">
                                 <select id="inputSelectMulti" multiple="multiple">
                                 </select>
@@ -79,13 +62,13 @@
                 <div class="span4">
                         <div class="lead">
                             <i class="icon-github text-contrast"></i>
-                            商品详细信息
+                            模式详细信息
                         </div>
                     </div>
                     <div class="row-fluid">
                     <div class="span12 box">
                         <div class="box-content">
-                            <textarea name="editor1" id="editor1" style="width: 100%;" rows="10">
+                            <textarea name="editor1" id="editor1" style="width: 100%;" rows="20">
 				            </textarea>
                         </div>
                     </div>
@@ -115,20 +98,21 @@
 <script type="text/javascript">
 	var id; 
 	$(document).ready(function() {
-		
 		id = getUrlParam("id");
 		
 		CKEDITOR.replace( 'editor1' ,{
 		    filebrowserBrowseUrl: '/browser/browse.php',
-		    filebrowserUploadUrl: '<%=basePath%>ckfileupload'
+		    filebrowserUploadUrl: '<%=basePath%>ckfileupload',
+		    toolbar : 'Full'
 		});
+		
 		
 		CKEDITOR.on('instanceReady', function(e) {
 			getTypeModelByType();
 		})
-		
+
 		$("#fileupload_input").fileupload({
-		    url:"<%=basePath%>fileupload",//文件上传地址，当然也可以直接写在input的data-url属性内
+			url : "<%=basePath%>fileupload",//文件上传地址，当然也可以直接写在input的data-url属性内
 		    //formData:{"name":"p1","age":2},//如果需要额外添加参数可以在这里添加
 		    done:function(e,result){
 		        //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
@@ -146,30 +130,24 @@
 		
 	});
 	
-	function getGoodsModelById(){
-		$.AMUI.progress.start();
-		var path = "<%=basePath%>getGoodsModelById";
+	function getLecturerModelById(){
+		var path = "<%=basePath%>getBusinessById";
 		var data = {"id":id};
 		$.ajax({
 			type : 'POST',
 			data : data,
 			url : path,
 			success : function(result) {
-				$.AMUI.progress.done();
 				if (result.result == "ok") {
 					var data = result.data;
 					$("#thum").attr("src",data.thum);
 					$("#thum").attr("alt",data.thum);
 					$("#full-name").val(data.name);
-					$("#price").val(data.price);
-					$("#units").val(data.units);
-					$("#freight").val(data.freight);
-					
-					CKEDITOR.instances.editor1.setData(data.description);
 					var types = data.types.split(",");
 					$.each(types, function(n, value) {
 						$("#inputSelectMulti").find("option[value="+value+"]").attr("selected",true);
 					});
+					CKEDITOR.instances.editor1.setData(data.description);
 				} else {
 					alert(result.data);
 				}
@@ -207,7 +185,7 @@
 					});
 					
 					if(id != null){
-						getGoodsModelById();
+						getLecturerModelById();
 					}
 				}else{
 					$("#nodata").show();
@@ -222,28 +200,13 @@
 		
 		var thum = $("#thum").attr("alt");
 		var name = $("#full-name").val();
-		var price = $("#price").val();
-		var units = $("#units").val();
-		var freight = $("#freight").val();
 		var stem = CKEDITOR.instances.editor1.getData();
 		if(thum == null){
-			alert("请上传商品图片");
+			alert("请上传模式照片");
 			return;
 		}
 		if(name == ""){
-			alert("请输入商品名称");
-			return;
-		}
-		if(price == ""){
-			alert("请输入商品价格");
-			return;
-		}
-		if(units == ""){
-			alert("请填写商品单位");
-			return;
-		}
-		if(freight == ""){
-			alert("请设置运费");
+			alert("请输入模式名字");
 			return;
 		}
 		var group_list = "";
@@ -254,25 +217,23 @@
 			group_list = group_list.substring(0, group_list.length - 1);
 		}
 		if(group_list == ""){
-			alert("请选择商品类型");
+			alert("请选择模式领域");
 			return;
 		}
 		if(stem == ""){
-			alert("请录入商品详细信息");
+			alert("请录入模式详细信息");
 			return;
 		}
-		
-		var data = JSON.stringify({id:id,name:name,price:price,types:group_list,units:units,freight:freight,thum:thum,description:stem});
-
+		var data = JSON.stringify({id:id,name:name,types:group_list,thum:thum,description:stem});
 		$.ajax({
 			type : 'POST',
 			data : data,
 			dataType : "json",
 			contentType : "application/json ; charset=utf-8", 
-			url : "<%=basePath%>insertGoods",
+			url : "<%=basePath%>insertOrUpdateBusiness",
 			success : function(result) {
 				if(result.result = "ok"){
-					alert("商品信息已保存.");
+					alert("模式信息已发布.");
 					if(id != null){
 						history.go(-1); 
 						location.reload();

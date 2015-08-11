@@ -10,7 +10,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>讲师管理页</title>
+<title>供货商管理页</title>
 <!-- base -->
 <link href='<%=basePath%>assets/stylesheets/bootstrap/bootstrap.css' media='all' rel='stylesheet' type='text/css' />
 <link href='<%=basePath%>assets/stylesheets/jquery_ui/jquery-ui-1.10.0.custom.css' media='all' rel='stylesheet' type='text/css' />
@@ -26,7 +26,7 @@
         <div class="box-header red-background">
             <div class="title">
                 <i class="icon-coffee"></i>
-                商品信息编辑表单
+                供货商信息编辑表单
             </div>
         </div>
         <div class="box-content box-double-padding">
@@ -35,41 +35,50 @@
                     <div class="span4">
                         <div class="lead">
                             <i class="icon-github text-contrast"></i>
-                            商品基本信息
+                            供货商基本信息
                         </div>
                         <input accept="image/jpeg" type="file" name="upload" id="fileupload_input" style="visibility: hidden;"/>
-                        <a href="javascript:toUpload();"><img id="thum" src="<%=basePath%>assets/images/avatar_default.png" width="260px" height="300px" /></a>
+                        <a style="width: 260px;height: 300px;display: inline-block;" href="javascript:toUpload();"><img id="thum" src="<%=basePath%>assets/images/avatar_default.png" width="260px" height="300px" /></a>
                     </div>
                     <div class="span7 offset1">
                         <div class="control-group">
-                            <label class="control-label">商品名称</label>
+                            <label class="control-label">全名</label>
                             <div class="controls">
                                 <input class="span12" id="full-name" type="text">
-                                </div>
+                                <p class="help-block">
+                            </p></div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">单价</label>
+                            <label class="control-label">地址</label>
                             <div class="controls">
-                                <input class="span12" id="price" type="text" placeholder="如:10">
+                                <input class="span12" id="address" type="text">
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">单位</label>
+                            <label class="control-label">联系人电话</label>
                             <div class="controls">
-                                <input class="span12" id="units" type="text" placeholder="如:箱">
+                                <input class="span12" id="mobile" type="text">
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">运费</label>
-                            <div class="controls">
-                                <input class="span12" id="freight" type="text" placeholder="如:包邮、10箱包邮、10元/箱">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">商品所属类型(按住ctrl可多选)</label>
+                            <label class="control-label">领域(按住ctrl可多选)</label>
                             <div class="controls">
                                 <select id="inputSelectMulti" multiple="multiple">
                                 </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <label class="checkbox inline">
+                                    <input id="work_type" type="checkbox">
+                                    设置为阿里健自营
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">设置佣金比例(%)</label>
+                            <div class="controls">
+                                <input class="span12" id="commission" type="text">
                             </div>
                         </div>
                     </div>
@@ -79,7 +88,7 @@
                 <div class="span4">
                         <div class="lead">
                             <i class="icon-github text-contrast"></i>
-                            商品详细信息
+                            供货商详细信息
                         </div>
                     </div>
                     <div class="row-fluid">
@@ -113,10 +122,10 @@
 <script src="<%=basePath%>assets/javascripts/fileupload/jquery.fileupload.js"></script>
 
 <script type="text/javascript">
-	var id; 
+	var uid; 
 	$(document).ready(function() {
-		
-		id = getUrlParam("id");
+		uid = getUrlParam("uid");
+		if(uid == null) window.close();
 		
 		CKEDITOR.replace( 'editor1' ,{
 		    filebrowserBrowseUrl: '/browser/browse.php',
@@ -146,26 +155,27 @@
 		
 	});
 	
-	function getGoodsModelById(){
-		$.AMUI.progress.start();
-		var path = "<%=basePath%>getGoodsModelById";
-		var data = {"id":id};
+	function getUserModelById(){
+		var path = "<%=basePath%>getUserById";
+		var data = {"uid":uid};
 		$.ajax({
 			type : 'POST',
 			data : data,
 			url : path,
 			success : function(result) {
-				$.AMUI.progress.done();
 				if (result.result == "ok") {
 					var data = result.data;
-					$("#thum").attr("src",data.thum);
-					$("#thum").attr("alt",data.thum);
+					if(data.thum != ""){
+						$("#thum").attr("src",data.thum);
+						$("#thum").attr("alt",data.thum);
+					}
 					$("#full-name").val(data.name);
-					$("#price").val(data.price);
-					$("#units").val(data.units);
-					$("#freight").val(data.freight);
-					
-					CKEDITOR.instances.editor1.setData(data.description);
+					$("#address").val(data.address);
+					$("#mobile").val(data.mobile);
+					$("#work_type").attr("checked",data.work_type == 1?true:false);
+					$("#commission").val(data.commission);
+					$("#editor1").val(data.description);
+					//CKEDITOR.instances.editor1.setData(data.description);
 					var types = data.types.split(",");
 					$.each(types, function(n, value) {
 						$("#inputSelectMulti").find("option[value="+value+"]").attr("selected",true);
@@ -193,7 +203,7 @@
 	function getTypeModelByType(){
 		$.AMUI.progress.start();
 		var path = "<%=basePath%>getTypeModelByType";
-		var data = {"type":3};
+		var data = {"type":1};
 		$.ajax({
 			type : 'POST',
 			data : data,
@@ -206,9 +216,7 @@
 						$("#inputSelectMulti").append("<option value="+value.id+">"+value.name+"</option>");
 					});
 					
-					if(id != null){
-						getGoodsModelById();
-					}
+					getUserModelById();
 				}else{
 					$("#nodata").show();
 					$("#thread").hide();
@@ -222,28 +230,23 @@
 		
 		var thum = $("#thum").attr("alt");
 		var name = $("#full-name").val();
-		var price = $("#price").val();
-		var units = $("#units").val();
-		var freight = $("#freight").val();
+		var address = $("#address").val();
+		var mobile = $("#mobile").val();
 		var stem = CKEDITOR.instances.editor1.getData();
-		if(thum == null){
-			alert("请上传商品图片");
+		/* if(thum == null){
+			alert("请上传厂家照片");
 			return;
-		}
+		} */
 		if(name == ""){
-			alert("请输入商品名称");
+			alert("请输入厂家名字");
 			return;
 		}
-		if(price == ""){
-			alert("请输入商品价格");
+		if(address == ""){
+			alert("请输入厂家地址");
 			return;
 		}
-		if(units == ""){
-			alert("请填写商品单位");
-			return;
-		}
-		if(freight == ""){
-			alert("请设置运费");
+		if(mobile == ""){
+			alert("请输入厂家联系方式");
 			return;
 		}
 		var group_list = "";
@@ -254,31 +257,30 @@
 			group_list = group_list.substring(0, group_list.length - 1);
 		}
 		if(group_list == ""){
-			alert("请选择商品类型");
+			alert("请选择厂家领域");
 			return;
 		}
 		if(stem == ""){
-			alert("请录入商品详细信息");
+			alert("请录入厂家详细信息");
 			return;
 		}
-		
-		var data = JSON.stringify({id:id,name:name,price:price,types:group_list,units:units,freight:freight,thum:thum,description:stem});
-
+		var work_type = $("#work_type").attr('checked');
+		if(work_type == "checked"){
+			work_type = 1;
+		}else{
+			work_type = 0;
+		}
+		var commission = $("#commission").val();
+		var data = JSON.stringify({id:uid,name:name,address:address,mobile:mobile,types:group_list,thum:thum,description:stem,work_type:work_type,commission:commission});
 		$.ajax({
 			type : 'POST',
 			data : data,
 			dataType : "json",
 			contentType : "application/json ; charset=utf-8", 
-			url : "<%=basePath%>insertGoods",
+			url : "<%=basePath%>updateUser",
 			success : function(result) {
 				if(result.result = "ok"){
-					alert("商品信息已保存.");
-					if(id != null){
-						history.go(-1); 
-						location.reload();
-					}else{
-						location.reload();
-					}
+					window.history.back();
 				}else{
 					alert(result.data);
 				}

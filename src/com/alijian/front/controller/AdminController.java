@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.AdminService;
@@ -37,7 +39,7 @@ public class AdminController extends BaseData {
 			admin.setId(0);;
 			admin.setName("系统管理员");
 			admin.setType(0);
-			request.getSession().setAttribute("user", admin);
+			request.getSession().setAttribute(SESSION_USER, admin);
 		}else{
 			jObj.put(RESULT, NO);
 		}
@@ -49,7 +51,7 @@ public class AdminController extends BaseData {
 	public ModelAndView adminInfo(HttpServletRequest request) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
-		UserModel user = (UserModel) request.getSession().getAttribute("user");
+		UserModel user = (UserModel) request.getSession().getAttribute(SESSION_USER);
 		if(user == null) {
 			jObj.put(RESULT, NO);
 		}else{
@@ -62,7 +64,6 @@ public class AdminController extends BaseData {
 	
 	@RequestMapping(value = "/type_insert")
 	public ModelAndView typeInsert(@RequestBody TypeModel model) {
-		System.out.println(model.name+":"+model.type);
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
 		
@@ -203,7 +204,7 @@ public class AdminController extends BaseData {
 	public ModelAndView insertGoods(HttpSession session, @RequestBody GoodsModel model) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
-		UserModel user = (UserModel) session.getAttribute("user");
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
 		if(user == null){
 			jObj.put(RESULT, NO);
 			jObj.put(DATA, "未登录");
@@ -212,6 +213,98 @@ public class AdminController extends BaseData {
 		}
 		model.setUser(user);
 		String result = adminService.insertGoods(model);
+		if(result.equals("")){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getMyGoods")
+	public ModelAndView getMyGoods(HttpSession session,int pageNum){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, "未登录");
+		}else{
+			PageModel pageModel = adminService.getMyGoods(user.getId(),pageNum);
+			if(pageModel != null && pageModel.getModels().size() > 0){
+				jObj.put(RESULT, OK);
+				jObj.put(DATA, pageModel.getModels());
+				jObj.put("pageCount", pageModel.getPageCount());
+			}else{
+				jObj.put(RESULT, NO);
+				jObj.put(DATA, "无数据");
+			}
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	
+	@RequestMapping(value = "/removeGoodsById")
+	public ModelAndView removeGoodsById(int id) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		String result = adminService.removeGoodsById(id);
+		if(result.equals("")){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/updateUser")
+	public ModelAndView updateUser(@RequestBody UserModel user) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		String result = adminService.updateUser(user);
+		if(result.equals("")){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/insertOrUpdateBusiness")
+	public ModelAndView insertOrUpdateBusiness(@RequestBody BusinessModel model,HttpSession session) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, "未登录");
+			view.addObject(MODELS,jObj);
+			return view;
+		}
+		model.setUser(user);
+		String result = adminService.insertOrUpdateModel(model);
+		if(result.equals("")){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/removeBusinessById")
+	public ModelAndView removeBusinessById(int id) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		String result = adminService.removeBusinessById(id);
 		if(result.equals("")){
 			jObj.put(RESULT, OK);
 		}else{

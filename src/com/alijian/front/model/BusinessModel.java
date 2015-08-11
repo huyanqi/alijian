@@ -1,51 +1,48 @@
 package com.alijian.front.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
- * 讲师
+ * 商业模式
  * @author Frankie
  *
  */
 @Entity
-@Table(name = "lecturer")
-public class LecturerModel {
+@Table(name = "business")
+public class BusinessModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public int id;
 	
 	@Column
-	public String name;//讲师名字
+	public String name;
 	
 	@Column
-	public String birth;//讲师年龄
+	public String thum;
 	
 	@Column
-	public String types;//讲师领域分类
+	public String types;
 	
 	@Column
-	public String thum;//讲师封面
-	
-	@Column
-	public String description;//讲师简介
+	public String description;
 
 	@Column
 	public Date update_time = new Date();
 	
-	@Transient
-	public List<TypeModel> typeModels = new ArrayList<TypeModel>();
-
+	@ManyToOne
+    @JoinColumn(name="user")//加入一列作为外键
+	public UserModel user;
+	
 	public int getId() {
 		return id;
 	}
@@ -60,22 +57,6 @@ public class LecturerModel {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getBirth() {
-		return birth;
-	}
-
-	public void setBirth(String birth) {
-		this.birth = birth;
-	}
-
-	public String getTypes() {
-		return types;
-	}
-
-	public void setTypes(String types) {
-		this.types = types;
 	}
 
 	public String getThum() {
@@ -94,12 +75,12 @@ public class LecturerModel {
 		this.description = description;
 	}
 
-	public List<TypeModel> getTypeModels() {
-		return typeModels;
+	public String getTypes() {
+		return types;
 	}
 
-	public void setTypeModels(List<TypeModel> typeModels) {
-		this.typeModels = typeModels;
+	public void setTypes(String types) {
+		this.types = types;
 	}
 
 	public Date getUpdate_time() {
@@ -108,6 +89,14 @@ public class LecturerModel {
 
 	public void setUpdate_time(Date update_time) {
 		this.update_time = update_time;
+	}
+
+	public UserModel getUser() {
+		return user;
+	}
+
+	public void setUser(UserModel user) {
+		this.user = user;
 	}
 	
 }

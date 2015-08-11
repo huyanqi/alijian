@@ -27,4 +27,20 @@ public class Tools {
 		return request.getContextPath() + "/" + "images"+ "/" +fileName;
 	}
 	
+	public static long getPageCount(Long total,int pageSize){
+		long page = 1;
+		if(total%pageSize == 0){
+			page = total/pageSize;
+		}else{
+			page = (total/pageSize)+1;
+		}
+		return page;
+	}
+	
+	public static int getPageSize(int pageSize){
+		if(pageSize > 20)
+			pageSize = 20;
+		return pageSize;
+	}
+	
 }

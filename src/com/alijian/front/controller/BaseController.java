@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alijian.front.model.BusinessModel;
+import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
@@ -139,16 +141,16 @@ public class BaseController extends BaseData {
 	public ModelAndView login(@RequestBody UserModel model,HttpServletResponse response,HttpServletRequest request) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
-		model = baseService.login(model.username,model.password);
+		model = baseService.login(model.getUsername(),model.getPassword());
 		if(model != null){
 			obj.put(RESULT, OK);
 			obj.put(DATA, model);
-			Cookie cookie = new Cookie("uid", model.id+"");
-			Cookie roleCookie = new Cookie("role", model.type+"");
-			Cookie usernameCookie = new Cookie("username", model.username);
+			Cookie cookie = new Cookie("uid", model.getId()+"");
+			Cookie roleCookie = new Cookie("role", model.getType()+"");
+			Cookie usernameCookie = new Cookie("username", model.getUsername());
 			Cookie nameCookie;
 			try {
-				nameCookie = new Cookie("name", URLEncoder.encode(model.name, "utf-8"));
+				nameCookie = new Cookie("name", URLEncoder.encode(model.getName(), "utf-8"));
 				response.addCookie(nameCookie);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -204,6 +206,148 @@ public class BaseController extends BaseData {
 		JSONObject obj = new JSONObject();
 		
 		UserModel user = (UserModel) request.getSession().getAttribute("user");
+		if(user != null){
+			obj.put(RESULT, OK);
+			obj.put(DATA, user);
+		}else{
+			obj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getGoodsModelById")
+	public ModelAndView getGoodsModelById(int id){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		GoodsModel goods = baseService.getGoodsModelById(id);
+		if(goods != null){
+			obj.put(RESULT, OK);
+			obj.put(DATA, goods);
+		}else{
+			obj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getGoods")
+	public ModelAndView getGoods(int pageSize){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		List<GoodsModel> goods = baseService.getGoods(pageSize);
+		if(goods != null){
+			obj.put(RESULT, OK);
+			obj.put(DATA, goods);
+		}else{
+			obj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getUsers")
+	public ModelAndView getUsers(int pageSize,int type,int status){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		List<UserModel> users = baseService.getUsers(pageSize,type,status);
+		if(users != null){
+			obj.put(RESULT, OK);
+			obj.put(DATA, users);
+		}else{
+			obj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getUserById")
+	public ModelAndView getUserById(int uid){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		UserModel user = baseService.getUserById(uid);
+		if(user != null){
+			obj.put(RESULT, OK);
+			obj.put(DATA, user);
+		}else{
+			obj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getBusinessModels")
+	public ModelAndView getBusinessModels(int pageNum,int pageSize,String types){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		List<BusinessModel> models = baseService.getBusinessModels(pageNum,pageSize,types);
+		if(models.size() > 0){
+			obj.put(RESULT, OK);
+			obj.put(DATA, models);
+		}else{
+			obj.put(RESULT, NO);
+			obj.put(DATA, "无数据");
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getBusinessById")
+	public ModelAndView getBusinessById(int id){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		BusinessModel model = baseService.getBusinessById(id);
+		if(model != null){
+			obj.put(RESULT, OK);
+			obj.put(DATA, model);
+		}else{
+			obj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	/**
+	 * 搜索厂家
+	 * @param pageSize 每页大小
+	 * @param types 包含类型
+	 * @return
+	 */
+	@RequestMapping(value = "/getSuppliers")
+	public ModelAndView getSuppliers(int pageNum,int pageSize,String types) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		List<UserModel> models = baseService.getSuppliers(pageNum,pageSize,types);
+		if(models.size() > 0){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, models);
+		}else{
+			jObj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getLecturers")
+	public ModelAndView getLecturers(int pageNum,int pageSize,String types) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		List<LecturerModel> models = baseService.getLecturers(pageNum,pageSize,types);
+		if(models.size() > 0){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, models);
+		}else{
+			jObj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getSupplierById")
+	public ModelAndView getSupplierById(int uid){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		UserModel user = baseService.getSupplierById(uid);
 		if(user != null){
 			obj.put(RESULT, OK);
 			obj.put(DATA, user);

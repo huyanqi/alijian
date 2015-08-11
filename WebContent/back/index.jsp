@@ -108,7 +108,7 @@
             </a>
         </li>
         <li class=''>
-            <a href='#'>
+            <a href='javascript:frameLink("supplier/manage.jsp")'>
                 <i class='icon-caret-right'></i>
                 <span>管理</span>
             </a>

@@ -106,12 +106,14 @@
 	$(document).ready(function() {
 		id = getUrlParam("id");
 		
-		getTypeModelByType();
-		
 		CKEDITOR.replace( 'editor1' ,{
 		    filebrowserBrowseUrl: '/browser/browse.php',
 		    filebrowserUploadUrl: '<%=basePath%>ckfileupload'
 		});
+		
+		CKEDITOR.on('instanceReady', function(e) {
+			getTypeModelByType();
+		})
 		
 		initDatePicker();
 		
@@ -148,7 +150,7 @@
 					$("#thum").attr("alt",data.thum);
 					$("#full-name").val(data.name);
 					$("#birth").val(data.birth);
-					CKEDITOR.instances.editor1.setData(unescape(data.description));
+					CKEDITOR.instances.editor1.setData(data.description);
 					var types = data.types.split(",");
 					$.each(types, function(n, value) {
 						$("#inputSelectMulti").find("option[value="+value+"]").attr("selected",true);
@@ -270,7 +272,7 @@
 			alert("请录入讲师详细信息");
 			return;
 		}
-		var data = '{"id":'+id+',"name":"'+name+'","birth":"'+birth+'","types":"'+group_list+'","thum":"'+thum+'","description":"'+escape(stem)+'"}';
+		var data = JSON.stringify({id:id,name:name,birth:birth,types:group_list,thum:thum,description:stem});
 		$.ajax({
 			type : 'POST',
 			data : data,

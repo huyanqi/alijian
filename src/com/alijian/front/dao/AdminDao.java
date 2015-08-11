@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 
@@ -33,5 +35,17 @@ public interface AdminDao {
 	UserModel getUserById(int uid);
 
 	String insertGoods(GoodsModel model);
-	
+
+	PageModel getMyGoods(int uid, int pageNum);
+
+	GoodsModel getGoodsById(int id);
+
+	String removeGoods(GoodsModel model);
+
+	List<GoodsModel> getGoods(int pageSize);
+
+	String insertOrUpdateModel(Object object);
+
+	String removeObject(Object obj);
+
 }

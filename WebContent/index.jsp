@@ -255,21 +255,8 @@
 		        <a class="am-badge am-badge-primary am-radius">更多</a>
 		    </div>
 		</div>
-		<div id="container" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
-		    <div class="item">
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    	<a class="supplier_name">哈药集团</a>
-		    </div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item">
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    	<a class="supplier_name">哈药集团</a>
-		    </div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item"></div>
+		<div id="goods_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
+		    
 		</div>		
 		
 		<div style="clear:both;"></div>
@@ -280,39 +267,8 @@
 		        <a class="am-badge am-badge-primary am-radius">更多</a>
 		    </div>
 		</div>
-		<div id="container" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
-		    <div class="item">
-		    	<a class="supplier_name">哈药集团</a>
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    </div>
-		    <div class="item">
-		    	<a class="supplier_name">哈药集团</a>
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    </div>
-		    <div class="item">
-		    	<a class="supplier_name">哈药集团</a>
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    </div>
-		    <div class="item">
-		    	<a class="supplier_name">哈药集团</a>
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    </div>
-		    <div class="item">
-		    	<a class="supplier_name">哈药集团</a>
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    </div>
-		    <div class="item">
-		    	<a class="supplier_name">哈药集团</a>
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    </div>
-		    <div class="item">
-		    	<a class="supplier_name">哈药集团</a>
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    </div>
-		    <div class="item">
-		    	<a class="supplier_name">哈药集团</a>
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    </div>
+		<div id="supplies_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
+		    
 		</div>		
 		
 		<div style="clear:both;"></div>
@@ -323,21 +279,7 @@
 		        <a class="am-badge am-badge-primary am-radius">更多</a>
 		    </div>
 		</div>
-		<div id="container" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
-		    <div class="item">
-		    	<img class="lecturer_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    	<font>张<br/>靖<br/>豪</font>
-		    </div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item">
-		    	<img class="lecturer_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    	<font>张<br/>靖<br/>豪</font>
-		    </div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item"></div>
+		<div id="lecturer_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
 		</div>		
 		
 		<div style="clear:both;"></div>
@@ -349,21 +291,7 @@
 		    </div>
 		</div>
 		
-		<div id="container" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
-		    <div class="item">
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    	<a class="supplier_name">哈药集团</a>
-		    </div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item">
-		    	<img class="supplier_img" src="/ALiJian/images/2015_7_30_1049014064.jpg" alt="" />
-		    	<a class="supplier_name">哈药集团</a>
-		    </div>
-		    <div class="item"></div>
-		    <div class="item"></div>
-		    <div class="item"></div>
+		<div id="business_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
 		</div>		
 		
 		<div style="clear:both;"></div>
@@ -379,39 +307,51 @@
 <script>
 var uid;
 	$(document).ready(function(){
-		uid = getCookie("uid");
-		if(uid != null){
-			//已登录
-			$("#supplierJoin").hide();
-			$("#login").hide();
-			$("#reg").hide();
-			$("#username_ly").show();
-			var role = "";
-			var cookieRole = getCookie("role");
-			if(cookieRole == "1"){
-				role = "供应商";
-				$("#username").attr("href","supplier/supplier_controller.jsp");
-			}else if(cookieRole == "2"){
-				role = "采购商";
-				$("#username").attr("href","user_controller.jsp");
-			}
-			$("#username").html(getCookie("username")+"("+role+")");
-		}else{
-			$("#supplierJoin").show();
-			$("#login").show();
-			$("#reg").show();
-			$("#username_ly").hide();
-		}
+		getSession();
+		
+		getGoods();
+		getSupplier();
+		getLecturer();
+		getBusiness();
 	});
 	
-	function getCookie(name) { 
-	    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-	 
-	    if(arr=document.cookie.match(reg))
-	 
-	        return unescape(arr[2]); 
-	    else 
-	        return null; 
+	function getSession() { 
+		$.ajax({
+			type : 'POST',
+			dataType : "json",
+			contentType : "application/json ; charset=utf-8",
+			url : "<%=basePath%>getSession",
+			success : function(result) {
+				$.AMUI.progress.done();
+				if (result.result == "ok") {
+					var user = result.data;
+					uid = user.id;
+					if(uid != null){
+						//已登录
+						$("#supplierJoin").hide();
+						$("#login").hide();
+						$("#reg").hide();
+						$("#username_ly").show();
+						var role = "";
+						var cookieRole = user.type;
+						if(cookieRole == "1"){
+							role = "供应商";
+							$("#username").attr("href","supplier/supplier_controller.jsp");
+						}else if(cookieRole == "2"){
+							role = "采购商";
+							$("#username").attr("href","user_controller.jsp");
+						}
+						$("#username").html(user.name+"("+role+")");
+					}else{
+						$("#supplierJoin").show();
+						$("#login").show();
+						$("#reg").show();
+						$("#username_ly").hide();
+					}
+				}
+			},
+			dataType : "json"
+		});
 	}
 	
 	function logout(){
@@ -432,6 +372,77 @@ var uid;
 			dataType : "json"
 		});
 	}
+	
+	function getGoods(){
+		$.ajax({
+			type : 'POST',
+			url : "<%=basePath%>getGoods",
+			data : {"pageSize":8},
+			success : function(result) {
+				$.AMUI.progress.done();
+				if (result.result == "ok") {
+					$.each(result.data, function(n, value) {
+						$("#goods_ly").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'><div class='item'><img class='supplier_img' src='"+value.thum+"' alt='' /><font class='supplier_name'>"+value.name+"</font></div></a>");
+					});
+				}
+			},
+			dataType : "json"
+		});
+	}
+	
+	function getSupplier(){
+		$.ajax({
+			type : 'POST',
+			url : "<%=basePath%>getSuppliers",
+			data : {"pageNum":1,"pageSize":8,"types":""},
+			success : function(result) {
+				$.AMUI.progress.done();
+				if (result.result == "ok") {
+					$.each(result.data, function(n, value) {
+						$("#supplies_ly").append("<a target='_blank' href='supplier.jsp?id="+value.id+"'><div class='item'><font class='supplier_name'>"+value.name+"</font><img class='supplier_img' src='"+value.thum+"' alt='' /></div></a>")
+					});
+				}
+			},
+			dataType : "json"
+		});
+	}
+	
+	function getLecturer(){
+		$.ajax({
+			type : 'POST',
+			url : "<%=basePath%>getLecturers",
+			data : {"pageNum":1,"pageSize":8,"types":""},
+			success : function(result) {
+				$.AMUI.progress.done();
+				if (result.result == "ok") {
+					$.each(result.data, function(n, value) {
+						var name = value.name.split('').join("<br/>");
+						$("#lecturer_ly").append("<a href='lecturer.jsp?id="+value.id+"' target='_blank'><div class='item'><img class='lecturer_img' src='"+value.thum+"' alt='' /><font>"+name+"</font></div></a>")
+					});
+				}
+			},
+			dataType : "json"
+		});
+	}
+	
+	function getBusiness(){
+		$.ajax({
+			type : 'POST',
+			url : "<%=basePath%>getBusinessModels",
+			data : {"pageNum":1,"pageSize":8,"types":""},
+			success : function(result) {
+				$.AMUI.progress.done();
+				if (result.result == "ok") {
+					$.each(result.data, function(n, value) {
+						var name = value.name.split('').join("<br/>");
+						$("#business_ly").append("<a target='_blank' href='business.jsp?id="+value.id+"'><div class='item'><img class='supplier_img' src='"+value.thum+"' alt='' /><font class='supplier_name'>"+value.name+"</font></div></a>")
+					});
+				}
+			},
+			dataType : "json"
+		});
+	}
+	
 </script>
 </body>
 </html>

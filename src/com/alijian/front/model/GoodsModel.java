@@ -1,15 +1,17 @@
 package com.alijian.front.model;
 
-import javax.persistence.CascadeType;
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * 商品
@@ -35,6 +37,9 @@ public class GoodsModel {
 	public String units;	//单位
 	
 	@Column
+	public String types;	//所属类型
+	
+	@Column
 	public String freight;	//运费方式
 	
 	@Column
@@ -42,6 +47,12 @@ public class GoodsModel {
 	
 	@Column
 	public String description;
+	
+	@Column
+	public Date update_time = new Date();
+	
+	@Transient
+	public List<TypeModel> typeList;
 	
 	@ManyToOne
     @JoinColumn(name="user")//加入一列作为外键
@@ -79,6 +90,14 @@ public class GoodsModel {
 		this.units = units;
 	}
 
+	public String getTypes() {
+		return types;
+	}
+
+	public void setTypes(String types) {
+		this.types = types;
+	}
+
 	public String getFreight() {
 		return freight;
 	}
@@ -109,6 +128,22 @@ public class GoodsModel {
 
 	public void setUser(UserModel user) {
 		this.user = user;
+	}
+
+	public Date getUpdate_time() {
+		return update_time;
+	}
+
+	public void setUpdate_time(Date update_time) {
+		this.update_time = update_time;
+	}
+
+	public List<TypeModel> getTypeList() {
+		return typeList;
+	}
+
+	public void setTypeList(List<TypeModel> typeList) {
+		this.typeList = typeList;
 	}
 	
 }

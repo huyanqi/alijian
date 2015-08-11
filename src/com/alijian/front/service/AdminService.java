@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 
@@ -31,5 +32,15 @@ public interface AdminService {
 	String supplierPass(int uid);
 
 	String insertGoods(GoodsModel model);
+
+	PageModel getMyGoods(int uid,int pageNum);
+
+	String removeGoodsById(int id);
+
+	String updateUser(UserModel user);
+
+	String insertOrUpdateModel(Object object);
+
+	String removeBusinessById(int id);
 
 }

@@ -94,7 +94,6 @@ function toSubmit(){
 		success : function(result) {
 			$.AMUI.progress.done();
 			if (result.result == "ok") {
-				alert("登录成功");
 				history.go(-1); 
 				location.reload();
 			} else {

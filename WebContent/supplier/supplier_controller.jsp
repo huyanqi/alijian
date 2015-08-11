@@ -69,7 +69,7 @@
             </a>
         </li>
         <li class=''>
-            <a href='javascript:frameLink("type/TypeManage.jsp?type=1")'>
+            <a href='javascript:frameLink("goods/GoodsManage.jsp")'>
                 <i class='icon-caret-right'></i>
                 <span>商品列表</span>
             </a>
@@ -90,13 +90,13 @@
     </a>
     <ul class='nav nav-stacked in'>
         <li class=''>
-            <a href='javascript:frameLink("type/TypeManage.jsp?type=0")'>
+            <a href='javascript:frameLink("business/BusinessInsertOrUpdate.jsp")'>
                 <i class='icon-caret-right'></i>
                 <span>新模式发布</span>
             </a>
         </li>
         <li class=''>
-            <a href='javascript:frameLink("type/TypeManage.jsp?type=1")'>
+            <a href='javascript:frameLink("business/BusinessManage.jsp")'>
                 <i class='icon-caret-right'></i>
                 <span>已有列表查看</span>
             </a>
