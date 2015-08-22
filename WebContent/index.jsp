@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8" %>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://"
@@ -99,39 +99,8 @@
 	
 </head>
 <body class="am-with-topbar-fixed-top">
-	<header class="am-topbar am-topbar-fixed-top">
-	  <div class="am-container">
-	    <h1 class="am-topbar-brand">
-	      <a href="#">阿里健 - 淘资源</a>
-	    </h1>
-	
-	    <div class="am-collapse am-topbar-collapse" id="collapse-head">
-	
-		<div class="am-topbar-right" id="username_ly">
-	        	<a href="#" id="username" target="_blank" style="line-height: 50px;"></a>
-	        	<a href="javascript:logout();" style="line-height: 50px;color: #04aeda;font-size: 14px;">安全退出</a>
-	      </div>
-	
-	      <div class="am-topbar-right" id="reg">
-	        <button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='user_reg.jsp'"><span class="am-icon-pencil"></span> 采购商注册</button>
-	      </div>
-	
-	      <div class="am-topbar-right" id="login">
-	        <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='login.jsp'"><span class="am-icon-user"></span> 登录</button>
-	      </div>
 
-			<div class="am-topbar-right" id="supplierJoin">
-				<button class="am-btn am-btn-success am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='supplier_join.jsp'">
-					<span class="am-icon-angellist"></span> 供货商入驻
-				</button>
-			</div>
-		</div>
-	  </div>
-	</header>
-	
-	<div class="am-container" style="padding-top: 20px;padding-bottom: 20px;">
-		<img src="font/logo.png" alt="logo"/>
-	</div>
+	<jsp:include page="head.jsp" flush="true"/>	
 	
 	<div class="am-container" style="background: #DDDDDD;height: 1px;"/>
 	
@@ -147,7 +116,7 @@
 					</span> 
 					<input type="text" class="am-form-field" placeholder="输入关键字搜索" />
 					<span class="am-input-group-btn">
-						<button class="am-btn am-btn-default" type="button">搜索</button>
+						<button class="am-btn am-btn-default" onclick="search();" type="button">搜索</button>
 					</span>
 				</div>
 			</div>
@@ -166,85 +135,31 @@
 		</div>
 		
 		<!-- 多选框 -->
-		<div class="am-form-group" style="margin-top: 20px;">
+		<div class="am-form-group" style="margin-top: 20px;" id="type3ly">
 		  <label>产品 ></label>
 		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck checked>不限</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>养老</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>保健品</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>包装</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>材料</input>
+		    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(3);">不限</input>
 		  </label>
 		</div>
 		
-		<div class="am-form-group" style="margin-top: 10px;">
+		<div class="am-form-group" style="margin-top: 10px;" id="type1ly">
 		  <label>厂家 ></label>
 		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck checked>不限</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>养老</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>保健品</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>包装</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>材料</input>
+		    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(1);">不限</input>
 		  </label>
 		</div>
 		
-		<div class="am-form-group" style="margin-top: 10px;">
+		<div class="am-form-group" style="margin-top: 10px;" id="type2ly">
 		  <label>讲师 ></label>
 		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck checked>不限</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>养老</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>保健品</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>医院</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>药店</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>美容</input>
+		    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(2);">不限</input>
 		  </label>
 		</div>
 		
-		<div class="am-form-group" style="margin-top: 10px;">
+		<div class="am-form-group" style="margin-top: 10px;" id="type0ly">
 		  <label>模式 ></label>
 		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck checked>不限</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>养老</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>保健品</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>医院</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>药店</input>
-		  </label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="" data-am-ucheck>美容</input>
+		    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(0);">不限</input>
 		  </label>
 		</div>
 		
@@ -305,81 +220,91 @@
 <script src="font/amazeui/js/jquery.min.js"></script>
 <script src="font/amazeui/js/amazeui.min.js"></script>
 <script>
-var uid;
+if(!IsPC()){
+	window.location.href='index_m.jsp';
+}
 	$(document).ready(function(){
-		getSession();
 		
-		getGoods();
-		getSupplier();
-		getLecturer();
-		getBusiness();
+		getGoods("");
+		getSupplier("");
+		getLecturer("");
+		getBusiness("");
+		getAllTypes();
 	});
 	
-	function getSession() { 
+	function search(){
+		//获取checkbox选中值
+		
+	}
+	
+	function unselectAll(type){
+		$("#type"+type+"ly [value=0]").prop("checked",true);
+		$("#type"+type+"ly :checkbox").each(function(){
+			$(this).prop("checked",false);
+		});
+		checkLyChecked(type);
+	}
+	
+	function getAllTypes(){
 		$.ajax({
 			type : 'POST',
 			dataType : "json",
 			contentType : "application/json ; charset=utf-8",
-			url : "<%=basePath%>getSession",
+			url : "<%=basePath%>getAllTypeModel",
 			success : function(result) {
-				$.AMUI.progress.done();
 				if (result.result == "ok") {
-					var user = result.data;
-					uid = user.id;
-					if(uid != null){
-						//已登录
-						$("#supplierJoin").hide();
-						$("#login").hide();
-						$("#reg").hide();
-						$("#username_ly").show();
-						var role = "";
-						var cookieRole = user.type;
-						if(cookieRole == "1"){
-							role = "供应商";
-							$("#username").attr("href","supplier/supplier_controller.jsp");
-						}else if(cookieRole == "2"){
-							role = "采购商";
-							$("#username").attr("href","user_controller.jsp");
-						}
-						$("#username").html(user.name+"("+role+")");
-					}else{
-						$("#supplierJoin").show();
-						$("#login").show();
-						$("#reg").show();
-						$("#username_ly").hide();
-					}
+					$.each(result.data, function(n, value) {
+						$("#type"+value.type+"ly").append("<label class='am-checkbox-inline'><input id='checkbox"+value.id+"' type='checkbox' value="+value.id+" data-am-ucheck>"+value.name+"</input></label>");
+						$("#checkbox"+value.id).click(function(){
+							checkLyChecked(value.type);
+						});
+					});
 				}
 			},
-			dataType : "json"
 		});
 	}
 	
-	function logout(){
-		$.ajax({
-			type : 'POST',
-			dataType : "json",
-			contentType : "application/json ; charset=utf-8",
-			url : "<%=basePath%>logout",
-			success : function(result) {
-				$.AMUI.progress.done();
-				if (result.result == "ok") {
-					$("#supplierJoin").show();
-					$("#login").show();
-					$("#reg").show();
-					$("#username_ly").hide();
-				}
-			},
-			dataType : "json"
+	function checkLyChecked(type){
+		var uncheck = false;
+		var selected = "";
+		$("#type"+type+"ly :checkbox").each(function(){
+			if($(this).val() != 0 && $(this).is(':checked') == true){
+				selected += $(this).val() + ",";
+				uncheck = true;
+			}
 		});
+		$("#type"+type+"ly [value=0]").prop("checked",!uncheck); 
+		
+		if(type == 0){
+			//模式
+			getBusiness(selected);
+		}
+		
+		if(type == 1){
+			//厂家
+			getSupplier(selected);
+		}
+				
+		if(type == 2){
+			//讲师
+			getLecturer(selected);
+		}
+		
+		if(type == 3){
+			//商品
+			getGoods(selected);
+		}
 	}
 	
-	function getGoods(){
+	function getGoods(types){
+		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getGoods",
-			data : {"pageSize":8},
+			data : {"pageNum":1,"pageSize":8,"types":types},
 			success : function(result) {
 				$.AMUI.progress.done();
+				$("#goods_ly").empty();
 				if (result.result == "ok") {
 					$.each(result.data, function(n, value) {
 						$("#goods_ly").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'><div class='item'><img class='supplier_img' src='"+value.thum+"' alt='' /><font class='supplier_name'>"+value.name+"</font></div></a>");
@@ -390,13 +315,15 @@ var uid;
 		});
 	}
 	
-	function getSupplier(){
+	function getSupplier(types){
+		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getSuppliers",
-			data : {"pageNum":1,"pageSize":8,"types":""},
+			data : {"pageNum":1,"pageSize":8,"types":types},
 			success : function(result) {
 				$.AMUI.progress.done();
+				$("#supplies_ly").empty();
 				if (result.result == "ok") {
 					$.each(result.data, function(n, value) {
 						$("#supplies_ly").append("<a target='_blank' href='supplier.jsp?id="+value.id+"'><div class='item'><font class='supplier_name'>"+value.name+"</font><img class='supplier_img' src='"+value.thum+"' alt='' /></div></a>")
@@ -407,13 +334,15 @@ var uid;
 		});
 	}
 	
-	function getLecturer(){
+	function getLecturer(types){
+		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getLecturers",
-			data : {"pageNum":1,"pageSize":8,"types":""},
+			data : {"pageNum":1,"pageSize":8,"types":types},
 			success : function(result) {
 				$.AMUI.progress.done();
+				$("#lecturer_ly").empty();
 				if (result.result == "ok") {
 					$.each(result.data, function(n, value) {
 						var name = value.name.split('').join("<br/>");
@@ -425,13 +354,15 @@ var uid;
 		});
 	}
 	
-	function getBusiness(){
+	function getBusiness(types){
+		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getBusinessModels",
-			data : {"pageNum":1,"pageSize":8,"types":""},
+			data : {"pageNum":1,"pageSize":8,"types":types},
 			success : function(result) {
 				$.AMUI.progress.done();
+				$("#business_ly").empty();
 				if (result.result == "ok") {
 					$.each(result.data, function(n, value) {
 						var name = value.name.split('').join("<br/>");
@@ -441,6 +372,21 @@ var uid;
 			},
 			dataType : "json"
 		});
+	}
+	
+	function IsPC() {
+	    var userAgentInfo = navigator.userAgent;
+	    var Agents = ["Android", "iPhone",
+	                "SymbianOS", "Windows Phone",
+	                "iPad", "iPod"];
+	    var flag = true;
+	    for (var v = 0; v < Agents.length; v++) {
+	        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+	            flag = false;
+	            break;
+	        }
+	    }
+	    return flag;
 	}
 	
 </script>

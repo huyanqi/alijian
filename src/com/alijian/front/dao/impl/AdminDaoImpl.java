@@ -74,7 +74,7 @@ public class AdminDaoImpl extends HibernateDaoSupport implements AdminDao {
 		for(LecturerModel model : models){
 			String[] types = model.types.split(",");
 			for(String type : types){
-				model.typeModels.add(getTypeById(Integer.parseInt(type)));
+				model.typeList.add(getTypeById(Integer.parseInt(type)));
 			}
 		}
 		return models;
@@ -163,14 +163,23 @@ public class AdminDaoImpl extends HibernateDaoSupport implements AdminDao {
 	}
 
 	@Override
-	public List<GoodsModel> getGoods(final int pageSize) {
-		final String queryString = "FROM GoodsModel model ORDER BY model.update_time DESC";
-		return getHibernateTemplate().execute(new HibernateCallback<List<GoodsModel>>() {
-			@SuppressWarnings("unchecked")
+	public List<GoodsModel> getGoods(int pageNum,final int pageSize,final String types) {
+		final int size = Tools.getPageSize(pageSize);
+		final int starts = (pageNum-1)*pageSize;
+		return (List<GoodsModel>) getHibernateTemplate().execute(new HibernateCallback<List<GoodsModel>>() {
 			@Override
 			public List<GoodsModel> doInHibernate(Session session) throws HibernateException {
-				List<GoodsModel> models = session.createQuery(queryString).setMaxResults(pageSize).list();
-				return models;
+				String[] typesArray = types.split(",");
+				String findSql = "";
+				for(String type:typesArray){
+					if("".equals(type)) break;
+					findSql += " find_in_set("+type+", types) AND";
+				}
+				if(!"".equals(findSql)){
+					findSql = findSql.substring(0, findSql.length()-3);
+				}
+				String sql = "SELECT * FROM goods "+(findSql.length() > 0 ? "WHERE":"")+ findSql+" ORDER BY update_time DESC";
+				return session.createSQLQuery(sql).addEntity(GoodsModel.class).setFirstResult(starts).setMaxResults(size).list();
 			}
 		});
 	}

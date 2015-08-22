@@ -20,7 +20,7 @@ public interface BaseService {
 
 	GoodsModel getGoodsModelById(int id);
 
-	List<GoodsModel> getGoods(int pageSize);
+	List<GoodsModel> getGoods(int pageNum,int pageSize,String types);
 
 	List<UserModel> getUsers(int pageSize, int type, int status);
 

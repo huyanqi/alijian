@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.alijian.front.dao.BaseDao;
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.LecturerModel;
-import com.alijian.front.model.PageModel;
+import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.util.Tools;
 
@@ -91,6 +91,9 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 					if("".equals(type)) break;
 					findSql += " find_in_set("+type+", types) AND";
 				}
+				if(!"".equals(findSql)){
+					findSql = findSql.substring(0, findSql.length()-3);
+				}
 				String sql = "SELECT * FROM business "+ (findSql.length() > 0 ? "WHERE":"") + findSql+" ORDER BY update_time DESC";
 				return session.createSQLQuery(sql).addEntity(BusinessModel.class).setFirstResult(starts).setMaxResults(size).list();
 			}
@@ -119,7 +122,10 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 					if("".equals(type)) break;
 					findSql += " find_in_set("+type+", types) AND";
 				}
-				String sql = "SELECT * FROM user WHERE "+ findSql+" type = 1 AND status = 1 ORDER BY update_time DESC";
+				if(!"".equals(findSql)){
+					findSql = findSql.substring(0, findSql.length()-3);
+				}
+				String sql = "SELECT * FROM user WHERE"+ findSql+ (findSql.equals("") ? "" : " AND ")+ " type = 1 AND status = 1 ORDER BY update_time DESC";
 				System.out.println(sql);
 				return session.createSQLQuery(sql).addEntity(UserModel.class).setFirstResult(starts).setMaxResults(size).list();
 			}
@@ -139,6 +145,9 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 					if("".equals(type)) break;
 					findSql += " find_in_set("+type+", types) AND";
 				}
+				if(!"".equals(findSql)){
+					findSql = findSql.substring(0, findSql.length()-3);
+				}
 				String sql = "SELECT * FROM lecturer "+ (findSql.length() > 0 ? "WHERE":"") + findSql+" ORDER BY update_time DESC";
 				return session.createSQLQuery(sql).addEntity(LecturerModel.class).setFirstResult(starts).setMaxResults(size).list();
 			}
@@ -152,6 +161,12 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 			return models.get(0);
 		}
 		return null;
+	}
+
+	@Override
+	public List<TypeModel> getAllTypeModel() {
+		List<TypeModel> models = (List<TypeModel>) getHibernateTemplate().find("FROM TypeModel");
+		return models;
 	}
 
 }

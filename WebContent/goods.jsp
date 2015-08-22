@@ -116,39 +116,8 @@
 	
 </head>
 <body class="am-with-topbar-fixed-top">
-	<header class="am-topbar am-topbar-fixed-top">
-	  <div class="am-container">
-	    <h1 class="am-topbar-brand">
-	      <a href="#">阿里健 - 淘资源</a>
-	    </h1>
-	
-	    <div class="am-collapse am-topbar-collapse" id="collapse-head">
-	
-		<div class="am-topbar-right" id="username_ly">
-	        	<a href="#" id="username" target="_blank" style="line-height: 50px;"></a>
-	        	<a href="javascript:logout();" style="line-height: 50px;color: #04aeda;font-size: 14px;">安全退出</a>
-	      </div>
-	
-	      <div class="am-topbar-right" id="reg">
-	        <button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='user_reg.jsp'"><span class="am-icon-pencil"></span> 采购商注册</button>
-	      </div>
-	
-	      <div class="am-topbar-right" id="login">
-	        <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='login.jsp'"><span class="am-icon-user"></span> 登录</button>
-	      </div>
 
-			<div class="am-topbar-right" id="supplierJoin">
-				<button class="am-btn am-btn-success am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='supplier_join.jsp'">
-					<span class="am-icon-angellist"></span> 供货商入驻
-				</button>
-			</div>
-		</div>
-	  </div>
-	</header>
-	
-	<div class="am-container" style="padding-top: 20px;padding-bottom: 20px;">
-		<img src="font/logo.png" alt="logo"/>
-	</div>
+	<jsp:include page="head.jsp" flush="true"/>		
 	
 	<div class="am-container" style="background: #DDDDDD;height: 1px;"/>
 
@@ -199,64 +168,6 @@ var id;
 			getGoodsById();
 		}
 	});
-	
-	function getSession() { 
-		$.ajax({
-			type : 'POST',
-			dataType : "json",
-			contentType : "application/json ; charset=utf-8",
-			url : "<%=basePath%>getSession",
-			success : function(result) {
-				$.AMUI.progress.done();
-				if (result.result == "ok") {
-					var user = result.data;
-					uid = user.id;
-					if(uid != null){
-						//已登录
-						$("#supplierJoin").hide();
-						$("#login").hide();
-						$("#reg").hide();
-						$("#username_ly").show();
-						var role = "";
-						var cookieRole = user.type;
-						if(cookieRole == "1"){
-							role = "供应商";
-							$("#username").attr("href","supplier/supplier_controller.jsp");
-						}else if(cookieRole == "2"){
-							role = "采购商";
-							$("#username").attr("href","user_controller.jsp");
-						}
-						$("#username").html(user.name+"("+role+")");
-					}else{
-						$("#supplierJoin").show();
-						$("#login").show();
-						$("#reg").show();
-						$("#username_ly").hide();
-					}
-				}
-			},
-			dataType : "json"
-		});
-	}
-	
-	function logout(){
-		$.ajax({
-			type : 'POST',
-			dataType : "json",
-			contentType : "application/json ; charset=utf-8",
-			url : "<%=basePath%>logout",
-			success : function(result) {
-				$.AMUI.progress.done();
-				if (result.result == "ok") {
-					$("#supplierJoin").show();
-					$("#login").show();
-					$("#reg").show();
-					$("#username_ly").hide();
-				}
-			},
-			dataType : "json"
-		});
-	}
 	
 	function getGoodsById(){
 		$.AMUI.progress.start();

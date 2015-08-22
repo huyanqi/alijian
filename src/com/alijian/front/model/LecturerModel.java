@@ -44,7 +44,7 @@ public class LecturerModel {
 	public Date update_time = new Date();
 	
 	@Transient
-	public List<TypeModel> typeModels = new ArrayList<TypeModel>();
+	public List<TypeModel> typeList = new ArrayList<TypeModel>();
 
 	public int getId() {
 		return id;
@@ -95,11 +95,11 @@ public class LecturerModel {
 	}
 
 	public List<TypeModel> getTypeModels() {
-		return typeModels;
+		return typeList;
 	}
 
 	public void setTypeModels(List<TypeModel> typeModels) {
-		this.typeModels = typeModels;
+		this.typeList = typeModels;
 	}
 
 	public Date getUpdate_time() {

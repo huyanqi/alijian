@@ -120,7 +120,7 @@
 		
 		CKEDITOR.replace( 'editor1' ,{
 		    filebrowserBrowseUrl: '/browser/browse.php',
-		    filebrowserUploadUrl: '<%=basePath%>ckfileupload'
+		    filebrowserUploadUrl: '<%=basePath%>ckfileupload',
 		});
 		
 		CKEDITOR.on('instanceReady', function(e) {

@@ -1,6 +1,8 @@
 package com.alijian.front.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * 商业模式
@@ -36,6 +39,9 @@ public class BusinessModel {
 	@Column
 	public String description;
 
+	@Transient
+	public List<TypeModel> typeModels = new ArrayList<TypeModel>();
+	
 	@Column
 	public Date update_time = new Date();
 	
@@ -97,6 +103,14 @@ public class BusinessModel {
 
 	public void setUser(UserModel user) {
 		this.user = user;
+	}
+
+	public List<TypeModel> getTypeModels() {
+		return typeModels;
+	}
+
+	public void setTypeModels(List<TypeModel> typeModels) {
+		this.typeModels = typeModels;
 	}
 	
 }

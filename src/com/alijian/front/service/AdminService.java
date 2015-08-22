@@ -43,4 +43,6 @@ public interface AdminService {
 
 	String removeBusinessById(int id);
 
+	List<TypeModel> getAllTypeModel();
+
 }

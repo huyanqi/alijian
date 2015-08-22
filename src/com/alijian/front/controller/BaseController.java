@@ -65,6 +65,7 @@ public class BaseController extends BaseData {
 			String directory = request.getSession().getServletContext().getRealPath("images");
 			
 			//确定写出文件的目录位置
+			System.out.println(directory);
 			newFile = new File(directory,fileName);
 			if(!newFile.exists()){//判断文件目录是否存在  
 				newFile.mkdirs();
@@ -232,10 +233,10 @@ public class BaseController extends BaseData {
 	}
 	
 	@RequestMapping(value = "/getGoods")
-	public ModelAndView getGoods(int pageSize){
+	public ModelAndView getGoods(int pageNum,int pageSize,String types){
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
-		List<GoodsModel> goods = baseService.getGoods(pageSize);
+		List<GoodsModel> goods = baseService.getGoods(pageNum,pageSize,types);
 		if(goods != null){
 			obj.put(RESULT, OK);
 			obj.put(DATA, goods);

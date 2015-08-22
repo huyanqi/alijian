@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 
 @Component
@@ -32,5 +33,7 @@ public interface BaseDao {
 	List<LecturerModel> getLecturers(int pageNum, int pageSize, String types);
 
 	UserModel getSupplierById(int uid);
+
+	List<TypeModel> getAllTypeModel();
 
 }

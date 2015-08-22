@@ -123,4 +123,9 @@ public class AdminServiceImpl implements AdminService {
 		return adminDao.removeObject(model);
 	}
 
+	@Override
+	public List<TypeModel> getAllTypeModel() {
+		return baseDao.getAllTypeModel();
+	}
+
 }

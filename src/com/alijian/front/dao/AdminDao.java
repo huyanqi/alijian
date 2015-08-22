@@ -42,7 +42,7 @@ public interface AdminDao {
 
 	String removeGoods(GoodsModel model);
 
-	List<GoodsModel> getGoods(int pageSize);
+	List<GoodsModel> getGoods(int pageNum,int pageSize,String types);
 
 	String insertOrUpdateModel(Object object);
 

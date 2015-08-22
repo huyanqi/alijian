@@ -95,6 +95,23 @@ public class AdminController extends BaseData {
 		return view;
 	}
 	
+	@RequestMapping(value = "/getAllTypeModel")
+	public ModelAndView getAllTypeModel() {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		
+		List<TypeModel> models = adminService.getAllTypeModel();
+		if(models.size() > 0){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, models);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, "ÎÞÊý¾Ý");
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
 	@RequestMapping(value = "/getTypeById")
 	public ModelAndView getTypeById(int id) {
 		ModelAndView view = new ModelAndView("/json");

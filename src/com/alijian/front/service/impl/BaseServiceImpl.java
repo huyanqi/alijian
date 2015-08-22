@@ -69,8 +69,8 @@ public class BaseServiceImpl implements BaseService {
 	}
 
 	@Override
-	public List<GoodsModel> getGoods(int pageSize) {
-		return adminDao.getGoods(pageSize);
+	public List<GoodsModel> getGoods(int pageNum,int pageSize,String types) {
+		return adminDao.getGoods(pageNum,pageSize,types);
 	}
 
 	@Override
@@ -85,6 +85,17 @@ public class BaseServiceImpl implements BaseService {
 
 	@Override
 	public List<BusinessModel> getBusinessModels(int pageNum, int pageSize,String types) {
+		List<BusinessModel> models = baseDao.getBusinessModels(pageNum,pageSize,types);
+		for(BusinessModel model:models){
+			String[] types1 = model.getTypes().split(",");
+			List<TypeModel> typeList = new ArrayList<TypeModel>();
+			for(String type:types1){
+				TypeModel typeModel = adminDao.getTypeById(Integer.parseInt(type));
+				if(typeModel != null)
+					typeList.add(typeModel);
+			}
+			model.setTypeModels(typeList);
+		}
 		return baseDao.getBusinessModels(pageNum,pageSize,types);
 	}
 
@@ -100,7 +111,18 @@ public class BaseServiceImpl implements BaseService {
 
 	@Override
 	public List<LecturerModel> getLecturers(int pageNum, int pageSize,String types) {
-		return baseDao.getLecturers(pageNum,pageSize,types);
+		List<LecturerModel> models = baseDao.getLecturers(pageNum,pageSize,types);
+		for(LecturerModel model:models){
+			String[] types1 = model.getTypes().split(",");
+			List<TypeModel> typeList = new ArrayList<TypeModel>();
+			for(String type:types1){
+				TypeModel typeModel = adminDao.getTypeById(Integer.parseInt(type));
+				if(typeModel != null)
+					typeList.add(typeModel);
+			}
+			model.setTypeModels(typeList);
+		}
+		return models;
 	}
 
 	@Override

@@ -171,7 +171,7 @@
 	function getTypeModelByType(){
 		$.AMUI.progress.start();
 		var path = "<%=basePath%>getTypeModelByType";
-		var data = {"type":3};
+		var data = {"type":0};
 		$.ajax({
 			type : 'POST',
 			data : data,
