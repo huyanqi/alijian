@@ -22,27 +22,24 @@
 <!-- No Baidu Siteapp-->
 <meta http-equiv="Cache-Control" content="no-siteapp" /></meta>
 
-<link rel="icon" type="image/png" href="font/amazeui/i/favicon.png"></link>
+<link rel="icon" type="image/png" href="<%=basePath%>font/amazeui/i/favicon.png"></link>
 
 <!-- Add to homescreen for Chrome on Android -->
 <meta name="mobile-web-app-capable" content="yes"></meta>
-<link rel="icon" sizes="192x192"
-	href="font/amazeui/i/app-icon72x72@2x.png"></link>
+<link rel="icon" sizes="192x192" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
 <!-- Add to homescreen for Safari on iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes"></meta>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"></meta>
 <meta name="apple-mobile-web-app-title" content="Amaze UI" />
-<link rel="apple-touch-icon-precomposed"
-	href="font/amazeui/i/app-icon72x72@2x.png"></link>
+<link rel="apple-touch-icon-precomposed" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
 <!-- Tile icon for Win8 (144x144 + tile color) -->
-<meta name="msapplication-TileImage"
-	content="font/amazeui/i/app-icon72x72@2x.png"></meta>
+<meta name="msapplication-TileImage" content="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></meta>
 <meta name="msapplication-TileColor" content="#0e90d2"></meta>
 
-<link rel="stylesheet" href="font/amazeui/css/amazeui.min.css"></link>
-<link rel="stylesheet" href="font/amazeui/css/app.css"></link>
+<link rel="stylesheet" href="<%=basePath%>font/amazeui/css/amazeui.min.css"></link>
+<link rel="stylesheet" href="<%=basePath%>font/amazeui/css/app.css"></link>
 <style>
 .title_name {
 	max-height: 50px;
@@ -134,14 +131,11 @@
 
 	</div>
 
-	<script src="font/amazeui/js/jquery.min.js"></script>
-	<script src="font/amazeui/js/amazeui.min.js"></script>
-	<script src="font/amazeui/js/amazeui.lazyload.js"></script>
+	<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
+	<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
+	<script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script>
 	<script>
 		$(document).ready(function() {
-			$("img").lazyload({ 
-	           effect: "fadeIn"
-		     });
 			getGoods("");
 			getSupplier("");
 			getLecturer("");
@@ -159,9 +153,10 @@
 					$("#goods_ly").empty();
 					if (result.result == "ok") {
 						$.each(result.data, function(n, value) {
-							var url = "";
-							$("#goods_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"</div></div></li>");
+							var url = "goods_m.jsp?id="+value.id;
+							$("#goods_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"</div></div></li>");
 						});
+						$("img.lazy").lazyload({effect: "fadeIn"});
 					}
 				},
 				dataType : "json"
@@ -179,9 +174,10 @@
 					$("#supplier_ly").empty();
 					if (result.result == "ok") {
 						$.each(result.data, function(n, value) {
-							var url = "";
-							$('#supplier_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-bottom-right'><h3 class='am-list-item-hd'><a href='"+url+"' class=''>"+value.name+"</a></h3><div class=' am-u-sm-8 am-list-main'><div class='am-list-item-text'>"+value.address+"</div></div><div class='am-list-thumb am-u-sm-4'><a href='"+url+"' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div></li>")
+							var url = "supplier_m.jsp?id="+value.id;
+							$('#supplier_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-bottom-right'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class=''>"+value.name+"</a></h3><div class=' am-u-sm-8 am-list-main'><div class='am-list-item-text'>"+value.address+"</div></div><div class='am-list-thumb am-u-sm-4'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div></li>")
 						});
+						$("img.lazy").lazyload({effect: "fadeIn"});
 					}
 				},
 				dataType : "json"
@@ -199,15 +195,16 @@
 					$("#lecturer_ly").empty();
 					if (result.result == "ok") {
 						$.each(result.data, function(n, value) {
-							var url = "";
+							var url = "lecturer_m.jsp?id="+value.id;
 							var types = "";
 							$.each(value.typeModels, function(n, value2) {
 								types += value2.name+",";
 							});
 							if(types.length > 0)
 								types = types.substring(0, types.length-1);
-							$('#lecturer_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+"擅长领域:"+types+"</div></div></li>");
+							$('#lecturer_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+"擅长领域:"+types+"</div></div></li>");
 						});
+						$("img.lazy").lazyload({effect: "fadeIn"});
 					}
 				},
 				dataType : "json"
@@ -229,15 +226,16 @@
 							$("#business_ly").empty();
 							if (result.result == "ok") {
 								$.each(result.data,function(n, value) {
-									var url = "";
+									var url = "business_m.jsp?id="+value.id;
 									var types = "";
 									$.each(value.typeModels, function(n, value2) {
 										types += value2.name+",";
 									});
 									if(types.length > 0)
 										types = types.substring(0, types.length-1);
-									$('#business_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-top'><div class='am-list-thumb am-u-sm-12'><a href='"+url+"' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div><div class=' am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' class=''>"+value.name+"</a></h3><div class='am-list-item-text'>"+"所属分类:"+types+"</div></div></li>");
+									$('#business_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-top'><div class='am-list-thumb am-u-sm-12'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div><div class=' am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class=''>"+value.name+"</a></h3><div class='am-list-item-text'>"+"所属分类:"+types+"</div></div></li>");
 								});
+								$("img.lazy").lazyload({effect: "fadeIn"});
 							}
 						},
 						dataType : "json"

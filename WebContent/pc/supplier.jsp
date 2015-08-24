@@ -21,24 +21,24 @@
   <!-- No Baidu Siteapp-->
   <meta http-equiv="Cache-Control" content="no-siteapp"/></meta>
 
-  <link rel="icon" type="image/png" href="font/amazeui/i/favicon.png"></link>
+  <link rel="icon" type="image/png" href="<%=basePath%>font/amazeui/i/favicon.png"></link>
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes"></meta>
-  <link rel="icon" sizes="192x192" href="font/amazeui/i/app-icon72x72@2x.png"></link>
+  <link rel="icon" sizes="192x192" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes"></meta>
   <meta name="apple-mobile-web-app-status-bar-style" content="black"></meta>
   <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
-  <link rel="apple-touch-icon-precomposed" href="font/amazeui/i/app-icon72x72@2x.png"></link>
+  <link rel="apple-touch-icon-precomposed" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
   <!-- Tile icon for Win8 (144x144 + tile color) -->
   <meta name="msapplication-TileImage" content="font/amazeui/i/app-icon72x72@2x.png"></meta>
   <meta name="msapplication-TileColor" content="#0e90d2"></meta>
 
-  <link rel="stylesheet" href="font/amazeui/css/amazeui.min.css"></link>
-  <link rel="stylesheet" href="font/amazeui/css/app.css"></link>
+  <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/amazeui.min.css"></link>
+  <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/app.css"></link>
 	
 	<style>
 	
@@ -129,8 +129,8 @@
 		<div style="width: 500px;height: 450px;float: left;">
 			<table style="width: 100%;margin-left: 30px;margin-top: 10px;" id="goods_info">
 				<tr><td colspan="2" style="height: 80px;" id="goods_name_ly"><font id="goods_name"></font></td></tr>
-				<tr><td colspan="2" style="height: 80px;"><font id="birth"></font></td></tr>
-				<tr><td class="table_th" style="height: 80px;">擅长领域:</td><td id="types"></td></tr>
+				<tr><td colspan="2" style="height: 80px;"><font id="address"></font></td></tr>
+				<tr><td class="table_th" style="height: 55px;">经营领域:</td><td id="types"></td></tr>
 				<tr><td colspan="2" style="border-bottom: 0px;" id="contact_me"></td></tr>
 			</table>
 		</div>
@@ -141,7 +141,7 @@
 	<div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
 		<header class="am-topbar">
 			<h1 class="am-topbar-brand">
-				<a href="#">讲师介绍</a>
+				<a href="#">厂家介绍</a>
 			</h1>
 		</header>
 		<div class="am-container" style="margin-top: 10px;" id="description">
@@ -154,8 +154,8 @@
 	  <p>© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
 	</footer>
 	
-<script src="font/amazeui/js/jquery.min.js"></script>
-<script src="font/amazeui/js/amazeui.min.js"></script>
+<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
+<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 <script>
 var uid;
 var id;
@@ -164,30 +164,30 @@ var id;
 		if(id == null){
 			window.close();
 		}else{
-			getLecturerModelById();
+			getSuppliesById();
 		}
 	});
 	
-	function getLecturerModelById(){
-		var path = "<%=basePath%>getLecturerModelById";
-		var data = {"id":id};
+	function getSuppliesById(){
+		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
-			data : data,
-			url : path,
+			data : {"uid":id},
+			url : "<%=basePath%>getSupplierById",
 			success : function(result) {
+				$.AMUI.progress.done();
 				if (result.result == "ok") {
 					result = result.data;
 					$("#thum").attr("src",result.thum);
 					$("#goods_name").html(result.name);
-					$("#birth").html("出生年月:"+result.birth);
-					$("#description").html(result.description);
-					$.each(result.typeModels, function(n, value) {
+					$("#address").html("地址:"+result.address);
+					$.each(result.typeList, function(n, value) {
 						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'>"+value.name+"</a>");
 					});
+					$("#description").html(result.description);
 					$("#contact_me").append("<a target='_blank' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
 				}else{
-					alert("错误的讲师ID号");
+					alert("错误的商品ID号");
 					window.close();
 				}
 			},

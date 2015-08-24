@@ -15,7 +15,7 @@
   <meta name="format-detection" content="telephone=no"></meta>
   <meta name="renderer" content="webkit"></meta>
   <meta http-equiv="Cache-Control" content="no-siteapp" ></meta>
-  <link rel="stylesheet" href="font/amazeui/css/amazeui.min.css"></link>
+  <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/amazeui.min.css"></link>
   <style>
     .header {
       text-align: center;

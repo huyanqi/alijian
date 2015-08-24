@@ -12,9 +12,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
 <meta name="description" content=""></meta>
 <meta name="keywords" content=""></meta>
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
-<title>阿里健 - 淘资源</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
 
 <!-- Set render engine for 360 browser -->
 <meta name="renderer" content="webkit"></meta>
@@ -22,34 +20,35 @@
 <!-- No Baidu Siteapp-->
 <meta http-equiv="Cache-Control" content="no-siteapp" /></meta>
 
-<link rel="icon" type="image/png" href="font/amazeui/i/favicon.png"></link>
+<link rel="icon" type="image/png" href="<%=basePath%>font/amazeui/i/favicon.png"></link>
 
 <!-- Add to homescreen for Chrome on Android -->
 <meta name="mobile-web-app-capable" content="yes"></meta>
-<link rel="icon" sizes="192x192"
-	href="font/amazeui/i/app-icon72x72@2x.png"></link>
+<link rel="icon" sizes="192x192" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
 <!-- Add to homescreen for Safari on iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes"></meta>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"></meta>
 <meta name="apple-mobile-web-app-title" content="Amaze UI" />
-<link rel="apple-touch-icon-precomposed"
-	href="font/amazeui/i/app-icon72x72@2x.png"></link>
+<link rel="apple-touch-icon-precomposed" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
 <!-- Tile icon for Win8 (144x144 + tile color) -->
-<meta name="msapplication-TileImage"
-	content="font/amazeui/i/app-icon72x72@2x.png"></meta>
+<meta name="msapplication-TileImage" content="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></meta>
 <meta name="msapplication-TileColor" content="#0e90d2"></meta>
 
-<link rel="stylesheet" href="font/amazeui/css/amazeui.min.css"></link>
-<link rel="stylesheet" href="font/amazeui/css/app.css"></link>
+<link rel="stylesheet" href="<%=basePath%>font/amazeui/css/amazeui.min.css"></link>
+<link rel="stylesheet" href="<%=basePath%>font/amazeui/css/app.css"></link>
+
+<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
+<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
+<script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script>
 
 </head>
 <body>
 
 	<header data-am-widget="header" class="am-header am-header-default am-header-fixed">
 		<div class="am-header-left am-header-nav">
-			<a href="#left-link" class=""> <i
+			<a href="index_m.jsp" class=""> <i
 				class="am-header-icon am-icon-home"></i>
 			</a>
 		</div>
@@ -76,8 +75,8 @@
 	  </div>
 	</div>
 
-	<script src="font/amazeui/js/jquery.min.js"></script>
-	<script src="font/amazeui/js/amazeui.min.js"></script>
+	<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
+	<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 	<script>
 	$(document).ready(function(){
 		getSession();
@@ -98,7 +97,7 @@
 					$("#icon_user").show();
 				}else{
 					//未登录
-					$("#userinfo").attr("href","login.jsp");
+					$("#userinfo").attr("href","<%=basePath%>login.jsp");
 					$("#login_user").show();
 					$("#icon_user").hide();
 				}

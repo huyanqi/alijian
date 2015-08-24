@@ -7,9 +7,9 @@
 <title>阿里健 - 淘资源</title>
 <script type="text/javascript">
 	if (!IsPC()) {
-		window.location.href = 'index_m.jsp';
+		window.location.href = 'mobile/index_m.jsp';
 	}else{
-		window.location.href = 'index.jsp';
+		window.location.href = 'pc/index.jsp';
 	}
 	function IsPC() {
 		var userAgentInfo = navigator.userAgent;

@@ -24,20 +24,20 @@
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes"></meta>
-  <link rel="icon" sizes="192x192" href="font/amazeui/i/app-icon72x72@2x.png"></link>
+  <link rel="icon" sizes="192x192" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes"></meta>
   <meta name="apple-mobile-web-app-status-bar-style" content="black"></meta>
   <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
-  <link rel="apple-touch-icon-precomposed" href="font/amazeui/i/app-icon72x72@2x.png"></link>
+  <link rel="apple-touch-icon-precomposed" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
   <!-- Tile icon for Win8 (144x144 + tile color) -->
   <meta name="msapplication-TileImage" content="font/amazeui/i/app-icon72x72@2x.png"></meta>
   <meta name="msapplication-TileColor" content="#0e90d2"></meta>
 
-  <link rel="stylesheet" href="font/amazeui/css/amazeui.min.css"></link>
-	  <link rel="stylesheet" href="font/amazeui/css/app.css"></link>
+  <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/amazeui.min.css"></link>
+  <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/app.css"></link>
 	
 	<style>
 	
@@ -116,7 +116,7 @@
 	      </div>
 	
 	      <div class="am-topbar-right" id="login">
-	        <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='login.jsp'"><span class="am-icon-user"></span> 登录</button>
+	        <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='<%=basePath%>login.jsp'"><span class="am-icon-user"></span> 登录</button>
 	      </div>
 
 			<div class="am-topbar-right" id="supplierJoin">
@@ -129,11 +129,11 @@
 	</header>
 	
 	<div class="am-container" style="padding-top: 20px;padding-bottom: 20px;">
-		<img src="font/logo.png" alt="logo"/>
+		<img src="<%=basePath%>font/logo.png" alt="logo"/>
 	</div>
 	
-<script src="font/amazeui/js/jquery.min.js"></script>
-<script src="font/amazeui/js/amazeui.min.js"></script>
+<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
+<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 <script>
 	$(document).ready(function(){
 		getSession();
@@ -160,10 +160,10 @@
 						var cookieRole = user.type;
 						if(cookieRole == "1"){
 							role = "供应商";
-							$("#username").attr("href","supplier/supplier_controller.jsp");
+							$("#username").attr("href","<%=basePath%>supplier/supplier_controller.jsp");
 						}else if(cookieRole == "2"){
 							role = "采购商";
-							$("#username").attr("href","user_controller.jsp");
+							$("#username").attr("href","<%=basePath%>user_controller.jsp");
 						}
 						$("#username").html(user.name+"("+role+")");
 					}
