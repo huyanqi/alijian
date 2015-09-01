@@ -34,7 +34,7 @@
   <link rel="apple-touch-icon-precomposed" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
   <!-- Tile icon for Win8 (144x144 + tile color) -->
-  <meta name="msapplication-TileImage" content="font/amazeui/i/app-icon72x72@2x.png"></meta>
+  <meta name="msapplication-TileImage" content="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></meta>
   <meta name="msapplication-TileColor" content="#0e90d2"></meta>
 
   <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/amazeui.min.css"></link>
@@ -301,7 +301,7 @@ if(!IsPC()){
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getGoods",
-			data : {"pageNum":1,"pageSize":8,"types":types},
+			data : {"pageNum":1,"pageSize":8,"types":types,"keyword":""},
 			success : function(result) {
 				$.AMUI.progress.done();
 				$("#goods_ly").empty();
@@ -320,7 +320,7 @@ if(!IsPC()){
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getSuppliers",
-			data : {"pageNum":1,"pageSize":8,"types":types},
+			data : {"pageNum":1,"pageSize":8,"types":types,"keyword":""},
 			success : function(result) {
 				$.AMUI.progress.done();
 				$("#supplies_ly").empty();
@@ -339,7 +339,7 @@ if(!IsPC()){
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getLecturers",
-			data : {"pageNum":1,"pageSize":8,"types":types},
+			data : {"pageNum":1,"pageSize":8,"types":types,"keyword":""},
 			success : function(result) {
 				$.AMUI.progress.done();
 				$("#lecturer_ly").empty();
@@ -359,7 +359,7 @@ if(!IsPC()){
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getBusinessModels",
-			data : {"pageNum":1,"pageSize":8,"types":types},
+			data : {"pageNum":1,"pageSize":8,"types":types,"keyword":""},
 			success : function(result) {
 				$.AMUI.progress.done();
 				$("#business_ly").empty();

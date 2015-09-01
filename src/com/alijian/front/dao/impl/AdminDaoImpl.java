@@ -163,7 +163,7 @@ public class AdminDaoImpl extends HibernateDaoSupport implements AdminDao {
 	}
 
 	@Override
-	public List<GoodsModel> getGoods(int pageNum,final int pageSize,final String types) {
+	public List<GoodsModel> getGoods(int pageNum,final int pageSize,final String types,final String keyword) {
 		final int size = Tools.getPageSize(pageSize);
 		final int starts = (pageNum-1)*pageSize;
 		return (List<GoodsModel>) getHibernateTemplate().execute(new HibernateCallback<List<GoodsModel>>() {
@@ -171,6 +171,7 @@ public class AdminDaoImpl extends HibernateDaoSupport implements AdminDao {
 			public List<GoodsModel> doInHibernate(Session session) throws HibernateException {
 				String[] typesArray = types.split(",");
 				String findSql = "";
+				boolean hasWhere = false;
 				for(String type:typesArray){
 					if("".equals(type)) break;
 					findSql += " find_in_set("+type+", types) AND";
@@ -178,7 +179,8 @@ public class AdminDaoImpl extends HibernateDaoSupport implements AdminDao {
 				if(!"".equals(findSql)){
 					findSql = findSql.substring(0, findSql.length()-3);
 				}
-				String sql = "SELECT * FROM goods "+(findSql.length() > 0 ? "WHERE":"")+ findSql+" ORDER BY update_time DESC";
+				hasWhere = findSql.length() > 0;
+				String sql = "SELECT * FROM goods "+(hasWhere ? "WHERE":"")+ findSql+" "+ (hasWhere ? "AND ":"WHERE ")+"name LIKE '%"+keyword+"%'"+" ORDER BY update_time DESC";
 				return session.createSQLQuery(sql).addEntity(GoodsModel.class).setFirstResult(starts).setMaxResults(size).list();
 			}
 		});

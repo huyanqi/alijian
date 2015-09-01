@@ -11,6 +11,7 @@ import com.alijian.front.dao.AdminDao;
 import com.alijian.front.dao.BaseDao;
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.GoodsModel;
+import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
@@ -69,8 +70,8 @@ public class BaseServiceImpl implements BaseService {
 	}
 
 	@Override
-	public List<GoodsModel> getGoods(int pageNum,int pageSize,String types) {
-		return adminDao.getGoods(pageNum,pageSize,types);
+	public List<GoodsModel> getGoods(int pageNum,int pageSize,String types,String keyword) {
+		return adminDao.getGoods(pageNum,pageSize,types,keyword);
 	}
 
 	@Override
@@ -84,8 +85,8 @@ public class BaseServiceImpl implements BaseService {
 	}
 
 	@Override
-	public List<BusinessModel> getBusinessModels(int pageNum, int pageSize,String types) {
-		List<BusinessModel> models = baseDao.getBusinessModels(pageNum,pageSize,types);
+	public List<BusinessModel> getBusinessModels(int pageNum, int pageSize,String types,String keyword) {
+		List<BusinessModel> models = baseDao.getBusinessModels(pageNum,pageSize,types,keyword);
 		for(BusinessModel model:models){
 			String[] types1 = model.getTypes().split(",");
 			List<TypeModel> typeList = new ArrayList<TypeModel>();
@@ -96,7 +97,7 @@ public class BaseServiceImpl implements BaseService {
 			}
 			model.setTypeModels(typeList);
 		}
-		return baseDao.getBusinessModels(pageNum,pageSize,types);
+		return baseDao.getBusinessModels(pageNum,pageSize,types,keyword);
 	}
 
 	@Override
@@ -105,13 +106,13 @@ public class BaseServiceImpl implements BaseService {
 	}
 
 	@Override
-	public List<UserModel> getSuppliers(int pageNum,int pageSize, String types) {
-		return baseDao.getSuppliers(pageNum,pageSize,types);
+	public List<UserModel> getSuppliers(int pageNum,int pageSize, String types, String keyword) {
+		return baseDao.getSuppliers(pageNum,pageSize,types,keyword);
 	}
 
 	@Override
-	public List<LecturerModel> getLecturers(int pageNum, int pageSize,String types) {
-		List<LecturerModel> models = baseDao.getLecturers(pageNum,pageSize,types);
+	public List<LecturerModel> getLecturers(int pageNum, int pageSize,String types,String keyword) {
+		List<LecturerModel> models = baseDao.getLecturers(pageNum,pageSize,types,keyword);
 		for(LecturerModel model:models){
 			String[] types1 = model.getTypes().split(",");
 			List<TypeModel> typeList = new ArrayList<TypeModel>();
@@ -137,6 +138,11 @@ public class BaseServiceImpl implements BaseService {
 		}
 		model.setTypeList(typeList);
 		return model;
+	}
+
+	@Override
+	public List<KeywordsModel> getKeyWords(int pageNum) {
+		return baseDao.getKeyWords(pageNum);
 	}
 	
 }

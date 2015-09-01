@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.GoodsModel;
+import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
@@ -233,10 +234,10 @@ public class BaseController extends BaseData {
 	}
 	
 	@RequestMapping(value = "/getGoods")
-	public ModelAndView getGoods(int pageNum,int pageSize,String types){
+	public ModelAndView getGoods(int pageNum,int pageSize,String types,String keyword){
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
-		List<GoodsModel> goods = baseService.getGoods(pageNum,pageSize,types);
+		List<GoodsModel> goods = baseService.getGoods(pageNum,pageSize,types,keyword);
 		if(goods != null){
 			obj.put(RESULT, OK);
 			obj.put(DATA, goods);
@@ -278,10 +279,10 @@ public class BaseController extends BaseData {
 	}
 	
 	@RequestMapping(value = "/getBusinessModels")
-	public ModelAndView getBusinessModels(int pageNum,int pageSize,String types){
+	public ModelAndView getBusinessModels(int pageNum,int pageSize,String types,String keyword){
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
-		List<BusinessModel> models = baseService.getBusinessModels(pageNum,pageSize,types);
+		List<BusinessModel> models = baseService.getBusinessModels(pageNum,pageSize,types,keyword);
 		if(models.size() > 0){
 			obj.put(RESULT, OK);
 			obj.put(DATA, models);
@@ -315,10 +316,10 @@ public class BaseController extends BaseData {
 	 * @return
 	 */
 	@RequestMapping(value = "/getSuppliers")
-	public ModelAndView getSuppliers(int pageNum,int pageSize,String types) {
+	public ModelAndView getSuppliers(int pageNum,int pageSize,String types,String keyword) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
-		List<UserModel> models = baseService.getSuppliers(pageNum,pageSize,types);
+		List<UserModel> models = baseService.getSuppliers(pageNum,pageSize,types,keyword);
 		if(models.size() > 0){
 			jObj.put(RESULT, OK);
 			jObj.put(DATA, models);
@@ -330,10 +331,10 @@ public class BaseController extends BaseData {
 	}
 	
 	@RequestMapping(value = "/getLecturers")
-	public ModelAndView getLecturers(int pageNum,int pageSize,String types) {
+	public ModelAndView getLecturers(int pageNum,int pageSize,String types,String keyword) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
-		List<LecturerModel> models = baseService.getLecturers(pageNum,pageSize,types);
+		List<LecturerModel> models = baseService.getLecturers(pageNum,pageSize,types,keyword);
 		if(models.size() > 0){
 			jObj.put(RESULT, OK);
 			jObj.put(DATA, models);
@@ -352,6 +353,21 @@ public class BaseController extends BaseData {
 		if(user != null){
 			obj.put(RESULT, OK);
 			obj.put(DATA, user);
+		}else{
+			obj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getKeyWords")
+	public ModelAndView getKeyWords(int pageNum){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		List<KeywordsModel> keywords = baseService.getKeyWords(pageNum);
+		if(keywords.size() > 0){
+			obj.put(RESULT, OK);
+			obj.put(DATA, keywords);
 		}else{
 			obj.put(RESULT, NO);
 		}

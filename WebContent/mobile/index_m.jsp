@@ -147,7 +147,7 @@
 			$.ajax({
 				type : 'POST',
 				url : "<%=basePath%>getGoods",
-				data : {"pageNum":1,"pageSize":8,"types":types},
+				data : {"pageNum":1,"pageSize":8,"types":types,"keyword":""},
 				success : function(result) {
 					$.AMUI.progress.done();
 					$("#goods_ly").empty();
@@ -168,7 +168,7 @@
 			$.ajax({
 				type : 'POST',
 				url : "<%=basePath%>getSuppliers",
-				data : {"pageNum":1,"pageSize":8,"types":types},
+				data : {"pageNum":1,"pageSize":8,"types":types,"keyword":""},
 				success : function(result) {
 					$.AMUI.progress.done();
 					$("#supplier_ly").empty();
@@ -189,7 +189,7 @@
 			$.ajax({
 				type : 'POST',
 				url : "<%=basePath%>getLecturers",
-				data : {"pageNum":1,"pageSize":8,"types":types},
+				data : {"pageNum":1,"pageSize":8,"types":types,"keyword":""},
 				success : function(result) {
 					$.AMUI.progress.done();
 					$("#lecturer_ly").empty();
@@ -219,7 +219,8 @@
 						data : {
 							"pageNum" : 1,
 							"pageSize" : 8,
-							"types" : types
+							"types" : types,
+							"keyword" : ""
 						},
 						success : function(result) {
 							$.AMUI.progress.done();

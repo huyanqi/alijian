@@ -57,24 +57,11 @@
 	
 		<div class="am-header-right am-header-nav">
 			<a href="#user-link" class="" id="userinfo"> <font id="login_user">登录</font><i id="icon_user" class="am-header-icon am-icon-user"></i></a> 
-			<a href="#doc-oc-demo1" data-am-offcanvas="{target: '#doc-oc-demo1', effect: 'push'}"> <i class="am-header-icon am-icon-bars"></i>
+			<a href="search_m.jsp" target="_blank" > <i class="am-header-icon am-icon-search"></i>
 			</a>
 		</div>
 	</header>
 	
-	<!-- 侧边栏内容 -->
-	<div id="doc-oc-demo1" class="am-offcanvas">
-	  <div class="am-offcanvas-bar">
-	    <div class="am-offcanvas-content">
-	      <p>
-	        我不愿让你一个人 <br/>
-	        承受这世界的残忍 <br/>
-	        我不愿眼泪陪你到 永恒
-	      </p>
-	    </div>
-	  </div>
-	</div>
-
 	<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
 	<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 	<script>
@@ -83,6 +70,7 @@
 	});
 	
 	function getSession() { 
+		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
 			dataType : "json",

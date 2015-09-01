@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.alijian.front.dao.BaseDao;
 import com.alijian.front.model.BusinessModel;
+import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
@@ -79,7 +80,7 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public List<BusinessModel> getBusinessModels(int pageNum, int pageSize,final String types) {
+	public List<BusinessModel> getBusinessModels(int pageNum, int pageSize,final String types,final String keyword) {
 		final int size = Tools.getPageSize(pageSize);
 		final int starts = (pageNum-1)*pageSize;
 		return (List<BusinessModel>) getHibernateTemplate().execute(new HibernateCallback<List<BusinessModel>>() {
@@ -87,6 +88,7 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 			public List<BusinessModel> doInHibernate(Session session) throws HibernateException {
 				String[] typesArray = types.split(",");
 				String findSql = "";
+				boolean hasWhere = false;
 				for(String type:typesArray){
 					if("".equals(type)) break;
 					findSql += " find_in_set("+type+", types) AND";
@@ -94,7 +96,8 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 				if(!"".equals(findSql)){
 					findSql = findSql.substring(0, findSql.length()-3);
 				}
-				String sql = "SELECT * FROM business "+ (findSql.length() > 0 ? "WHERE":"") + findSql+" ORDER BY update_time DESC";
+				hasWhere = findSql.length() > 0;
+				String sql = "SELECT * FROM business "+ (hasWhere ? "WHERE":"") + findSql+" "+ (hasWhere ? "AND ":"WHERE ")+"name LIKE '%"+keyword+"%'"+" ORDER BY update_time DESC";
 				return session.createSQLQuery(sql).addEntity(BusinessModel.class).setFirstResult(starts).setMaxResults(size).list();
 			}
 		});
@@ -110,7 +113,7 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 	}
 
 	@Override
-	public List<UserModel> getSuppliers(int pageNum,int pageSize, final String types) {
+	public List<UserModel> getSuppliers(int pageNum,int pageSize, final String types,final String keyword) {
 		final int size = Tools.getPageSize(pageSize);
 		final int starts = (pageNum-1)*pageSize;
 		return (List<UserModel>) getHibernateTemplate().execute(new HibernateCallback<List<UserModel>>() {
@@ -125,15 +128,14 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 				if(!"".equals(findSql)){
 					findSql = findSql.substring(0, findSql.length()-3);
 				}
-				String sql = "SELECT * FROM user WHERE"+ findSql+ (findSql.equals("") ? "" : " AND ")+ " type = 1 AND status = 1 ORDER BY update_time DESC";
-				System.out.println(sql);
+				String sql = "SELECT * FROM user WHERE"+ findSql+ (findSql.equals("") ? "" : " AND ")+ " type = 1 AND status = 1 AND name LIKE '%"+keyword+"%' ORDER BY update_time DESC";
 				return session.createSQLQuery(sql).addEntity(UserModel.class).setFirstResult(starts).setMaxResults(size).list();
 			}
 		});
 	}
 
 	@Override
-	public List<LecturerModel> getLecturers(int pageNum, int pageSize,final String types) {
+	public List<LecturerModel> getLecturers(int pageNum, int pageSize,final String types,final String keyword) {
 		final int size = Tools.getPageSize(pageSize);
 		final int starts = (pageNum-1)*pageSize;
 		return (List<LecturerModel>) getHibernateTemplate().execute(new HibernateCallback<List<LecturerModel>>() {
@@ -141,6 +143,7 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 			public List<LecturerModel> doInHibernate(Session session) throws HibernateException {
 				String[] typesArray = types.split(",");
 				String findSql = "";
+				boolean hasWhere = false;
 				for(String type:typesArray){
 					if("".equals(type)) break;
 					findSql += " find_in_set("+type+", types) AND";
@@ -148,7 +151,8 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 				if(!"".equals(findSql)){
 					findSql = findSql.substring(0, findSql.length()-3);
 				}
-				String sql = "SELECT * FROM lecturer "+ (findSql.length() > 0 ? "WHERE":"") + findSql+" ORDER BY update_time DESC";
+				hasWhere = findSql.length() > 0;
+				String sql = "SELECT * FROM lecturer "+ (hasWhere ? "WHERE":"") + findSql+" "+ (hasWhere ? "AND ":"WHERE ")+"name LIKE '%"+keyword+"%'"+" ORDER BY update_time DESC";
 				return session.createSQLQuery(sql).addEntity(LecturerModel.class).setFirstResult(starts).setMaxResults(size).list();
 			}
 		});
@@ -167,6 +171,20 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 	public List<TypeModel> getAllTypeModel() {
 		List<TypeModel> models = (List<TypeModel>) getHibernateTemplate().find("FROM TypeModel");
 		return models;
+	}
+
+	@Override
+	public List<KeywordsModel> getKeyWords(int pageNum) {
+		int pageSize = 8;
+		final int size = Tools.getPageSize(pageSize);
+		final int starts = (pageNum-1)*pageSize;
+		return (List<KeywordsModel>) getHibernateTemplate().execute(new HibernateCallback<List<KeywordsModel>>() {
+			@Override
+			public List<KeywordsModel> doInHibernate(Session session) throws HibernateException {
+				String sql = "SELECT * FROM keywords ORDER BY weight DESC";
+				return session.createSQLQuery(sql).addEntity(KeywordsModel.class).setFirstResult(starts).setMaxResults(size).list();
+			}
+		});
 	}
 
 }
