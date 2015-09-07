@@ -42,6 +42,7 @@
 <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/app.css"></link>
 
 <link rel="stylesheet" type="text/css" href="<%=basePath%>font/addtohomescreen/addtohomescreen.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>font/xuanfu/index.css">
 <style>
 .title_name {
 	max-height: 50px;
@@ -124,7 +125,7 @@ a{
 		<!--列表标题-->
 		<div class="am-list-news-hd am-cf">
 			<!--带更多链接-->
-			<a href="search_result.jsp?type=0&keyword=" target="_blank" class="">
+			<a href="search_result.jsp?type=3&keyword=" target="_blank" class="">
 				<h2>1F 产品</h2> <span class="am-list-news-more am-fr">更多&raquo;</span>
 			</a>
 		</div>
@@ -180,7 +181,7 @@ a{
 		<!--列表标题-->
 		<div class="am-list-news-hd am-cf">
 			<!--带更多链接-->
-			<a href="search_result.jsp?type=3&keyword=" target="_blank" class="">
+			<a href="search_result.jsp?type=0&keyword=" target="_blank" class="">
 				<h2>4F 热门模式</h2> <span class="am-list-news-more am-fr">更多&raquo;</span>
 			</a>
 		</div>
@@ -193,7 +194,24 @@ a{
 		</div>
 
 	</div>
-
+	
+	<!-- 右侧悬浮窗 -->
+	<div class="OnlineService_Bg">
+		<div class="OnlineService_Box">
+			<a target="_blank" href="search_result.jsp?type=3&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找产品</button></a>
+			<a target="_blank" href="search_result.jsp?type=1&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找厂家</button></a>
+			<a target="_blank" href="search_result.jsp?type=2&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找讲师</button></a>
+			<a target="_blank" href="search_result.jsp?type=0&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找模式</button></a>
+			<div data-am-widget="gotop">
+				<a href="#top"><button class="am-btn am-btn-default am-btn-xs">回顶部</button></a>
+			</div>
+			<!-- <ul class="OnlineService_QQBox"><li><a target="_blank" rel="nofollow" href="http://sc.chinaz.com/">站长素材</a></li></ul>
+			<div class="OnlineService_Phone"><a href="http://sc.chinaz.com/" target="_blank">在线咨询</a></div>
+			<div class="OnlineService_Sign" target="_blank" onclick="http://sc.chinaz.com/">立即试用</div>
+			<div class="OnlineService_Top"><a href="#">返回顶部</a></div> -->
+		</div>
+	</div>
+	
 	<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
 	<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 	<script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script>

@@ -40,10 +40,10 @@ a{
 	
 	<div class="am-form-group am-form-select" style="float: left;">
 		<select name="select-native-3" id="type_selector" style="height: 39px;border: 0px;border: 1px solid #E6E6E6;background: transparent;">
-			<option value="0">产品</option>
+			<option value="3">产品</option>
 			<option value="1">厂家</option>
 			<option value="2">讲师</option>
-			<option value="3">模式</option>
+			<option value="0">模式</option>
 		</select>
 	</div>
 	
@@ -76,7 +76,7 @@ a{
 </div>
 
 	<script type="text/javascript">
-		var type = 0;
+		var type = 3;//默认是产品
 		$(document).ready(function() {
 
 			$('#type_selector').change(function() {

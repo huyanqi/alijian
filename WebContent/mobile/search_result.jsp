@@ -29,17 +29,17 @@
 <body>
 <jsp:include page="head_m.jsp" flush="true" />
 
-
-<!-- <div id="list_news" data-am-widget="list_news" class="am-list-news am-list-news-default" style="margin: 0px 10px 0px 10px;">
-	<div class="am-list-news-bd" id="wrapper">
-		<ul class="am-list" id="result_ly">
-		</ul>
-	</div>
-</div> -->
-
 <div id="wrapper" class="am-list-news">
-  <ul id="result_ly">
-  </ul>
+	<ul id="result_ly">
+		<li>
+			<button id="keyword_et" class="am-btn am-btn-default am-btn-sm" style="width: 100%;" />
+		</li>
+		<li>
+			<div class="am-form-group" style="margin: 0px; padding: 10px;" id="typely">
+				<label style="font-size: 12px;">可选分类></label> <label class="am-checkbox-inline"> <input type="checkbox" value="0" data-am-ucheck checked onclick="unselectAll(0);">不限</input></label>
+			</div>
+		</li>
+	</ul>
 </div>
 
 <script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script>
@@ -50,18 +50,25 @@
 initScroll();
 
 var type;
+var types = "";//用于搜索
 var keyword;
 var pageNum = 1;
 var pageSize = 20;
 $(document).ready(function(){
 	type = getUrlParam("type");
 	keyword = unescape(getUrlParam("keyword"));
+	var key = keyword == "" ? "全部":"\""+keyword+"\"";
+	$("#keyword_et").html("搜索:"+key+"的返回结果,点击更换关键词");
+	$("#keyword_et").click(function(){
+		location.href="search_m.jsp";
+	});
 	getData();
+	getTypes();
 });
 
 function getData(){
 	if(type == 0){
-		getGoods();
+		getBusiness();
 	}
 	if(type == 1){
 		getSupplier();
@@ -70,7 +77,7 @@ function getData(){
 		getLecturer();
 	}
 	if(type == 3){
-		getBusiness();
+		getGoods();
 	}
 }
 
@@ -93,16 +100,25 @@ function Load() {
 	getData();
 }
 
+function removeChild(){
+	$("#result_ly").children().each(function(i,n){
+		if(i != 0 && i != 1){
+		     var obj = $(n);
+		     obj.remove();
+		}
+    });
+}
+
 function getGoods(){
 	$.AMUI.progress.start();
 	$.ajax({
 		type : 'POST',
 		url : "<%=basePath%>getGoods",
-		data : {"pageNum":pageNum,"pageSize":pageSize,"types":"","keyword":keyword},
+		data : {"pageNum":pageNum,"pageSize":pageSize,"types":types,"keyword":keyword},
 		success : function(result) {
 			$.AMUI.progress.done();
 			if(pageNum == 1){
-				$("#result_ly").empty();
+				removeChild();
 			}
 			if (result.result == "ok") {
 				$.each(result.data, function(n, value) {
@@ -122,16 +138,16 @@ function getSupplier(){
 	$.ajax({
 		type : 'POST',
 		url : "<%=basePath%>getSuppliers",
-		data : {"pageNum":pageNum,"pageSize":8,"types":"","keyword":keyword},
+		data : {"pageNum":pageNum,"pageSize":8,"types":types,"keyword":keyword},
 		success : function(result) {
 			$.AMUI.progress.done();
 			if(pageNum == 1){
-				$("#result_ly").empty();
+				removeChild();
 			}
 			if (result.result == "ok") {
 				$.each(result.data, function(n, value) {
 					var url = "supplier_m.jsp?id="+value.id;
-					$('#result_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-bottom-right'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class=''>"+value.name+"</a></h3><div class=' am-u-sm-8 am-list-main'><div class='am-list-item-text'>"+value.address+"</div></div><div class='am-list-thumb am-u-sm-4'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' width='88px' height='66px' alt='"+value.name+"' /></a></div></li>")
+					$('#result_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-bottom-right'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='' style='margin-left:10px;'>"+value.name+"</a></h3><div class=' am-u-sm-8 am-list-main'><div class='am-list-item-text'>"+value.address+"</div></div><div class='am-list-thumb am-u-sm-4'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' width='88px' height='66px' alt='"+value.name+"' /></a></div></li>")
 				});
 				$("img.lazy").lazyload({effect: "fadeIn"});
 				myScroll.refresh();
@@ -146,11 +162,11 @@ function getLecturer(){
 	$.ajax({
 		type : 'POST',
 		url : "<%=basePath%>getLecturers",
-		data : {"pageNum":pageNum,"pageSize":8,"types":"","keyword":keyword},
+		data : {"pageNum":pageNum,"pageSize":8,"types":types,"keyword":keyword},
 		success : function(result) {
 			$.AMUI.progress.done();
 			if(pageNum == 1){
-				$("#result_ly").empty();
+				removeChild();
 			}
 			if (result.result == "ok") {
 				$.each(result.data, function(n, value) {
@@ -179,13 +195,13 @@ function getBusiness(){
 				data : {
 					"pageNum" : pageNum,
 					"pageSize" : 8,
-					"types" : "",
+					"types" : types,
 					"keyword" : keyword
 				},
 				success : function(result) {
 					$.AMUI.progress.done();
 					if(pageNum == 1){
-						$("#result_ly").empty();
+						removeChild();
 					}
 					if (result.result == "ok") {
 						$.each(result.data,function(n, value) {
@@ -196,7 +212,7 @@ function getBusiness(){
 							});
 							if(types.length > 0)
 								types = types.substring(0, types.length-1);
-							$('#result_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-top'><div class='am-list-thumb am-u-sm-12'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' width='100%' alt='"+value.name+"' /></a></div><div class=' am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class=''>"+value.name+"</a></h3><div class='am-list-item-text'>"+"所属分类:"+types+"</div></div></li>");
+							$('#result_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-top'><div class='am-list-thumb am-u-sm-12'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' width='100%' alt='"+value.name+"' /></a></div><div class=' am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='' style='margin-left:10px;'>"+value.name+"</a></h3><div class='am-list-item-text' style='padding-left:10px;'>"+"所属分类:"+types+"</div></div></li>");
 						});
 						$("img.lazy").lazyload({effect: "fadeIn"});
 						myScroll.refresh();
@@ -204,6 +220,45 @@ function getBusiness(){
 				},
 				dataType : "json"
 			});
+}
+
+function getTypes(){
+	$.AMUI.progress.start();
+	var path = "<%=basePath%>getTypeModelByType";
+	var data = {"type":type};
+	$.ajax({
+		type : 'POST',
+		data : data,
+		url : path,
+		success : function(result) {
+			$.AMUI.progress.done();
+			if (result.result == "ok") {
+				$.each(result.data, function(n, value) {
+					$("#typely").append("<label class='am-checkbox-inline'><input id='checkbox"+value.id+"' type='checkbox' value="+value.id+" data-am-ucheck>"+value.name+"</input></label>");
+					$("#checkbox"+value.id).click(function(){
+						checkLyChecked(value.type);
+					});
+				});
+			}
+		},
+		dataType : "json"
+	});
+}
+
+function checkLyChecked(type){
+	var uncheck = false;
+	var selected = "";
+	$("#typely :checkbox").each(function(){
+		if($(this).val() != 0 && $(this).is(':checked') == true){
+			selected += $(this).val() + ",";
+			uncheck = true;
+		}
+	});
+	$("#typely [value=0]").prop("checked",!uncheck); 
+	types = selected;
+	
+	pageNum = 1;
+	getData();
 }
 
 function getUrlParam(name) {
