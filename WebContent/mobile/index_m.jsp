@@ -198,6 +198,7 @@ a{
 	<!-- 右侧悬浮窗 -->
 	<div class="OnlineService_Bg">
 		<div class="OnlineService_Box">
+			<a target="_blank" href="search_result.jsp?type=4&keyword="><button class="am-btn am-btn-primary am-btn-xs">找求购</button></a>
 			<a target="_blank" href="search_result.jsp?type=3&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找产品</button></a>
 			<a target="_blank" href="search_result.jsp?type=1&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找厂家</button></a>
 			<a target="_blank" href="search_result.jsp?type=2&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找讲师</button></a>

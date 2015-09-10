@@ -31,7 +31,7 @@ public class GoodsModel {
 	public String name;
 	
 	@Column
-	public String price;	//单价
+	public Double price;	//单价
 	
 	@Column
 	public String units;	//单位
@@ -74,11 +74,11 @@ public class GoodsModel {
 		this.name = name;
 	}
 
-	public String getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(String price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 

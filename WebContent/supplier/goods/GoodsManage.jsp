@@ -28,39 +28,53 @@
 
 </head>
 <body>
-	<div class="span12 box bordered-box red-border"
-		style="margin-bottom: 0;margin-top: 20px;">
-		<div class="box-header red-background">
-			<div class="title" id="title">商品列表</div>
-			<div class="actions" >
+
+<div class="row-fluid">
+    <div class="span12 box bordered-box red-border" style="margin-bottom:0;">
+        <div class="box-header red-background">
+            <div class="title">商品列表</div>
+            <div class="actions">
                 <a href="javascript:refresh()" class="btn box-remove btn-mini btn-link"><i class="icon-refresh"></i></a>
                 <Button href="#" class="btn btn-mini btn-link"></Button>
             </div>
-		</div>
-		<div class="box-content box-no-padding">
-			<div class="table table-striped" style="margin-bottom:0;">
-				<div class="scrollable-area">
-					<table class="table table-hover table-striped"
-						style="margin-bottom: 0;">
-						<thead id="thread">
-							<tr>
-								<th>ID</th>
-								<th style="overflow: hidden;">名称</th>
-								<th width="100">单价</th>
-								<th width="100">运费方式</th>
-								<th width="220">最后更新时间</th>
-								<th width="70"><div class="text-right">操作</div></th>
-							</tr>
-						</thead>
-						<thead id="nodata">
+        </div>
+        <div class="box-content box-no-padding">
+            <div class="responsive-table">
+                <div class="scrollable-area">
+                    <table class="table table-hover table-striped" style="margin-bottom:0;">
+                        <thead>
+                        <tr>
+                            <th>
+                                ID
+                            </th>
+                            <th>
+								名称
+                            </th>
+                            <th>
+								单价
+                            </th>
+                            <th>
+								运费
+                            </th>
+                            <th>
+								最后更新时间
+                            </th>
+                            <th>
+								操作
+                            </th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <thead id="nodata">
 							<tr>
 								<th colspan="2">无数据</th>
 							</tr>
 						</thead>
-						<tbody id="list_content">
-						</tbody>
-					</table>
-					<ul class="am-pagination" style="margin-left: 10px;">
+                        <tbody id="list_content">
+                        
+                        </tbody>
+                    </table>
+                    <ul class="am-pagination" style="margin-left: 10px;">
 						<li><a href="javascript:page(0);">&laquo;上一页</a></li>
 						<li>
 							<select style="width: 100px;" id="pageselect">
@@ -68,11 +82,12 @@
 						</li>
 						<li><a href="javascript:page(1);">下一页 &raquo;</a></li>
 					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
-	
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src='<%=basePath%>resources/jquery-1.8.2.min.js'></script>
 <script src="<%=basePath%>assets/amazeui/assets/js/amazeui.min.js"></script>
 <script src="<%=basePath%>assets/javascripts/moment.js"></script>
@@ -133,6 +148,7 @@
 					$.each(result.data, function(n, value) {
 						var update_time = moment(value.update_time.time).format("lll");
 						$("#list_content").append("<tr><td>"+value.id+"</td><td>"+value.name+"</td><td>"+value.price+"</td><td>"+value.freight+"</td><td>"+update_time+"</td><td><div class='text-right'><a class='btn btn-success btn-mini' href='javascript:editModel("+value.id+")'> <i class='icon-edit'></i></a> <a class='btn btn-danger btn-mini' href='javascript:deleteModel("+value.id+")'> <i class='icon-remove'></i></a></div></td></tr>");
+						//$("#list_content").append("<tr><td>Pattie Jenkins</td><td>meaghan@yahoo.com</td><td><span class='label label-warning'>Warning</span></td><td>meaghan@yahoo.com</td><td>meaghan@yahoo.com</td><td><div class='text-right'><a class='btn btn-success btn-mini' href='#'><i class='icon-ok'></i></a><a class='btn btn-danger btn-mini' href='#'><i class='icon-remove'></i></a></div></td></tr>");
 					});
 					if(pageNum == 1){
 						$("#pageselect").empty();

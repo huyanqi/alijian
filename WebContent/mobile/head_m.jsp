@@ -51,6 +51,8 @@
 			<a href="index_m.jsp" class=""> <i
 				class="am-header-icon am-icon-home"></i>
 			</a>
+			
+			<a href="<%=basePath%>supplier_join.jsp" class="" style="font-size: 12px;" id="supplier_join">我要开店</a>
 		</div>
 	
 		<h1 class="am-header-title">阿里健</h1>
@@ -80,14 +82,16 @@
 				$.AMUI.progress.done();
 				if (result.result == "ok") {
 					//已登录
-					$("#userinfo").attr("href","supplier/supplier_controller_m.jsp");
+					$("#userinfo").attr("href","<%=basePath%>supplier/supplier_controller_new.jsp");
 					$("#login_user").hide();
 					$("#icon_user").show();
+					$("#supplier_join").hide();//"我要开店"按钮
 				}else{
 					//未登录
 					$("#userinfo").attr("href","<%=basePath%>login.jsp");
 					$("#login_user").show();
 					$("#icon_user").hide();
+					$("#supplier_join").show();
 				}
 			}
 		});

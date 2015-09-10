@@ -112,7 +112,7 @@
 	      </div>
 	
 	      <div class="am-topbar-right" id="reg">
-	        <button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='user_reg.jsp'"><span class="am-icon-pencil"></span> 采购商注册</button>
+	        <button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='<%=basePath%>user_reg.jsp'"><span class="am-icon-pencil"></span> 采购商注册</button>
 	      </div>
 	
 	      <div class="am-topbar-right" id="login">
@@ -120,8 +120,8 @@
 	      </div>
 
 			<div class="am-topbar-right" id="supplierJoin">
-				<button class="am-btn am-btn-success am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='supplier_join.jsp'">
-					<span class="am-icon-angellist"></span> 供货商入驻
+				<button class="am-btn am-btn-success am-topbar-btn am-btn-sm" onclick="javascript:window.location.href='<%=basePath%>supplier_join.jsp'">
+					<span class="am-icon-angellist"></span> 我要开店
 				</button>
 			</div>
 		</div>
@@ -139,7 +139,7 @@
 		getSession();
 	});
 	
-	function getSession() { 
+	function getSession() {
 		$.ajax({
 			type : 'POST',
 			dataType : "json",

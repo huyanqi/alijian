@@ -1,9 +1,13 @@
 package com.alijian.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.alijian.front.controller.OrderController;
 
 public class Tools {
 
@@ -41,6 +45,26 @@ public class Tools {
 		if(pageSize > 20)
 			pageSize = 20;
 		return pageSize;
+	}
+	
+	/**
+	 * 生成订单号规则:
+	 * "ALJ"+当前时间+"-"+商品ID+"-"+购买数量+"-"+卖家ID+"-"+买家ID
+	 * @return
+	 */
+	public static String newOrderNo(String goodsid,int amount,int seller,int buyer){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		StringBuffer orderNo = new StringBuffer("ALJ");
+		orderNo.append(sdf.format(new Date()));
+		orderNo.append("-");
+		orderNo.append(goodsid);
+		orderNo.append("-");
+		orderNo.append(amount);
+		orderNo.append("-");
+		orderNo.append(seller);
+		orderNo.append("-");
+		orderNo.append(buyer);
+		return orderNo.toString();
 	}
 	
 }

@@ -15,4 +15,6 @@ public class BaseData {
 	public static final String WX_TOKEN = "huyanqi";
 	public static final String WX_AESKEY = "zXtdoUDou0EJf8OKFFRrXNECyWABOwuOSzmPfZNGjlM";
 	
+	public static final String LOCAL = "http://www.56ziyuan.com/";
+	
 }

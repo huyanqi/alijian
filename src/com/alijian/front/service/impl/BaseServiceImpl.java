@@ -44,8 +44,11 @@ public class BaseServiceImpl implements BaseService {
 	@Override
 	public String saveOrUpdateUser(UserModel model) {
 		UserModel user = baseDao.getUserByUsername(model.getUsername());
-		if(user == null)
+		if(user == null){
+			if(model.getName() == null)
+				model.setName(model.getUsername());
 			return baseDao.saveOrUpdateUser(model);
+		}
 		else
 			return "该用户名已被占用，请重新选择";
 	}
@@ -58,6 +61,7 @@ public class BaseServiceImpl implements BaseService {
 	@Override
 	public GoodsModel getGoodsModelById(int id) {
 		GoodsModel model = adminDao.getGoodsById(id);
+		if(model == null) return model;
 		String[] types = model.types.split(",");
 		List<TypeModel> typeList = new ArrayList<TypeModel>();
 		for(String type:types){

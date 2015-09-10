@@ -132,7 +132,7 @@
 				<tr><td class="table_th" style="height: 55px;">单价:</td><td><a style="font-size: 12px;color: #027cff;margin-right: 5px;">￥</a><font style="font-size:30px;line-height:50px;color:#027cff;" id="price"></font><font style="font-size: 12px;color:black;margin-left:5px;" id="units"></font></td></tr>
 				<tr><td class="table_th" style="height: 55px;">运费:</td><td><a style="font-size: 12px;" id="freight"></a></td></tr>
 				<tr><td class="table_th" style="height: 55px;">所属分类:</td><td id="types"></td></tr>
-				<tr><td style="border-bottom: 0px;" id="contact_me"></td><td align="right" style="height: 55px;border-bottom: 0px;"><button type="button" class="am-btn am-radius am-btn-primary" >立即订购</button></td></tr>
+				<tr><td style="border-bottom: 0px;" id="contact_me"></td><td align="right" style="height: 55px;border-bottom: 0px;"><button type="button" class="am-btn am-radius am-btn-primary" id="buy_submit">立即订购</button></td></tr>
 			</table>
 		</div>
 	</div>
@@ -189,6 +189,9 @@ var id;
 						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'>"+value.name+"</a>");
 					});
 					$("#contact_me").append("<a target='_blank' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
+					$("#buy_submit").click(function(){
+						location.href="<%=basePath%>pc/buy.jsp?id="+result.id;
+					});
 				}else{
 					alert("错误的商品ID号");
 					window.close();
