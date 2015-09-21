@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alijian.front.dao.AdminDao;
 import com.alijian.front.dao.BaseDao;
 import com.alijian.front.model.BusinessModel;
+import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.LinkModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
@@ -74,8 +76,8 @@ public class BaseServiceImpl implements BaseService {
 	}
 
 	@Override
-	public List<GoodsModel> getGoods(int pageNum,int pageSize,String types,String keyword) {
-		return adminDao.getGoods(pageNum,pageSize,types,keyword);
+	public List<GoodsModel> getGoods(int pageNum,int pageSize,String types,String keyword,int type) {
+		return adminDao.getGoods(pageNum,pageSize,types,keyword,type);
 	}
 
 	@Override
@@ -136,6 +138,7 @@ public class BaseServiceImpl implements BaseService {
 		String[] types = model.getTypes().split(",");
 		List<TypeModel> typeList = new ArrayList<TypeModel>();
 		for(String type:types){
+			if("".equals(type)) continue;
 			TypeModel typeModel = adminDao.getTypeById(Integer.parseInt(type));
 			if(typeModel != null)
 				typeList.add(typeModel);
@@ -147,6 +150,21 @@ public class BaseServiceImpl implements BaseService {
 	@Override
 	public List<KeywordsModel> getKeyWords(int pageNum) {
 		return baseDao.getKeyWords(pageNum);
+	}
+
+	@Override
+	public List<LinkModel> getLinks() {
+		return baseDao.getLinks();
+	}
+
+	@Override
+	public String insertBuyModel(BuyModel model) {
+		return baseDao.saveOrUpdateModel(model);
+	}
+
+	@Override
+	public List<BuyModel> getBuyModels(int pageNum) {
+		return baseDao.getBuyModels(pageNum);
 	}
 	
 }

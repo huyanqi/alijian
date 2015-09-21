@@ -31,7 +31,7 @@ public class GoodsModel {
 	public String name;
 	
 	@Column
-	public Double price;	//单价
+	public double price;	//单价
 	
 	@Column
 	public String units;	//单位
@@ -50,6 +50,9 @@ public class GoodsModel {
 	
 	@Column
 	public Date update_time = new Date();
+	
+	@Column
+	public int sales_volume = 0;//销量
 	
 	@Transient
 	public List<TypeModel> typeList;
@@ -74,11 +77,11 @@ public class GoodsModel {
 		this.name = name;
 	}
 
-	public Double getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 
@@ -145,5 +148,13 @@ public class GoodsModel {
 	public void setTypeList(List<TypeModel> typeList) {
 		this.typeList = typeList;
 	}
-	
+
+	public int getSales_volume() {
+		return sales_volume;
+	}
+
+	public void setSales_volume(int sales_volume) {
+		this.sales_volume = sales_volume;
+	}
+
 }

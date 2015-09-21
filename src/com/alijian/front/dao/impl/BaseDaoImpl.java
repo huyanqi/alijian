@@ -10,8 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import com.alijian.front.dao.BaseDao;
 import com.alijian.front.model.BusinessModel;
+import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.LinkModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.util.Tools;
@@ -183,6 +186,64 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 			public List<KeywordsModel> doInHibernate(Session session) throws HibernateException {
 				String sql = "SELECT * FROM keywords ORDER BY weight DESC";
 				return session.createSQLQuery(sql).addEntity(KeywordsModel.class).setFirstResult(starts).setMaxResults(size).list();
+			}
+		});
+	}
+
+	@Override
+	public String linkInsertOrUpdate(LinkModel model) {
+		try{
+			getHibernateTemplate().saveOrUpdate(model);
+			return "";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	@Override
+	public List<LinkModel> getLinks() {
+		return (List<LinkModel>) getHibernateTemplate().find("FROM LinkModel", null);
+	}
+
+	@Override
+	public LinkModel getLinkById(int id) {
+		List<LinkModel> models = (List<LinkModel>) getHibernateTemplate().find("FROM LinkModel model WHERE model.id = ?", id);
+		if(models.size() > 0){
+			return models.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public String removeLinkById(int id) {
+		try{
+			getHibernateTemplate().delete(getLinkById(id));
+			return "";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	@Override
+	public String saveOrUpdateModel(Object object) {
+		try{
+			getHibernateTemplate().saveOrUpdate(object);
+			return "";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	@Override
+	public List<BuyModel> getBuyModels(int pageNum) {
+		final int starts = (pageNum-1)*PAGE_SIZE;
+		return getHibernateTemplate().execute(new HibernateCallback<List<BuyModel>>() {
+			@Override
+			public List<BuyModel> doInHibernate(Session session) throws HibernateException {
+				return session.createQuery("FROM BuyModel model ORDER BY update_time DESC").setFirstResult(starts).setMaxResults(PAGE_SIZE).list();
 			}
 		});
 	}

@@ -42,6 +42,10 @@
 <div class="am-g">
   <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
     <h3>登录</h3>
+   	<ul>
+   		<li>供应商:登陆后可管理商品、模式、订单等信息</li>
+   		<li>采购商:登陆后可查看订单记录</li>
+   	</ul>
     <hr>
     <br>
 

@@ -102,120 +102,130 @@
 
 	<jsp:include page="head.jsp" flush="true"/>	
 	
-	<div class="am-container" style="background: #DDDDDD;height: 1px;"/>
+	<div class="am-container" style="background: #DDDDDD;height: 1px;"></div>
 	
-	<!-- 搜索框 -->
-	<div class="am_container" style="margin-top: 15px;">
-		<div class="am-g">
-			<div class="am-u-lg-6" style="padding:  0;">
-				<div class="am-input-group" style="width: 500px;">
-					<span class="am-input-group-btn">
-						<button class="am-btn am-btn-default" type="button">
-							<span class="am-icon-search"></span>
-						</button>
-					</span> 
-					<input type="text" class="am-form-field" placeholder="输入关键字搜索" />
-					<span class="am-input-group-btn">
-						<button class="am-btn am-btn-default" onclick="search();" type="button">搜索</button>
-					</span>
+	<div>
+		<iframe id="iframe1" src="<%=basePath%>boom.jsp" scrolling="no" style="height: 1000px;float: left;">
+		</iframe>
+		
+		<!-- 搜索框 -->
+		<div class="am_container" style="margin-top: 15px;width: 980px;float: left;">
+			<div class="am-g">
+				<div class="am-u-lg-6" style="padding:  0;">
+					<div class="am-input-group" style="width: 500px;">
+						<span class="am-input-group-btn">
+							<button class="am-btn am-btn-default" type="button">
+								<span class="am-icon-search"></span>
+							</button>
+						</span> 
+						<input type="text" class="am-form-field" placeholder="输入关键字搜索" />
+						<span class="am-input-group-btn">
+							<button class="am-btn am-btn-default" onclick="search();" type="button">搜索</button>
+						</span>
+					</div>
 				</div>
+				<a target="_blank"
+					style="margin-left: 100px;"
+					href="tencent://message/?uin=375377612&Site=阿里健&Menu=yes"
+					class="content-btn" title="在线咨询"> <img border="0"
+					src="http://wpa.qq.com/pa?p=2:375377612:42" alt="点击这里给我发消息"
+					title="点击这里给我发消息"></a>
+				<a target="_blank"
+					style="margin-left: 10px;"
+					href="tencent://message/?uin=375377612&Site=阿里健&Menu=yes"
+					class="content-btn" title="在线咨询"> <img border="0"
+					src="http://wpa.qq.com/pa?p=2:375377612:42" alt="点击这里给我发消息"
+					title="点击这里给我发消息"></a>
 			</div>
-			<a target="_blank"
-				style="margin-left: 100px;"
-				href="tencent://message/?uin=375377612&Site=阿里健&Menu=yes"
-				class="content-btn" title="在线咨询"> <img border="0"
-				src="http://wpa.qq.com/pa?p=2:375377612:42" alt="点击这里给我发消息"
-				title="点击这里给我发消息"></a>
-			<a target="_blank"
-				style="margin-left: 10px;"
-				href="tencent://message/?uin=375377612&Site=阿里健&Menu=yes"
-				class="content-btn" title="在线咨询"> <img border="0"
-				src="http://wpa.qq.com/pa?p=2:375377612:42" alt="点击这里给我发消息"
-				title="点击这里给我发消息"></a>
+			
+			<!-- 多选框 -->
+			<div class="am-form-group" style="margin-top: 20px;" id="type3ly">
+			  <label>产品 ></label>
+			  <label class="am-checkbox-inline">
+			    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(3);">不限</input>
+			  </label>
+			</div>
+			
+			<div class="am-form-group" style="margin-top: 10px;" id="type1ly">
+			  <label>厂家 ></label>
+			  <label class="am-checkbox-inline">
+			    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(1);">不限</input>
+			  </label>
+			</div>
+			
+			<div class="am-form-group" style="margin-top: 10px;" id="type2ly">
+			  <label>讲师 ></label>
+			  <label class="am-checkbox-inline">
+			    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(2);">不限</input>
+			  </label>
+			</div>
+			
+			<div class="am-form-group" style="margin-top: 10px;" id="type0ly">
+			  <label>模式 ></label>
+			  <label class="am-checkbox-inline">
+			    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(0);">不限</input>
+			  </label>
+			</div>
+			
+			<!-- 各种列表 -->
+			<div class="my_at">
+				<font>1F <a>产品</a></font>
+				<div class="am-topbar-right">
+			        <a class="am-badge am-badge-primary am-radius">更多</a>
+			    </div>
+			</div>
+			<div id="goods_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
+			    
+			</div>		
+			
+			<div style="clear:both;"></div>
+			
+			<div class="my_at">
+				<font>2F <a>厂家</a></font>
+				<div class="am-topbar-right">
+			        <a class="am-badge am-badge-primary am-radius">更多</a>
+			    </div>
+			</div>
+			<div id="supplies_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
+			    
+			</div>		
+			
+			<div style="clear:both;"></div>
+			
+			<div class="my_at">
+				<font>3F <a>讲师</a></font>
+				<div class="am-topbar-right">
+			        <a class="am-badge am-badge-primary am-radius">更多</a>
+			    </div>
+			</div>
+			<div id="lecturer_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
+			</div>		
+			
+			<div style="clear:both;"></div>
+			
+			<div class="my_at">
+				<font>4F <a>模式</a></font>
+				<div class="am-topbar-right">
+			        <a class="am-badge am-badge-primary am-radius">更多</a>
+			    </div>
+			</div>
+			
+			<div id="business_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
+			</div>		
+			
+			<div style="clear:both;"></div>
+			
 		</div>
 		
-		<!-- 多选框 -->
-		<div class="am-form-group" style="margin-top: 20px;" id="type3ly">
-		  <label>产品 ></label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(3);">不限</input>
-		  </label>
-		</div>
-		
-		<div class="am-form-group" style="margin-top: 10px;" id="type1ly">
-		  <label>厂家 ></label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(1);">不限</input>
-		  </label>
-		</div>
-		
-		<div class="am-form-group" style="margin-top: 10px;" id="type2ly">
-		  <label>讲师 ></label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(2);">不限</input>
-		  </label>
-		</div>
-		
-		<div class="am-form-group" style="margin-top: 10px;" id="type0ly">
-		  <label>模式 ></label>
-		  <label class="am-checkbox-inline">
-		    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(0);">不限</input>
-		  </label>
-		</div>
-		
-		<!-- 各种列表 -->
-		<div class="my_at">
-			<font>1F <a>产品</a></font>
-			<div class="am-topbar-right">
-		        <a class="am-badge am-badge-primary am-radius">更多</a>
-		    </div>
-		</div>
-		<div id="goods_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
-		    
-		</div>		
-		
-		<div style="clear:both;"></div>
-		
-		<div class="my_at">
-			<font>2F <a>厂家</a></font>
-			<div class="am-topbar-right">
-		        <a class="am-badge am-badge-primary am-radius">更多</a>
-		    </div>
-		</div>
-		<div id="supplies_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
-		    
-		</div>		
-		
-		<div style="clear:both;"></div>
-		
-		<div class="my_at">
-			<font>3F <a>讲师</a></font>
-			<div class="am-topbar-right">
-		        <a class="am-badge am-badge-primary am-radius">更多</a>
-		    </div>
-		</div>
-		<div id="lecturer_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
-		</div>		
-		
-		<div style="clear:both;"></div>
-		
-		<div class="my_at">
-			<font>4F <a>模式</a></font>
-			<div class="am-topbar-right">
-		        <a class="am-badge am-badge-primary am-radius">更多</a>
-		    </div>
-		</div>
-		
-		<div id="business_ly" style="width:100%;  margin-left: auto;margin-right: auto;" align="center">
-		</div>		
-		
-		<div style="clear:both;"></div>
-		
+		<iframe id="iframe2" src="<%=basePath%>boom.jsp" scrolling="no" style="height: 1000px;float: left;">
+		</iframe>
 	</div>
 	
-	<footer class="footer">
-	  <p>© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
-	</footer>
+	<div style="clear: both;"></div>
+	
+	<div id="footer">
+		<jsp:include page="footer.jsp" flush="true"/>
+	</div>
 	
 <script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
 <script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
@@ -223,6 +233,10 @@
 if(!IsPC()){
 	window.location.href='index_m.jsp';
 }
+$("#footer > #links_ly").css("margin-left",($(document).width() - 980)/2);
+$("#iframe1").css("width",($(document).width() - 980)/2);
+$("#iframe2").css("width",($(document).width() - 980)/2);
+
 	$(document).ready(function(){
 		
 		getGoods("");
@@ -301,7 +315,7 @@ if(!IsPC()){
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getGoods",
-			data : {"pageNum":1,"pageSize":8,"types":types,"keyword":""},
+			data : {"pageNum":1,"pageSize":8,"types":types,"keyword":"","type":0},
 			success : function(result) {
 				$.AMUI.progress.done();
 				$("#goods_ly").empty();
@@ -390,5 +404,6 @@ if(!IsPC()){
 	}
 	
 </script>
+
 </body>
 </html>

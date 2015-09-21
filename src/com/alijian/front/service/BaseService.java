@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.alijian.front.model.BusinessModel;
+import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.LinkModel;
 import com.alijian.front.model.UserModel;
 
 @Component
@@ -21,7 +23,7 @@ public interface BaseService {
 
 	GoodsModel getGoodsModelById(int id);
 
-	List<GoodsModel> getGoods(int pageNum,int pageSize,String types, String keyword);
+	List<GoodsModel> getGoods(int pageNum,int pageSize,String types, String keyword,int type);
 
 	List<UserModel> getUsers(int pageSize, int type, int status);
 
@@ -38,5 +40,11 @@ public interface BaseService {
 	UserModel getSupplierById(int uid);
 
 	List<KeywordsModel> getKeyWords(int pageNum);
+
+	List<LinkModel> getLinks();
+
+	String insertBuyModel(BuyModel model);
+
+	List<BuyModel> getBuyModels(int pageNum);
 
 }

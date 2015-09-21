@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.LinkModel;
 import com.alijian.front.model.PageModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
@@ -322,6 +323,52 @@ public class AdminController extends BaseData {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
 		String result = adminService.removeBusinessById(id);
+		if(result.equals("")){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/link_insert")
+	public ModelAndView link_insert(@RequestBody LinkModel model){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		String result = adminService.linkInsertOrUpdate(model);
+		if(result.equals("")){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getLinkById")
+	public ModelAndView getLinkById(int id) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		LinkModel model = adminService.getLinkById(id);
+		if(model != null){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, model);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, "ÎÞÊý¾Ý");
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/removeLinkById")
+	public ModelAndView removeLinkById(int id) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		String result = adminService.removeLinkById(id);
 		if(result.equals("")){
 			jObj.put(RESULT, OK);
 		}else{

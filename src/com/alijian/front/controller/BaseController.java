@@ -22,9 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alijian.front.model.BusinessModel;
+import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.LinkModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
 import com.alijian.util.BaseData;
@@ -233,11 +235,20 @@ public class BaseController extends BaseData {
 		return view;
 	}
 	
+	/**
+	 * 
+	 * @param pageNum 当前页数
+	 * @param pageSize 每页大小
+	 * @param types 商品分类(,隔开)
+	 * @param keyword 搜索关键字
+	 * @param type 搜索类型:0 默认 1：价格从低到高 2：价格从高到低 3：销量从高到低
+	 * @return
+	 */
 	@RequestMapping(value = "/getGoods")
-	public ModelAndView getGoods(int pageNum,int pageSize,String types,String keyword){
+	public ModelAndView getGoods(int pageNum,int pageSize,String types,String keyword,int type){
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
-		List<GoodsModel> goods = baseService.getGoods(pageNum,pageSize,types,keyword);
+		List<GoodsModel> goods = baseService.getGoods(pageNum,pageSize,types,keyword,type);
 		if(goods != null){
 			obj.put(RESULT, OK);
 			obj.put(DATA, goods);
@@ -372,6 +383,51 @@ public class BaseController extends BaseData {
 			obj.put(RESULT, NO);
 		}
 		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getLinks")
+	public ModelAndView getLinks(){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject obj = new JSONObject();
+		List<LinkModel> links = baseService.getLinks();
+		if(links.size() > 0){
+			obj.put(RESULT, OK);
+			obj.put(DATA, links);
+		}else{
+			obj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,obj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/insertBuyModel")
+	public ModelAndView insertBuyModel(@RequestBody BuyModel model){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		String result = baseService.insertBuyModel(model);
+		if(result.equals("")){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getBuyModels")
+	public ModelAndView getBuyModels(int pageNum){
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		List<BuyModel> models = baseService.getBuyModels(pageNum);
+		if(models.size() > 0){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, models);
+		}else{
+			jObj.put(RESULT, NO);
+		}
+		view.addObject(MODELS,jObj);
 		return view;
 	}
 	

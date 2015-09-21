@@ -11,6 +11,7 @@ import com.alijian.front.dao.BaseDao;
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.LinkModel;
 import com.alijian.front.model.PageModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
@@ -126,6 +127,21 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public List<TypeModel> getAllTypeModel() {
 		return baseDao.getAllTypeModel();
+	}
+
+	@Override
+	public String linkInsertOrUpdate(LinkModel model) {
+		return baseDao.linkInsertOrUpdate(model);
+	}
+
+	@Override
+	public LinkModel getLinkById(int id) {
+		return baseDao.getLinkById(id);
+	}
+
+	@Override
+	public String removeLinkById(int id) {
+		return baseDao.removeLinkById(id);
 	}
 
 }

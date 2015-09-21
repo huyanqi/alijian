@@ -11,5 +11,7 @@ public interface OrderDao {
 
 	OrdersModel getOrderByOutTradeNo(String out_trade_no);
 
+	void addCredit(int i, OrdersModel order);
+
 
 }

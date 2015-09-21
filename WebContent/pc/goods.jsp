@@ -120,6 +120,10 @@
 	<jsp:include page="head.jsp" flush="true"/>
 	
 	<div class="am-container" style="background: #DDDDDD;height: 1px;"/>
+	
+	<div class="jiathis_style" style="padding: 10px;display: inline-block;width: 100%;">
+		<a href="http://www.jiathis.com/share" style="float: none;" class="jiathis jiathis_txt" target="_blank"><img src="http://v2.jiathis.com/code_mini/images/btn/v1/jiathis5.gif" border="0" /></a>
+	</div>
 
 	<div class="am-container" style="height: 400px;">
 		<div style="width: 400px;height: 450px;float: left;margin-top: 1px;">
@@ -132,6 +136,7 @@
 				<tr><td class="table_th" style="height: 55px;">单价:</td><td><a style="font-size: 12px;color: #027cff;margin-right: 5px;">￥</a><font style="font-size:30px;line-height:50px;color:#027cff;" id="price"></font><font style="font-size: 12px;color:black;margin-left:5px;" id="units"></font></td></tr>
 				<tr><td class="table_th" style="height: 55px;">运费:</td><td><a style="font-size: 12px;" id="freight"></a></td></tr>
 				<tr><td class="table_th" style="height: 55px;">所属分类:</td><td id="types"></td></tr>
+				<tr><td class="table_th" style="height: 55px;">卖家:</td><td id="supplier_ly"><a style="font-size: 12px;margin-right: 10px;" id="supplier"></a></td></tr>
 				<tr><td style="border-bottom: 0px;" id="contact_me"></td><td align="right" style="height: 55px;border-bottom: 0px;"><button type="button" class="am-btn am-radius am-btn-primary" id="buy_submit">立即订购</button></td></tr>
 			</table>
 		</div>
@@ -150,17 +155,19 @@
 		</div>
 	</div>
 	
-	
-	<footer class="footer">
-	  <p>© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
-	</footer>
+	<jsp:include page="footer.jsp" flush="true"/>
 	
 <script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
 <script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
+<script src="<%=basePath%>assets/javascripts/alijian.js"></script>
 <script>
-var id;
+
+var id = getUrlParam("id");
 	$(document).ready(function(){
-		id = getUrlParam("id");
+		if(!IsPC()){
+			window.location.href='<%=basePath%>mobile/goods_m.jsp?id='+id;
+			return;
+		}
 		if(id == null){
 			window.close();
 		}else{
@@ -188,10 +195,14 @@ var id;
 					$.each(result.typeList, function(n, value) {
 						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'>"+value.name+"</a>");
 					});
-					$("#contact_me").append("<a target='_blank' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
+					$("#supplier").html(result.user.name);
+					$("#supplier").attr("href","<%=basePath%>pc/supplier.jsp?id="+result.user.id+"");
+					$("#supplier_ly").append(getLevel("<%=basePath%>",result.user.credit_supplier));
+					$("#contact_me").append("<a id='contact_me_a' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
 					$("#buy_submit").click(function(){
 						location.href="<%=basePath%>pc/buy.jsp?id="+result.id;
 					});
+					document.getElementById("contact_me_a").click();
 				}else{
 					alert("错误的商品ID号");
 					window.close();
@@ -199,6 +210,21 @@ var id;
 			},
 			dataType : "json"
 		});
+	}
+	
+	function IsPC() {
+	    var userAgentInfo = navigator.userAgent;
+	    var Agents = ["Android", "iPhone",
+	                "SymbianOS", "Windows Phone",
+	                "iPad", "iPod"];
+	    var flag = true;
+	    for (var v = 0; v < Agents.length; v++) {
+	        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+	            flag = false;
+	            break;
+	        }
+	    }
+	    return flag;
 	}
 	
 	function getUrlParam(name) {

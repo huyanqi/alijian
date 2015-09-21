@@ -32,6 +32,9 @@ public class OrdersModel {
 	private String goods_ids;//包含的商品号 ,隔开
 	
 	@Column
+	private String amouts;//购买的数量,隔开
+	
+	@Column
 	private int amout;//购买数量
 	
 	@Column
@@ -173,15 +176,12 @@ public class OrdersModel {
 		this.trade_no = trade_no;
 	}
 
-	@Override
-	public String toString() {
-		return "OrdersModel [id=" + id + ", orders_no=" + orders_no
-				+ ", trade_no=" + trade_no + ", goods_ids=" + goods_ids
-				+ ", amout=" + amout + ", prices=" + prices + ", buyer="
-				+ buyer + ", address=" + address + ", mobile=" + mobile
-				+ ", name=" + name + ", remark=" + remark + ", create_time="
-				+ create_time + ", update_time=" + update_time + ", state="
-				+ state + "]";
+	public String getAmouts() {
+		return amouts;
 	}
-	
+
+	public void setAmouts(String amouts) {
+		this.amouts = amouts;
+	}
+
 }

@@ -1,6 +1,7 @@
 package com.alijian.front.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +55,12 @@ public class UserModel implements Serializable{
 	
 	@Column
 	private String types;
+	
+	@Column
+	private BigDecimal credit_supplier;
+	
+	@Column
+	private BigDecimal credit_buyer;
 	
 	@Column
 	private Integer work_type = 0;		//0:供货商 1:阿里健自营(商品标题会显示"自营")
@@ -183,5 +190,21 @@ public class UserModel implements Serializable{
 	public void setTypeList(List<TypeModel> typeList) {
 		this.typeList = typeList;
 	}
-	
+
+	public BigDecimal getCredit_supplier() {
+		return credit_supplier;
+	}
+
+	public void setCredit_supplier(BigDecimal credit_supplier) {
+		this.credit_supplier = credit_supplier;
+	}
+
+	public BigDecimal getCredit_buyer() {
+		return credit_buyer;
+	}
+
+	public void setCredit_buyer(BigDecimal credit_buyer) {
+		this.credit_buyer = credit_buyer;
+	}
+
 }

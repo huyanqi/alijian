@@ -121,6 +121,27 @@
         <span>佣金结算</span>
     </a>
 </li>
+<li class=''>
+    <a class='dropdown-collapse' href='#'>
+        <i class='icon-edit'></i>
+        <span>友情链接管理</span>
+        <i class='icon-angle-down angle-down'></i>
+    </a>
+    <ul class='nav nav-stacked in'>
+        <li class=''>
+            <a href='javascript:frameLink("link/LinkInsert.jsp?is_edit=0")'>
+                <i class='icon-caret-right'></i>
+                <span>新增友情链接</span>
+            </a>
+        </li>
+        <li class=''>
+            <a href='javascript:frameLink("link/LinkManage.jsp")'>
+                <i class='icon-caret-right'></i>
+                <span>管理友情链接</span>
+            </a>
+        </li>
+    </ul>
+</li>
 </ul>
 </div>
 </nav>

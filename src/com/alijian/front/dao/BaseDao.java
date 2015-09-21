@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.alijian.front.model.BusinessModel;
+import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.LinkModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 
@@ -38,5 +40,17 @@ public interface BaseDao {
 	List<TypeModel> getAllTypeModel();
 
 	List<KeywordsModel> getKeyWords(int pageNum);
+
+	String linkInsertOrUpdate(LinkModel model);
+
+	List<LinkModel> getLinks();
+
+	LinkModel getLinkById(int id);
+
+	String removeLinkById(int id);
+
+	String saveOrUpdateModel(Object object);
+
+	List<BuyModel> getBuyModels(int pageNum);
 
 }

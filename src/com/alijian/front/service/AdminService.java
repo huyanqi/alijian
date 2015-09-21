@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
+import com.alijian.front.model.LinkModel;
 import com.alijian.front.model.PageModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
@@ -44,5 +45,11 @@ public interface AdminService {
 	String removeBusinessById(int id);
 
 	List<TypeModel> getAllTypeModel();
+
+	String linkInsertOrUpdate(LinkModel model);
+
+	LinkModel getLinkById(int id);
+
+	String removeLinkById(int id);
 
 }

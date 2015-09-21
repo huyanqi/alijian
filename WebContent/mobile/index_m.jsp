@@ -72,6 +72,11 @@ a{
 	color: black;
 	background: #F1F1F1;
 }
+#type_selector{
+	appearance:none;
+	-moz-appearance:none; /* Firefox */
+	-webkit-appearance:none; /* Safari 和 Chrome */
+}
 </style>
 </head>
 <body>
@@ -80,13 +85,14 @@ a{
 	
 	<div id="container" style="display: inline-block;height: 39px;margin-bottom: 0px;">
 	
-	<div class="am-form-group am-form-select" style="float: left;">
-		<select name="select-native-3" id="type_selector" style="height: 39px;border: 0px;border: 1px solid #E6E6E6;background: transparent;">
-			<option value="0">产品</option>
+	<div class="am-form-group am-form-select" style="float: left;border: 0px;border: 1px solid #E6E6E6;height: 39px;line-height: 39px;">
+		<select name="select-native-3" id="type_selector" style="border: 0px;background: transparent;">
+			<option value="3">产品</option>
 			<option value="1">厂家</option>
 			<option value="2">讲师</option>
-			<option value="3">模式</option>
+			<option value="0">模式</option>
 		</select>
+		<span class="am-icon-caret-down"></span>
 	</div>
 	
 	<input type="text" id="keyword_et" class="am-form-field" placeholder="输入搜索的关键字" style="float: left;width: 60%;border-color: #E6E6E6;border-left: 0px;"/>
@@ -198,7 +204,7 @@ a{
 	<!-- 右侧悬浮窗 -->
 	<div class="OnlineService_Bg">
 		<div class="OnlineService_Box">
-			<a target="_blank" href="search_result.jsp?type=4&keyword="><button class="am-btn am-btn-primary am-btn-xs">找求购</button></a>
+			<a target="_blank" href="buy_m.jsp"><button class="am-btn am-btn-primary am-btn-xs">找求购</button></a>
 			<a target="_blank" href="search_result.jsp?type=3&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找产品</button></a>
 			<a target="_blank" href="search_result.jsp?type=1&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找厂家</button></a>
 			<a target="_blank" href="search_result.jsp?type=2&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找讲师</button></a>
@@ -217,8 +223,9 @@ a{
 	<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 	<script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script>
 	<script src="<%=basePath%>font/addtohomescreen/addtohomescreen.js"></script>
+		
 	<script>
-	addToHomescreen();
+		addToHomescreen();
 		$(document).ready(function() {
 			getGoods("");
 			getSupplier("");
@@ -228,7 +235,7 @@ a{
 			
 		});
 		
-		var type = 0;
+		var type = 3;
 		function initSearch(){
 			$("#keyword_et").on("click", function() {
 				$("#search_ly").show();
@@ -255,14 +262,15 @@ a{
 			$.ajax({
 				type : 'POST',
 				url : "<%=basePath%>getGoods",
-				data : {"pageNum":1,"pageSize":4,"types":types,"keyword":""},
+				data : {"pageNum":1,"pageSize":4,"types":types,"keyword":"","type":0},
 				success : function(result) {
 					$.AMUI.progress.done();
 					$("#goods_ly").empty();
 					if (result.result == "ok") {
 						$.each(result.data, function(n, value) {
 							var url = "goods_m.jsp?id="+value.id;
-							$("#goods_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' width='88px' height='88px' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"</div></div></li>");
+							$("#goods_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' width='88px' height='88px' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"<a style='float:right;'>已售出"+value.sales_volume+value.units+"</a></div></div></li>");
+							//<div class='am-list-item-text base_info' style=''>"+"销量:"+value.sales_volume+"</div>
 						});
 						$("img.lazy").lazyload({effect: "fadeIn"});
 					}
@@ -437,5 +445,7 @@ a{
 			window.open("search_result.jsp?type="+type+"&keyword="+escape(keywords));
 		}
 	</script>
+	
+	<jsp:include page="footer_m.jsp" flush="true" />
 </body>
 </html>

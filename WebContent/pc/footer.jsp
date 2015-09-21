@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<div style="padding: 10px;">
+<div id="links_ly" style="padding: 10px;width: 980px;margin-top: 10px;border: 1px solid #eeeeee;">
 	<font style="font-size:12px;">友情链接</font>
 	<div id="links">
 		
@@ -26,10 +26,14 @@
 </div>
 
 <footer class="footer">
-  <p style="text-align: center;font-size: 12px;">© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
-  <p style="text-align: center;font-size: 12px;margin-top: 0;"><a href="<%=basePath%>about_us.jsp">关于我们</a></p>
+	<p style="text-align: center;font-size: 12px;">© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
+	<p style="text-align: center;font-size: 12px;margin-top: 0;"><a href="<%=basePath%>about_us.jsp">关于我们</a></p>
+	<div class="jiathis_style" style="padding: 10px;display: inline-block;width: 100%;text-align: center;">
+		<a href="http://www.jiathis.com/share" style="float: none;" class="jiathis jiathis_txt" target="_blank"><img src="http://v2.jiathis.com/code_mini/images/btn/v1/jiathis5.gif" border="0" /></a>
+	</div>
 </footer>
 <script>
+
 	$(document).ready(function(){
 		getLinks();
 	});
@@ -53,10 +57,6 @@
 		});
 	}
 </script>
-<!-- JiaThis Button BEGIN -->
-<div class="jiathis_style" style="padding: 10px;display: inline-block;">
-<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt" target="_blank"><img src="http://v2.jiathis.com/code_mini/images/btn/v1/jiathis5.gif" border="0" /></a>
-</div>
 <script type="text/javascript" >
 var url = window.location.href;
 var title = document.title;

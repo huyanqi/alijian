@@ -7,8 +7,6 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alijian.front.controller.OrderController;
-
 public class Tools {
 
 	public static String generateRandomFilename(){    
@@ -65,6 +63,30 @@ public class Tools {
 		orderNo.append("-");
 		orderNo.append(buyer);
 		return orderNo.toString();
+	}
+	
+	/**
+	 * 组装商品的排序sql
+	 * @param type 搜索类型:0 默认 1：价格从低到高 2：价格从高到低 3：销量从高到低
+	 * @return
+	 */
+	public static String getOrderBySQL(int type){
+		String sql = "";
+		switch (type) {
+		case 0:
+			sql = "ORDER BY update_time DESC";
+			break;
+		case 1:
+			sql = "ORDER BY price DESC";
+			break;
+		case 2:
+			sql = "ORDER BY price ASC";
+			break;
+		case 3:
+			sql = "ORDER BY sales_volume DESC";
+			break;
+		}
+		return sql;
 	}
 	
 }

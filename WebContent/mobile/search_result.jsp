@@ -10,6 +10,7 @@
 <html>
 <head>
 <title>阿里健 - 搜索结果</title>
+<link rel="stylesheet" href="<%=basePath%>font/iscroll/pullToRefresh.css"/>
 <style>
 .title_name {
 	max-height: 50px;
@@ -23,6 +24,10 @@
 #result_ly li a{
 	width: 200px;
 	height: 40px;
+}
+#list_tabs li a{
+	width: auto;
+	text-align: center;
 }
 </style>
 </head>
@@ -39,11 +44,19 @@
 				<label style="font-size: 12px;">可选分类></label> <label class="am-checkbox-inline"> <input type="checkbox" value="0" data-am-ucheck checked onclick="unselectAll(0);">不限</input></label>
 			</div>
 		</li>
+		<li>
+			<div data-am-widget="tabs" class="am-tabs am-tabs-default" style="margin: 0;display: none;" id="list_tabs_ky">
+		      <ul class="am-tabs-nav am-cf" id="list_tabs">
+		          <li class="am-active" onclick="changeGoodsType(0);"><a>默认</a></li>
+		          <li class="" onclick="changeGoodsType(1);"><a>销量</a></li>
+		          <li class="" onclick="changeGoodsType(2);"><a>价格<i id="price_type" class="am-icon-arrows-v" style="margin-left: 5px;"></i></a></li>
+		      </ul>
+		  </div>
+		</li>
 	</ul>
 </div>
 
 <script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script>
-<link rel="stylesheet" href="<%=basePath%>font/iscroll/pullToRefresh.css"/>
 <script src="<%=basePath%>font/iscroll/iscroll.js"></script>
 <script src="<%=basePath%>font/iscroll/pullToRefresh.js"></script>
 <script>
@@ -62,6 +75,9 @@ $(document).ready(function(){
 	$("#keyword_et").click(function(){
 		location.href="search_m.jsp";
 	});
+	if(type == 3){
+		$("#list_tabs_ky").show();
+	}
 	getData();
 	getTypes();
 });
@@ -102,11 +118,39 @@ function Load() {
 
 function removeChild(){
 	$("#result_ly").children().each(function(i,n){
-		if(i != 0 && i != 1){
+		if(i > 2){
 		     var obj = $(n);
 		     obj.remove();
 		}
     });
+}
+
+//改变排序方式
+var goodsType = 0;
+function changeGoodsType(selecttype){
+	if(selecttype == 2){
+		$("#price_type").removeClass("am-icon-arrows-v").removeClass("am-icon-sort-up").removeClass("am-icon-sort-down");
+		//改变价格方式
+		if(goodsType == 2){
+			//价格从低到高
+			goodsType = 1;
+			$("#price_type").addClass("am-icon-sort-down");
+		}else{
+			//改为价格从高到低
+			goodsType = 2;
+			$("#price_type").addClass("am-icon-sort-up");
+		}
+	}else{
+		if(selecttype == 1){
+			//改变为销量排序
+			goodsType = 3;
+		}else{
+			goodsType = 0;
+		}
+		$("#price_type").addClass("am-icon-arrows-v");
+	}
+	pageNum = 1;
+	getData();
 }
 
 function getGoods(){
@@ -114,7 +158,7 @@ function getGoods(){
 	$.ajax({
 		type : 'POST',
 		url : "<%=basePath%>getGoods",
-		data : {"pageNum":pageNum,"pageSize":pageSize,"types":types,"keyword":keyword},
+		data : {"pageNum":pageNum,"pageSize":pageSize,"types":types,"keyword":keyword,"type":goodsType},
 		success : function(result) {
 			$.AMUI.progress.done();
 			if(pageNum == 1){
@@ -123,7 +167,7 @@ function getGoods(){
 			if (result.result == "ok") {
 				$.each(result.data, function(n, value) {
 					var url = "goods_m.jsp?id="+value.id;
-					$("#result_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' alt='"+value.name+"' width='88px' height='88px' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"</div></div></li>");
+					$("#result_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' alt='"+value.name+"' width='88px' height='88px' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"</div><div class='am-list-item-text base_info' style=''>"+"销量:"+value.sales_volume+"</div></div></li>");
 				});
 				$("img.lazy").lazyload({effect: "fadeIn"});
 				myScroll.refresh();

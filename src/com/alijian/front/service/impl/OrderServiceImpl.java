@@ -132,6 +132,8 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 			}else if("TRADE_FINISHED".equals(trade_status)){
 				order.setState(2);
 			}
+			//增加买家、卖家积分
+			orderDao.addCredit(0,order);
 			if(orderDao.saveOrUpdateOrder(order) != null){
 				return "SUCCESS";
 			}

@@ -20,6 +20,9 @@
 <body>
 
 <jsp:include page="head_m.jsp" flush="true" />
+<div class="jiathis_style" style="padding: 10px;display: inline-block;">
+<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt" target="_blank"><img src="http://v2.jiathis.com/code_mini/images/btn/v1/jiathis5.gif" border="0" /></a>
+</div>
 
 <img id="thum" alt="" width="100%"/>
 
@@ -27,6 +30,7 @@
 	<tr><td colspan="2" style="height: 80px;" id="goods_name_ly"><font id="goods_name"></font></td></tr>
 	<tr><td class="table_th" style="height: 55px;">单价:</td><td><a style="font-size: 12px;color: #027cff;margin-right: 5px;">￥</a><font style="font-size:30px;line-height:50px;color:#027cff;" id="price"></font><font style="font-size: 12px;color:black;margin-left:5px;" id="units"></font></td></tr>
 	<tr><td class="table_th" style="height: 55px;">运费:</td><td><a style="font-size: 12px;" id="freight"></a></td></tr>
+	<tr><td class="table_th" style="height: 55px;">销量:</td><td><a style="font-size: 12px;" id="sales_volume"></a></td></tr>
 	<tr><td class="table_th" style="height: 55px;">所属分类:</td><td id="types"></td></tr>
 	<tr><td style="border-bottom: 0px;" id="contact_me"></td><td align="right" style="height: 55px;border-bottom: 0px;"><button type="button" class="am-btn am-radius am-btn-primary" >立即订购</button></td></tr>
 </table>
@@ -66,6 +70,7 @@ function getGoodsById(){
 				$("#price").html(result.price);
 				$("#units").html("/ "+result.units);
 				$("#freight").html(result.freight);
+				$("#sales_volume").html(result.sales_volume+result.units);
 				$("#description").html(result.description);
 				$("#description img").css("height","").css("width","100%");
 				$.each(result.typeList, function(n, value) {
@@ -91,5 +96,6 @@ function getUrlParam(name) {
 }
 	
 </script>
+<jsp:include page="footer_m.jsp" flush="true" />
 </body>
 </html>
