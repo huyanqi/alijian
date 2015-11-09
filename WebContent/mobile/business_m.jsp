@@ -9,7 +9,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>阿里健 - 淘资源</title>
+<title>阿里健 - 大健康产业链</title>
 
 <style>
 .my_at {
@@ -88,6 +88,7 @@ ul {
 	<jsp:include page="head_m.jsp" flush="true" />
 
 	<font id="goods_name"></font>
+	<div id="contact_me" style="text-align: center;"></div>
 	<div class="am-container" style="margin-top: 10px;" id="description">
 
 	</div>
@@ -116,6 +117,7 @@ var id;
 						$("#goods_name").html(result.name);
 						$("#description").html(result.description);
 						$("#description img").css("height","").css("width","100%");
+						$("#contact_me").append("<a id='contact_me_a' href='javascript:toChat("+result.user.id+");' class='content-btn' title='在线咨询'> <img border='0' src='<%=basePath%>font/imgs/icon_chat.png' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
 					} else {
 						alert("错误的商品ID号");
 						window.close();

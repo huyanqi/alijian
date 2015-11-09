@@ -18,7 +18,6 @@ import javax.persistence.Transient;
  * @author Frankie
  *
  */
-
 @Entity
 @Table(name = "goods")
 public class GoodsModel {
@@ -46,6 +45,9 @@ public class GoodsModel {
 	public String thum;
 	
 	@Column
+	public String thums;//多张附图,隔开
+	
+	@Column
 	public String description;
 	
 	@Column
@@ -60,6 +62,21 @@ public class GoodsModel {
 	@ManyToOne
     @JoinColumn(name="user")//加入一列作为外键
 	public UserModel user;
+	
+	@Transient
+	public String startsCount;//批发价开始范围,隔开
+	
+	@Transient
+	public String endsCount;//批发价结束范围,隔开
+	
+	@Transient
+	public String prices;//批发价,隔开
+	
+	@Transient
+	public PriceModel priceModel;
+	
+	@Column
+	public int price_id;
 
 	public int getId() {
 		return id;
@@ -155,6 +172,54 @@ public class GoodsModel {
 
 	public void setSales_volume(int sales_volume) {
 		this.sales_volume = sales_volume;
+	}
+
+	public int getPrice_id() {
+		return price_id;
+	}
+
+	public void setPrice_id(int price_id) {
+		this.price_id = price_id;
+	}
+
+	public String getStartsCount() {
+		return startsCount;
+	}
+
+	public void setStartsCount(String startsCount) {
+		this.startsCount = startsCount;
+	}
+
+	public String getEndsCount() {
+		return endsCount;
+	}
+
+	public void setEndsCount(String endsCount) {
+		this.endsCount = endsCount;
+	}
+
+	public String getPrices() {
+		return prices;
+	}
+
+	public void setPrices(String prices) {
+		this.prices = prices;
+	}
+
+	public PriceModel getPriceModel() {
+		return priceModel;
+	}
+
+	public void setPriceModel(PriceModel priceModel) {
+		this.priceModel = priceModel;
+	}
+
+	public String getThums() {
+		return thums;
+	}
+
+	public void setThums(String thums) {
+		this.thums = thums;
 	}
 
 }

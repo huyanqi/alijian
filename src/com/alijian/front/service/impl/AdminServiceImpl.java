@@ -13,6 +13,7 @@ import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
 import com.alijian.front.model.PageModel;
+import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.AdminService;
@@ -81,6 +82,15 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public String insertGoods(GoodsModel model) {
+		if(!"".equals(model.startsCount)){
+			//有设置价格区间
+			PriceModel priceModel = new PriceModel();
+			priceModel.startCount = model.startsCount;
+			priceModel.endCount = model.endsCount;
+			priceModel.price = model.prices;
+			baseDao.saveOrUpdateModel(priceModel);
+			model.price_id = priceModel.id;
+		}
 		return adminDao.insertGoods(model);
 	}
 
@@ -109,6 +119,16 @@ public class AdminServiceImpl implements AdminService {
 		model.setTypes(user.getTypes());
 		model.setWork_type(user.getWork_type());
 		model.setCommission(user.getCommission());
+		model.setJyms(user.getJyms());
+		model.setPpmc(user.getPpmc());
+		model.setNyye(user.getNyye());
+		model.setXsqy(user.getXsqy());
+		model.setKhqt(user.getKhqt());
+		model.setZcd(user.getZcd());
+		model.setFddb(user.getFddb());
+		model.setYgrs(user.getYgrs());
+		model.setZycp(user.getZycp());
+		
 		return baseDao.saveOrUpdateUser(model);
 	}
 

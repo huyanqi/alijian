@@ -1,9 +1,11 @@
 package com.alijian.front.service.impl;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alijian.front.dao.AdminDao;
 import com.alijian.front.dao.OrderDao;
+import com.alijian.front.model.CommentModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.OrdersModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.UserModel;
+import com.alijian.front.service.BaseService;
 import com.alijian.front.service.OrderService;
 import com.alijian.util.BaseData;
 import com.alijian.util.Tools;
@@ -32,27 +37,38 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 	private OrderDao orderDao;
 	
 	@Autowired
+	private BaseService baseService;
+	
+	@Autowired
 	private AdminDao adminDao;
 
 	@Override
 	public OrdersModel saveOrUpdateOrder(OrdersModel model,UserModel buyer) {
-		GoodsModel goods = adminDao.getGoodsById(Integer.parseInt(model.getGoods_ids()));
+		GoodsModel goods = adminDao.getGoodsById(model.getGood_id());
 		if(goods == null) return null;
 		//生成订单号
-		model.setOrders_no(Tools.newOrderNo(model.getGoods_ids(), model.getAmout(), goods.getUser().getId(), buyer.getId()));
+		model.setOrders_no(Tools.newOrderNo(model.getGood_id(), model.getAmout(), goods.getUser().getId(), buyer.getId()));
 		//计算订单总额
 		DecimalFormat df = new DecimalFormat("######0.00");
-		model.setPrices(Double.valueOf(df.format(model.getAmout() * goods.getPrice())));
+		model.setPrices(new BigDecimal(Double.valueOf(df.format(model.getAmout() * goods.getPrice()))));
 		//设置买家ID
 		model.setBuyer(buyer.getId());
+		//设置卖家ID
+		model.setSaller(goods.getUser().getId());
 		//设置订单生成时间
 		model.setCreate_time(new Date());
 		
 		return orderDao.saveOrUpdateOrder(model);
 	}
 
+	/**
+	 * 创建支付宝付款链接
+	 * @param model
+	 * @param force_pc 是否强制使用PC端付款
+	 * @return
+	 */
 	@Override
-	public String createALiPayOrder(OrdersModel model) {
+	public String createALiPayOrder(OrdersModel model,boolean force_pc) {
 		//支付类型
 		String payment_type = "1";
 		//必填，不能修改
@@ -69,12 +85,13 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 		String subject = new String(model.getOrders_no());//临时用订单号
 		//必填
 		//付款金额
-		String total_fee = new String(model.getPrices()+"");
+		double price = model.getPrices().setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
+		String total_fee = new String(price+"");
 		//必填
 		//订单描述
 		String body = new String(model.getRemark());
 		//商品展示地址
-		String show_url = new String(LOCAL+"pc/goods.jsp?id="+model.getGoods_ids());
+		String show_url = new String(LOCAL+"pc/goods.jsp?id="+model.getGood_id());
 		//需以http://开头的完整路径，例如：http://www.商户网址.com/myorder.html
 
 		//防钓鱼时间戳
@@ -86,8 +103,15 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 		//非局域网的外网IP地址，如：221.0.0.1
 		//把请求参数打包成数组
 		Map<String, String> sParaTemp = new HashMap<String, String>();
-		sParaTemp.put("service", "create_direct_pay_by_user");
+		String service = "";
+		if(force_pc){
+			service = "create_direct_pay_by_user";
+		}else{
+			service = model.getIs_mobile() == 0 ? "create_direct_pay_by_user" : "alipay.wap.create.direct.pay.by.user";
+		}
+		sParaTemp.put("service", service);
         sParaTemp.put("partner", AlipayConfig.partner);
+        sParaTemp.put("seller_id", AlipayConfig.seller_id);
         sParaTemp.put("seller_email", AlipayConfig.seller_email);
         sParaTemp.put("_input_charset", AlipayConfig.input_charset);
 		sParaTemp.put("payment_type", payment_type);
@@ -133,12 +157,91 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 				order.setState(2);
 			}
 			//增加买家、卖家积分
-			orderDao.addCredit(0,order);
+			//orderDao.addCredit(0,order);
 			if(orderDao.saveOrUpdateOrder(order) != null){
 				return "SUCCESS";
 			}
 		}
 		return "FAIL";
+	}
+
+	@Override
+	public PageModel getMySell(int id,int pageNum) {
+		PageModel model = orderDao.getMySell(id,pageNum);
+		for(Object order:model.getModels()){
+			((OrdersModel) order).setGoods(baseService.getGoodsModelById(((OrdersModel) order).getGood_id()));
+		}
+		return model;
+	}
+
+	@Override
+	public OrdersModel getOrderById(String orderid) {
+		OrdersModel model = orderDao.getOrderById(orderid);
+		model.setGoods(baseService.getGoodsModelById(model.getGood_id()));
+		return model;
+	}
+
+	@Override
+	public String fahuo(String no, String cnumber) {
+		try{
+			OrdersModel model = getOrderById(no);
+			model.setCnumber(cnumber);
+			model.setState(4);
+			orderDao.saveOrUpdateOrder(model);
+			return "";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	@Override
+	public PageModel getMyBy(int id, int pageNum) {
+		PageModel model = orderDao.getMyBy(id,pageNum);
+		for(Object order:model.getModels()){
+			((OrdersModel) order).setGoods(baseService.getGoodsModelById(((OrdersModel) order).getGood_id()));
+		}
+		return model;
+	}
+
+	@Override
+	public String querenshouhuo(String no) {
+		try{
+			OrdersModel model = getOrderById(no);
+			model.setState(2);
+			orderDao.saveOrUpdateOrder(model);
+			return "";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	@Override
+	public OrdersModel getOrderByOrderId(int orderid) {
+		OrdersModel model = orderDao.getOrderByOrderId(orderid);
+		model.setGoods(baseService.getGoodsModelById(model.getGood_id()));
+		return model;
+	}
+
+	@Override
+	public CommentModel saveOrUpdateComment(CommentModel model) {
+		model = orderDao.saveOrUpdateComment(model);
+		OrdersModel order = orderDao.getOrderById(model.getOrder_id());
+		order.setComment_id(model.getId());
+		orderDao.saveOrUpdateOrder(order);
+		return model; 
+	}
+
+	@Override
+	public PageModel getComment(int goods_id, int pageNum) {
+		PageModel model = orderDao.getComment(goods_id,pageNum);
+		for(CommentModel comment:(List<CommentModel>)model.getModels()){
+			UserModel user = baseService.getUserById(comment.user_id);
+			user.setPassword("");
+			comment.setUser(user);
+		}
+		return model;
 	}
 	
 

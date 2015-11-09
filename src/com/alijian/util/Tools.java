@@ -1,11 +1,16 @@
 package com.alijian.util;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.alijian.front.model.UserModel;
 
 public class Tools {
 
@@ -50,7 +55,7 @@ public class Tools {
 	 * "ALJ"+当前时间+"-"+商品ID+"-"+购买数量+"-"+卖家ID+"-"+买家ID
 	 * @return
 	 */
-	public static String newOrderNo(String goodsid,int amount,int seller,int buyer){
+	public static String newOrderNo(int goodsid,int amount,int seller,int buyer){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		StringBuffer orderNo = new StringBuffer("ALJ");
 		orderNo.append(sdf.format(new Date()));
@@ -87,6 +92,65 @@ public class Tools {
 			break;
 		}
 		return sql;
+	}
+	
+	public static String getChatName(UserModel user){
+		//有name就用name,没有则用username
+		if(!"".equals(user.getName())){
+			return user.getName();
+		}
+		return user.getUsername();
+	}
+	
+	/*
+	 * 获取登录令牌
+	 */
+	public static String getAccessToken() {
+	    String base = "abcdefghijklmnopqrstuvwxyz0123456789";   
+	    Random random = new Random();   
+	    StringBuffer sb = new StringBuffer();   
+	    for (int i = 0; i < 20; i++) {   
+	        int number = random.nextInt(base.length());   
+	        sb.append(base.charAt(number));   
+	    }   
+	    return sb.toString();   
+	 } 
+	
+	/**
+     * 用SHA1算法生成安全签名
+     * @param token 票据
+     * @param timestamp 时间戳
+     * @param nonce 随机字符串
+     * @param encrypt 密文
+     * @return 安全签名
+     * @throws NoSuchAlgorithmException 
+     * @throws AesException 
+     */
+	public static String getSHA1(String token, String timestamp, String nonce)
+			throws NoSuchAlgorithmException {
+		String[] array = new String[] { token, timestamp, nonce };
+		StringBuffer sb = new StringBuffer();
+		// 字符串排序
+		Arrays.sort(array);
+		for (int i = 0; i < 3; i++) {
+			sb.append(array[i]);
+		}
+		String str = sb.toString();
+		// SHA1签名生成
+		MessageDigest md = MessageDigest.getInstance("SHA-1");
+		md.update(str.getBytes());
+		byte[] digest = md.digest();
+
+		StringBuffer hexstr = new StringBuffer();
+		String shaHex = "";
+		for (int i = 0; i < digest.length; i++) {
+			shaHex = Integer.toHexString(digest[i] & 0xFF);
+			if (shaHex.length() < 2) {
+				hexstr.append(0);
+			}
+			hexstr.append(shaHex);
+		}
+		return hexstr.toString();
 	}
 	
 }

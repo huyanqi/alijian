@@ -17,7 +17,36 @@
 <link href='<%=basePath%>assets/stylesheets/light-theme.css' id='color-settings-body-color' media='all' rel='stylesheet' type='text/css' />
 <link rel="stylesheet" href="<%=basePath%>assets/amazeui/assets/css/amazeui.min.css">
 <!-- ---- -->
-
+<style>
+	.prices_ul{
+		list-style: none;
+		padding: 0;
+		border: 1px dotted gray;
+		width: 125px;
+		padding: 5px;
+	}
+	
+	#thum_ly{
+		padding-top: 5px;
+	}
+	
+	#thum_ly ul{
+		list-style: none;
+		padding-left: 0px;
+		float: left;
+	}
+	
+	#thum_ly ul li{
+		width: 65px;
+		text-align: center;
+		font-size: 12px;
+	}
+	
+	#thum_ly img{
+		width: 65px;
+		height: 65px;
+	}
+</style>
 </head>
 <body>
 
@@ -37,8 +66,16 @@
                             <i class="icon-github text-contrast"></i>
                             商品基本信息
                         </div>
-                        <input accept="image/jpeg" type="file" name="upload" id="fileupload_input" style="visibility: hidden;"/>
-                        <a href="javascript:toUpload();"><img id="thum" src="<%=basePath%>assets/images/avatar_default.png" width="260px" height="300px" /></a>
+                        <div>
+	                        <input accept="image/jpeg" type="file" name="upload" id="fileupload_input" style="visibility: hidden;"/>
+	                        <a href="javascript:toUpload();"><img id="thum" src="<%=basePath%>assets/images/avatar_default.png" width="260px" height="300px" /></a>
+                        </div>
+                        <div id="thum_ly">
+                        </div>
+                        <div>
+	                        <input accept="image/jpeg" type="file" name="upload" id="fileupload_thum" style="visibility: hidden;"/>
+	                        <a href="javascript:toUploadThum();">添加附图</a>
+                        </div>
                     </div>
                     <div class="span7 offset1">
                         <div class="control-group">
@@ -51,6 +88,12 @@
                             <label class="control-label">单价</label>
                             <div class="controls">
                                 <input class="span12" id="price" type="text" placeholder="如:10">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label"><a href='javascript:addPrices();'>增加批发价</a></label>
+                            <div class="controls" id="prices_ly" style="border: 1px solid gray;padding: 10px;display: none;">
+                            	
                             </div>
                         </div>
                         <div class="control-group">
@@ -144,7 +187,34 @@
 		    }
 		});
 		
+		$("#fileupload_thum").fileupload({
+		    url:"<%=basePath%>fileupload",//文件上传地址，当然也可以直接写在input的data-url属性内
+		    //formData:{"name":"p1","age":2},//如果需要额外添加参数可以在这里添加
+		    done:function(e,result){
+		        //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
+		        //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
+		        //返回的数据在result.result中，假设我们服务器返回了一个json对象
+		        var obj = eval('(' + result.result + ')');
+		        if(obj.result == "ok"){
+		        	addThum(obj.data);
+		        }else{
+		        	alert(obj.data);
+		        }
+		    }
+		});
+		
 	});
+	
+	var thumCount = 0;
+	function addThum(url){
+		$("#thum_ly").append("<div id='thumly"+thumCount+"'><ul><li><img src="+url+" /></li><li><a href='javascript:deleteThum("+thumCount+")'>删除</a></li></ul></div>");
+		thumCount++;
+	}
+	
+	function deleteThum(index){
+		$("#thumly"+index).remove();
+		thumCount--;
+	}
 	
 	function getGoodsModelById(){
 		$.AMUI.progress.start();
@@ -190,6 +260,14 @@
 		$("#fileupload_input").trigger("click");
 	}
 	
+	function toUploadThum(){
+		if(thumCount >= 4){
+			alert("最多添加4张附图");
+			return;
+		}
+		$("#fileupload_thum").trigger("click");
+	}
+	
 	function getTypeModelByType(){
 		$.AMUI.progress.start();
 		var path = "<%=basePath%>getTypeModelByType";
@@ -219,6 +297,28 @@
 	}
 	
 	function save(){
+		var startsCount = "";
+		var endsCount = "";
+		var prices = "";
+		if(price_count > 0){
+			for(var i=0;i<price_count;i++){
+				var start = $("#start"+i).val();
+				var end = $("#end"+i).val();
+				var price = $("#price"+i).val();
+				
+				startsCount += start+",";
+				endsCount += end+",";
+				prices += price+",";
+				
+			}
+			
+			if(startsCount.length > 0){
+				startsCount = startsCount.substring(0,startsCount.length-1);
+				endsCount = endsCount.substring(0,endsCount.length-1);
+				prices = prices.substring(0,prices.length-1);
+			}
+			
+		}
 		
 		var thum = $("#thum").attr("alt");
 		var name = $("#full-name").val();
@@ -262,8 +362,17 @@
 			return;
 		}
 		
-		var data = JSON.stringify({id:id,name:name,price:price,types:group_list,units:units,freight:freight,thum:thum,description:stem});
-
+		var thums = "";
+		//获取附图
+		$("#thum_ly img").each(function(){
+			var src = $(this).attr("src");
+			thums += src+",";
+		});
+		if(thums.length > 0){
+			thums = thums.substring(0,thums.length-1);
+		}
+		
+		var data = JSON.stringify({id:id,name:name,price:price,types:group_list,units:units,freight:freight,thum:thum,description:stem,startsCount:startsCount,endsCount:endsCount,prices:prices,thums:thums});
 		$.ajax({
 			type : 'POST',
 			data : data,
@@ -285,6 +394,17 @@
 			},
 			dataType : "json"
 		});
+	}
+	
+	var price_count = 0;
+	function addPrices(){
+		$("#prices_ly").show();
+		if(price_count >= 3){
+			alert("价格区间最多设置3个");
+			return;
+		}
+		$('#prices_ly').append("<ul class='prices_ul'><li><div><input class='span12' style='width: 50px;' id='start"+price_count+"' type='text' placeholder='最小数量' />-<input class='span12' style='width: 50px;' id='end"+price_count+"' type='text' placeholder='最大数量' /></div></li><li><input class='span12' style='width: 115px;' id='price"+price_count+"' type='text' placeholder='价格' /></li></ul>");
+		price_count++;
 	}
 	
 </script>

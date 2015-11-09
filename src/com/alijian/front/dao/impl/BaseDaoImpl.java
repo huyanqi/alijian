@@ -1,5 +1,6 @@
 package com.alijian.front.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -11,10 +12,12 @@ import org.springframework.stereotype.Repository;
 import com.alijian.front.dao.BaseDao;
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.BuyModel;
+import com.alijian.front.model.ChatList;
+import com.alijian.front.model.ChatModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
-import com.alijian.front.model.PageModel;
+import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.util.Tools;
@@ -246,6 +249,41 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 				return session.createQuery("FROM BuyModel model ORDER BY update_time DESC").setFirstResult(starts).setMaxResults(PAGE_SIZE).list();
 			}
 		});
+	}
+
+	@Override
+	public PriceModel getPriceModelById(int price_id) {
+		List<PriceModel> models = (List<PriceModel>) getHibernateTemplate().find("FROM PriceModel model WHERE model.id = ?", price_id);
+		if(models.size() > 0){
+			return models.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public UserModel getUserByUsernameAndToken(String username,String accesstoken) {
+		List<UserModel> list = (List<UserModel>) getHibernateTemplate().find("FROM UserModel model WHERE model.username = ? AND model.accesstoken = ?", username,accesstoken);
+		if(list.size() > 0)
+			return list.get(0);
+		return null;
+	}
+
+	@Override
+	public ChatList getChatListByIDs(Object targetid, int id) {
+		List<ChatList> list = (List<ChatList>) getHibernateTemplate().find("FROM ChatList model WHERE model.targetId = ? AND model.myid = ?",targetid,id);
+		if(list.size() > 0)
+			return list.get(0);
+		return null;
+	}
+
+	@Override
+	public List<ChatList> getUserList(int userid) {
+		return (List<ChatList>) getHibernateTemplate().find("FROM ChatList model WHERE model.myid = ?",userid);
+	}
+
+	@Override
+	public List<ChatModel> getchathistory(int id) {
+		return (List<ChatModel>) getHibernateTemplate().find("FROM ChatModel model WHERE model.myid = ?",id);
 	}
 
 }

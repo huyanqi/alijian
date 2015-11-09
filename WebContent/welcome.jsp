@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>阿里健 - 淘资源</title>
+<title>阿里健 - 大健康产业链</title>
 <script type="text/javascript">
 	if (!IsPC()) {
 		window.location.href = 'mobile/index_m.jsp';

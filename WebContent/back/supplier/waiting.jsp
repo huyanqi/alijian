@@ -41,6 +41,8 @@
 							<th>企业名称</th>
 							<th>联系人电话</th>
 							<th>地址</th>
+							<th>营业执照</th>
+							<th>经营者身份证</th>
 							<th><div class="text-right">操作</div></th>
 						</tr>
 					</thead>
@@ -101,7 +103,7 @@
 					$("#nodata").hide();
 					$("#thread").show();
 					$.each(result.data, function(n, value) {
-						$("#list_content").append("<tr><td>"+value.name+"</td><td>"+value.mobile+"</td><td>"+value.address+"</td><td><div class='text-right'><a class='btn btn-success btn-mini' href='javascript:pass("+value.id+")'> <i class='icon-ok'></i></a></div></td></tr>");
+						$("#list_content").append("<tr><td>"+value.name+"</td><td>"+value.mobile+"</td><td>"+value.address+"</td><td><a target='_blank' href='"+value.yyzz+"'>点击查看</a></td><td><a target='_blank' href='"+value.sfzzm+"'>查看正面</a>&emsp;<a target='_blank' href='"+value.sfzfm+"'>查看反面</a></td><td><div class='text-right'><a class='btn btn-success btn-mini' href='javascript:pass("+value.id+")'> <i class='icon-ok'></i></a></div></td></tr>");
 					});
 				}else{
 					$("#nodata").show();

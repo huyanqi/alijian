@@ -10,7 +10,7 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <title>登录到 阿里健 - 淘资源</title>
+  <title>登录到 阿里健 - 大健康产业链</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="format-detection" content="telephone=no">
@@ -34,7 +34,7 @@
 <body>
 <div class="header">
   <div class="am-g">
-    <h1>阿里健 - 淘资源</h1>
+    <h1>阿里健 - 大健康产业链</h1>
     <p>打造健康产业中的<br/>阿里巴巴</p>
   </div>
   <hr />
@@ -51,19 +51,19 @@
 
     <form method="post" class="am-form" id="myform" data-am-validator >
       <label for="email">账户:</label>
-      <input type="text" id="username" minlength="6" required >
+      <input type="text" id="username" value="">
       <br>
       <label for="password">密码:</label>
-      <input type="password" id="password" minlength="6" required >
+      <input type="password" id="password" minlength="6" value="" required >
       <br>
       <br />
       <div class="am-cf">
-        <input type="submit" name="" value="提交" class="am-btn am-btn-primary am-btn-sm am-fl">
-        <input type="button" name="" value="忘记密码 ^_^? " class="am-btn am-btn-default am-btn-sm am-fr">
+        <input type="submit" name="" value="登录" class="am-btn am-btn-primary am-btn-sm am-fl">
+        <input type="button" id="toreg" name="" value="注册为采购商" class="am-btn am-btn-default am-btn-sm am-fr">
       </div>
     </form>
     <hr>
-    <p>© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
+    <p>© 2015 <a href="#" target="_blank">阿里健 - 大健康产业链.</a> Powered by Frankie.</p>
   </div>
 </div>
 
@@ -71,13 +71,18 @@
 <script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 
 <script>
+
 $(function() {
+	
 	$('#myform').submit(function(evt) {
 		if ($('form').data('amui.validator').isFormValid()){
 			toSubmit();
 			return false;
 		}
 	});
+	
+	$("#toreg").attr("onclick","window.location.replace('user_reg.jsp?href="+document.referrer+"')");
+	
 });
 
 function toSubmit(){
@@ -98,8 +103,18 @@ function toSubmit(){
 		success : function(result) {
 			$.AMUI.progress.done();
 			if (result.result == "ok") {
-				history.go(-1); 
-				location.reload();
+				result = result.data;
+				//如果是商家登录，直接跳转到商家自己的界面
+				if(result.type == 1){
+					window.location.href="<%=basePath%>mobile/supplier_m.jsp?id="+result.id;
+				}else{
+					if(history.length > 1){
+						location.href = document.referrer;
+					}else{
+						//没有历史
+						window.location.href="<%=basePath%>welcome.jsp";
+					}
+				}
 			} else {
 				alert(result.data);
 			}
@@ -107,16 +122,6 @@ function toSubmit(){
 		dataType : "json"
 	});
 }
-
-function getCookie(name) { 
-    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
- 
-    if(arr=document.cookie.match(reg))
- 
-        return unescape(arr[2]); 
-    else 
-        return null; 
-} 
 
 </script>
 

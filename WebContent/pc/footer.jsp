@@ -26,7 +26,7 @@
 </div>
 
 <footer class="footer">
-	<p style="text-align: center;font-size: 12px;">© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
+	<p style="text-align: center;font-size: 12px;">© 2015 <a href="#" target="_blank">阿里健 - 大健康产业链.</a> Powered by Frankie.</p>
 	<p style="text-align: center;font-size: 12px;margin-top: 0;"><a href="<%=basePath%>about_us.jsp">关于我们</a></p>
 	<div class="jiathis_style" style="padding: 10px;display: inline-block;width: 100%;text-align: center;">
 		<a href="http://www.jiathis.com/share" style="float: none;" class="jiathis jiathis_txt" target="_blank"><img src="http://v2.jiathis.com/code_mini/images/btn/v1/jiathis5.gif" border="0" /></a>

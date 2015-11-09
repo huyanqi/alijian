@@ -10,11 +10,10 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
-<meta name="description" content=""></meta>
-<meta name="keywords" content=""></meta>
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
-<title>阿里健 - 淘资源</title>
+<meta name="description" content="阿里健 - 大健康产业链"></meta>
+<meta name="keywords" content="阿里健 - 大健康产业链"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
+<title>阿里健 - 大健康产业链</title>
 
 <!-- Set render engine for 360 browser -->
 <meta name="renderer" content="webkit"></meta>
@@ -31,7 +30,7 @@
 <!-- Add to homescreen for Safari on iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes"></meta>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"></meta>
-<meta name="apple-mobile-web-app-title" content="阿里健 - 淘资源" />
+<meta name="apple-mobile-web-app-title" content="阿里健 - 大健康产业链" />
 <link rel="apple-touch-icon-precomposed" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
 <!-- Tile icon for Win8 (144x144 + tile color) -->
@@ -77,12 +76,16 @@ a{
 	-moz-appearance:none; /* Firefox */
 	-webkit-appearance:none; /* Safari 和 Chrome */
 }
+.am-list-news-more a{
+	float: left;
+	margin-left: 5px;
+}
 </style>
 </head>
 <body>
 
 	<jsp:include page="head_m.jsp" flush="true" />
-	
+	<img src="<%=basePath%>font/amazeui/i/favicon.png" width="1" height="1"/>
 	<div id="container" style="display: inline-block;height: 39px;margin-bottom: 0px;">
 	
 	<div class="am-form-group am-form-select" style="float: left;border: 0px;border: 1px solid #E6E6E6;height: 39px;line-height: 39px;">
@@ -126,20 +129,31 @@ a{
 		<a onclick="javascript:searchHide();" style="text-align: right;width: 100%;display: inline-block;padding: 10px;">隐藏</a>
 	</div>
 	
+	<div style="padding: 10px;">
+		<a target="_blank" href="<%=basePath%>howtouse.jsp">如何使用阿里健</a>
+	</div>
 
 	<div data-am-widget="list_news" class="am-list-news am-list-news-default">
 		<!--列表标题-->
 		<div class="am-list-news-hd am-cf">
 			<!--带更多链接-->
-			<a href="search_result.jsp?type=3&keyword=" target="_blank" class="">
-				<h2>1F 产品</h2> <span class="am-list-news-more am-fr">更多&raquo;</span>
-			</a>
+			<a href="search_result.jsp?type=3&keyword="><h2 style="color: #0e90d2">1F 产品</h2></a> 
+			<span class="am-list-news-more am-fr">
+			<a href="search_result.jsp?type=1&keyword=">厂家</a>
+			<a href="search_result.jsp?type=2&keyword=">讲师</a>
+			<a href="search_result.jsp?type=0&keyword=">模式</a>
+			<a href="buy_m.jsp">供求</a>
+			</span>
 		</div>
 
 		<div class="am-list-news-bd">
 			<ul class="am-list" id="goods_ly">
 				<!--缩略图在标题左边-->
 			</ul>
+		</div>
+		
+		<div style="text-align: center;">
+			<a href="search_result.jsp?type=3&keyword=">查看更多产品</a>
 		</div>
 
 	</div>
@@ -158,6 +172,10 @@ a{
 			<ul class="am-list" id="supplier_ly">
 				<!--缩略图在标题下方居右-->
 			</ul>
+		</div>
+		
+		<div style="text-align: center;">
+			<a href="search_result.jsp?type=1&keyword=">查看更多厂家</a>
 		</div>
 
 	</div>
@@ -179,6 +197,10 @@ a{
 				
 			</ul>
 		</div>
+		
+		<div style="text-align: center;">
+			<a href="search_result.jsp?type=2&keyword=">查看更多讲师</a>
+		</div>
 
 	</div>
 
@@ -197,6 +219,10 @@ a{
 				<!--缩略图在标题上方-->
 				
 			</ul>
+		</div>
+		
+		<div style="text-align: center;">
+			<a href="search_result.jsp?type=0&keyword=">查看更多模式</a>
 		</div>
 
 	</div>
@@ -223,6 +249,7 @@ a{
 	<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 	<script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script>
 	<script src="<%=basePath%>font/addtohomescreen/addtohomescreen.js"></script>
+	<script src="<%=basePath%>font/amazeui/js/jweixin-1.0.0.js"></script>
 		
 	<script>
 		addToHomescreen();
@@ -232,7 +259,6 @@ a{
 			getLecturer("");
 			getBusiness("");
 			initSearch();
-			
 		});
 		
 		var type = 3;
@@ -262,15 +288,14 @@ a{
 			$.ajax({
 				type : 'POST',
 				url : "<%=basePath%>getGoods",
-				data : {"pageNum":1,"pageSize":4,"types":types,"keyword":"","type":0},
+				data : {"pageNum":1,"pageSize":4,"types":types,"keyword":"","type":0,"supplierid":0},
 				success : function(result) {
 					$.AMUI.progress.done();
 					$("#goods_ly").empty();
 					if (result.result == "ok") {
 						$.each(result.data, function(n, value) {
 							var url = "goods_m.jsp?id="+value.id;
-							$("#goods_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' width='88px' height='88px' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"<a style='float:right;'>已售出"+value.sales_volume+value.units+"</a></div></div></li>");
-							//<div class='am-list-item-text base_info' style=''>"+"销量:"+value.sales_volume+"</div>
+							$("#goods_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' width='88px' height='88px' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"<a style='float:right;'>已成交"+value.sales_volume+"笔</a></div></div></li>");
 						});
 						$("img.lazy").lazyload({effect: "fadeIn"});
 					}
@@ -350,7 +375,7 @@ a{
 									});
 									if(types.length > 0)
 										types = types.substring(0, types.length-1);
-									$('#business_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-top'><div class='am-list-thumb am-u-sm-12'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' alt='"+value.name+"' /></a></div><div class=' am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class=''>"+value.name+"</a></h3><div class='am-list-item-text'>"+"所属分类:"+types+"</div></div></li>");
+									$('#business_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' width='88px' height='102px' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+"领域:"+types+"</div></div></li>");
 								});
 								$("img.lazy").lazyload({effect: "fadeIn"});
 							}

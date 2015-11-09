@@ -6,7 +6,7 @@
 			+ request.getServerName() + ":" + request.getServerPort()
 			+ path + "/";
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -19,30 +19,78 @@
 		border-bottom: 1px solid #E5E5E5;
 		padding: 5px;
 	}
+	#pifa_ul,.prices_ul{
+		list-style: none;
+		padding: 0;
+	}
+	
+	.prices_ul{
+		padding: 5px;
+	}
+	
+	.prices_ul font{
+		color: white;
+		font-size: 12px;
+	}
+	
+	#pifa_ul>li{
+		float: left;
+		margin-left: 3px;
+	}
 </style>
+<link rel="stylesheet" href="<%=basePath%>font/amazeui/css/amazeui.min.css"></link>
+<link rel="stylesheet" href="<%=basePath%>font/amazeui/css/app.css"></link>
+<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
+<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 </head>
 <body>
 
-<jsp:include page="head.jsp" flush="true"/>
+<div id="header_ly"></div>
 
 <div class="am-container" >
+
 	<h3 style="text-align: center;">阿里健订单确认</h3>
 	<table style="width: 100%;margin-top: 10px;" id="goods_info">
-		<tbody>
-			<tr><td><img alt="" src="" width="120px" height="120px" id="thum"/></td><td style="height: 80px;" id="goods_name_ly"><font id="goods_name"></font></td></tr>
-			<tr><td class="table_th" style="height: 55px;">单价:</td><td><a style="font-size: 12px;color: #027cff;margin-right: 5px;">￥</a><font style="font-size:30px;line-height:50px;color:#027cff;" id="price"></font><font style="font-size: 12px;color:black;margin-left:5px;" id="units">/ 个</font></td></tr>
-			<tr><td class="table_th" style="height: 55px;">运费:</td><td><a style="font-size: 12px;" id="freight"></a></td></tr>
+		<tr><td><img alt="" src="" width="120px" height="120px" id="thum"/></td><td style="height: 80px;" id="goods_name_ly"><font id="goods_name"></font></td></tr>
+		<tr><td class="table_th" style="height: 55px;">单价:</td><td><a style="font-size: 12px;color: #027cff;margin-right: 5px;">￥</a><font style="font-size:30px;line-height:50px;color:#027cff;" id="price"></font><font style="font-size: 12px;color:black;margin-left:5px;" id="units">/ 个</font></td></tr>
+		<tr id="pifa_ly" style="display: none;"><td class="table_th" style="height: 55px;">批发价:</td><td><ul id="pifa_ul"></ul></td></tr>
+		<tr><td class="table_th" style="height: 55px;">运费:</td><td><a style="font-size: 12px;" id="freight"></a></td></tr>
 			<tr><td class="table_th" style="height: 55px;">购买数量:</td><td><span id="redu"><a href="#" style="padding: 5px;">-</a></span><input id="add" type="text" value="1" style="width:50px; text-align:center;ime-mode:disabled" onkeypress="return event.keyCode>=48&&event.keyCode<=57" onpaste="return !clipboardData.getData('text').match(/\D/)" ondragenter="return false"/><span id="add1"><a href="#" style="padding: 5px;">+</a></span></td></tr>
-			<tr><td class="table_th" style="height: 55px;">邮寄地址:</td><td><input id="buyeraddress" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
+			<tr><td class="table_th" style="height: 55px;">收货地址:</td><td><input id="buyeraddress" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
 			<tr><td class="table_th" style="height: 55px;">联系人:</td><td><input id="buyername" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
 			<tr><td class="table_th" style="height: 55px;">联系人手机号:</td><td><input id="buyermobile" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
 			<tr><td class="table_th" style="height: 55px;">备注:</td><td><input id="remark" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
-			<tr><td style="border-bottom: 0px;" id="contact_me"></td><td align="right" style="height: 55px;border-bottom: 0px;"><a style="color: black;margin-right: 20px;">总价:<font size="8" style="color:#CD0204;" id="totalprice"></font>元</a><button type="button" id="submitbtn" class="am-btn am-radius am-btn-primary am-disabled" onclick="formsubmit();">确认购买</button></td></tr>
-		</tbody>
+			<tr><td colspan="2" align="right" style="height: 55px;border-bottom: 0px;"><a style="color: black;margin-right: 20px;">总价:<font size="8" style="color:#CD0204;" id="totalprice"></font>元</a><button type="button" id="submitbtn" class="am-btn am-radius am-btn-primary am-disabled" onclick="formsubmit();">确认购买</button></td></tr>
 	</table>
 </div>
 
 <script type="text/javascript">
+	
+	var isMobile = 0;
+	var priceModel;
+	
+	if(!IsPC()){
+		isMobile = 1;
+		$("#header_ly").load("<%=basePath%>mobile/head_m.jsp");
+	}else{
+		isMobile = 0;
+		$("#header_ly").load("<%=basePath%>pc/head.jsp");
+	}
+	
+	function IsPC() {
+	    var userAgentInfo = navigator.userAgent;
+	    var Agents = ["Android", "iPhone",
+	                "SymbianOS", "Windows Phone",
+	                "iPad", "iPod"];
+	    var flag = true;
+	    for (var v = 0; v < Agents.length; v++) {
+	        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+	            flag = false;
+	            break;
+	        }
+	    }
+	    return flag;
+	}
 	
 	var goodsid;
 	$(document).ready(function(){
@@ -77,9 +125,25 @@
 	}
 	
 	function refreshTotalPrice(){
-		var price = $("#price").html();
 		var amount = $("#add").val();
-		$("#totalprice").html("￥"+(price * amount).toFixed(2));
+		if(priceModel != null){
+			//计算批发价，查询出这个范围的批发单价
+			var startCount = priceModel.startCount.split(",");
+			var endCount = priceModel.endCount.split(",");
+			var prices = priceModel.price.split(",");
+			for(var i=0;i<endCount.length;i++){
+				var start = startCount[i];
+				if(start == "") start = 0;
+				var end = endCount[i];
+				if(end == "") end = 9999999999;
+				if(start <= amount && amount <= end){
+					$("#totalprice").html("￥"+(prices[i] * amount).toFixed(2));
+				}
+			}
+		}else{
+			var price = $("#price").html();
+			$("#totalprice").html("￥"+(price * amount).toFixed(2));
+		}
 	}
 	
 	function getUrlParam(name) {
@@ -91,23 +155,16 @@
 	}
 	
 	function getUserSession() {
-		$.ajax({
-			type : 'POST',
-			dataType : "json",
-			contentType : "application/json ; charset=utf-8",
-			url : "<%=basePath%>getSession",
-			success : function(result) {
-				$.AMUI.progress.done();
-				if (result.result == "ok") {
-					//已登录，获取产品详情
-					getGoodsById();
-				}else{
-					//未登录
-					alert("请先登录后再购买");
-					window.location.href="<%=basePath%>login.jsp";
-				}
-			}
-		});
+		
+		var cookie = $.AMUI.utils.cookie;
+		if(cookie.get("accesstoken") != null){
+			//已登录，获取产品详情
+			getGoodsById();
+		}else{
+			//未登录
+			alert("请先登录后再购买");
+			window.location.href="<%=basePath%>login.jsp";
+		}
 	}
 	
 	function getGoodsById(){
@@ -130,7 +187,27 @@
 					$.each(result.typeList, function(n, value) {
 						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'>"+value.name+"</a>");
 					});
-					$("#contact_me").append("<a target='_blank' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
+					if(result.priceModel != null){
+						priceModel = result.priceModel;
+						$("#pifa_ly").show();
+						var start = result.priceModel.startCount.split(",");
+						var end = result.priceModel.endCount.split(",");
+						var price = result.priceModel.price.split(",");
+						for(var i=0;i<start.length;i++){
+							var startC = start[i];
+							var endC = end[i];
+							//endC+result.units+
+							var showCount = "";
+							if(startC == "") {
+								showCount = "≤"+endC;
+							}else if(endC == ""){
+								showCount = "≥"+startC;
+							}else{
+								showCount = startC+"-"+endC;
+							}
+							$('#pifa_ul').append("<li><ul class='prices_ul' style='background: #FFA155;'><li><div><font>"+showCount+result.units+"</font></div></li><li><font>￥"+price[i]+"</font></li></ul></li>");
+						}
+					}
 					refreshTotalPrice();
 				}else{
 					alert("错误的商品ID号");
@@ -158,7 +235,7 @@
 		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
-			data : {"amout":amount,"goods_ids":goodsid,"address":buyeraddress,"mobile":buyermobile,"name":buyername,"remark":remark},
+			data : {"amout":amount,"goods_id":goodsid,"address":buyeraddress,"mobile":buyermobile,"name":buyername,"remark":remark,"is_mobile":isMobile},
 			url : "<%=basePath%>create_order",
 			success : function(result) {
 				$.AMUI.progress.done();

@@ -66,7 +66,7 @@
 	});
 	
 	function pass(uid){
-		window.location.href="supplier_update.jsp?uid="+uid;
+		window.location.href="supplier_update.jsp?uid="+uid+"&isadmin=true";
 	}
 	
 	function getAllUser(){

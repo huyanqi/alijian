@@ -21,6 +21,7 @@ import com.alijian.front.model.PageModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.AdminService;
+import com.alijian.front.service.BaseService;
 import com.alijian.util.BaseData;
 
 @Controller
@@ -29,6 +30,9 @@ public class AdminController extends BaseData {
 
 	@Autowired
 	private AdminService adminService;
+	
+	@Autowired
+	private BaseService baseService;
 	
 	@RequestMapping(value = "/admin_login")
 	public ModelAndView adminLogin(HttpServletRequest request,String username,String password) {
@@ -219,15 +223,19 @@ public class AdminController extends BaseData {
 	}
 	
 	@RequestMapping(value = "/insertGoods")
-	public ModelAndView insertGoods(HttpSession session, @RequestBody GoodsModel model) {
+	public ModelAndView insertGoods(HttpServletRequest request, HttpSession session, @RequestBody GoodsModel model) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
-		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		UserModel user = (UserModel) session.getAttribute("user");
 		if(user == null){
-			jObj.put(RESULT, NO);
-			jObj.put(DATA, "未登录");
-			view.addObject(MODELS,jObj);
-			return view;
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
+				jObj.put(RESULT, NO);
+				jObj.put(DATA, "用户信息过期，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
+			}
 		}
 		model.setUser(user);
 		String result = adminService.insertGoods(model);
@@ -242,24 +250,31 @@ public class AdminController extends BaseData {
 	}
 	
 	@RequestMapping(value = "/getMyGoods")
-	public ModelAndView getMyGoods(HttpSession session,int pageNum){
+	public ModelAndView getMyGoods(HttpServletRequest request, HttpSession session,int pageNum){
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
-		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		UserModel user = (UserModel) session.getAttribute("user");
 		if(user == null){
-			jObj.put(RESULT, NO);
-			jObj.put(DATA, "未登录");
-		}else{
-			PageModel pageModel = adminService.getMyGoods(user.getId(),pageNum);
-			if(pageModel != null && pageModel.getModels().size() > 0){
-				jObj.put(RESULT, OK);
-				jObj.put(DATA, pageModel.getModels());
-				jObj.put("pageCount", pageModel.getPageCount());
-			}else{
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
 				jObj.put(RESULT, NO);
-				jObj.put(DATA, "无数据");
+				jObj.put(DATA, "用户信息过期，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
 			}
 		}
+		
+		PageModel pageModel = adminService.getMyGoods(user.getId(),pageNum);
+		if(pageModel != null && pageModel.getModels().size() > 0){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, pageModel.getModels());
+			jObj.put("pageCount", pageModel.getPageCount());
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, "无数据");
+		}
+		
 		view.addObject(MODELS,jObj);
 		return view;
 	}

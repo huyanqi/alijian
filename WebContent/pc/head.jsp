@@ -101,7 +101,7 @@
 	<header class="am-topbar am-topbar-fixed-top">
 	  <div class="am-container">
 	    <h1 class="am-topbar-brand">
-	      <a href="#">阿里健 - 淘资源</a>
+	      <a href="#">阿里健 - 大健康产业链</a>
 	    </h1>
 	
 	    <div class="am-collapse am-topbar-collapse" id="collapse-head">
@@ -129,7 +129,7 @@
 	</header>
 	
 	<div class="am-container" style="padding-top: 20px;padding-bottom: 20px;">
-		<img src="<%=basePath%>font/logo.png" alt="logo"/>
+		<img src="<%=basePath%>font/logo.png" width="50" height="50" alt="logo"/>
 	</div>
 	
 <script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
@@ -140,41 +140,30 @@
 	});
 	
 	function getSession() {
-		$.ajax({
-			type : 'POST',
-			dataType : "json",
-			contentType : "application/json ; charset=utf-8",
-			url : "<%=basePath%>getSession",
-			success : function(result) {
-				$.AMUI.progress.done();
-				if (result.result == "ok") {
-					var user = result.data;
-					uid = user.id;
-					if(uid != null){
-						//已登录
-						$("#supplierJoin").hide();
-						$("#login").hide();
-						$("#reg").hide();
-						$("#username_ly").show();
-						var role = "";
-						var cookieRole = user.type;
-						if(cookieRole == "1"){
-							role = "供应商";
-							$("#username").attr("href","<%=basePath%>supplier/supplier_controller.jsp");
-						}else if(cookieRole == "2"){
-							role = "采购商";
-							$("#username").attr("href","<%=basePath%>user_controller.jsp");
-						}
-						$("#username").html(user.name+"("+role+")");
-					}
-				}else{
-					$("#supplierJoin").show();
-					$("#login").show();
-					$("#reg").show();
-					$("#username_ly").hide();
-				}
+		
+		var cookie = $.AMUI.utils.cookie;
+		if(cookie.get("accesstoken") != null){
+			//已登录
+			$("#supplierJoin").hide();
+			$("#login").hide();
+			$("#reg").hide();
+			$("#username_ly").show();
+			var role = "";
+			var cookieRole = cookie.get("role");
+			if(cookieRole == "1"){
+				role = "供应商";
+			}else if(cookieRole == "2"){
+				role = "采购商";
 			}
-		});
+			$("#username").attr("href","<%=basePath%>supplier/supplier_controller_new.jsp");
+			$("#username").html(cookie.get("name")+""+"("+role+")");
+		}else{
+			//未登录
+			$("#supplierJoin").show();
+			$("#login").show();
+			$("#reg").show();
+			$("#username_ly").hide();
+		}
 	}
 	
 	function logout(){

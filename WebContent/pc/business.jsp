@@ -13,7 +13,7 @@
   <meta name="description" content=""></meta>
   <meta name="keywords" content=""></meta>
   <meta name="viewport"  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
-  <title>阿里健 - 淘资源</title>
+  <title>阿里健 - 大健康产业链</title>
 
   <!-- Set render engine for 360 browser -->
   <meta name="renderer" content="webkit"></meta>
@@ -131,7 +131,7 @@
 	
 	
 	<footer class="footer">
-	  <p>© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
+	  <p>© 2015 <a href="#" target="_blank">阿里健 - 大健康产业链.</a> Powered by Frankie.</p>
 	</footer>
 	
 <script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>

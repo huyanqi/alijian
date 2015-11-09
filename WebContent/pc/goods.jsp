@@ -13,7 +13,7 @@
   <meta name="description" content=""></meta>
   <meta name="keywords" content=""></meta>
   <meta name="viewport"  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
-  <title>阿里健 - 淘资源</title>
+  <title>阿里健 - 大健康产业链</title>
 
   <!-- Set render engine for 360 browser -->
   <meta name="renderer" content="webkit"></meta>
@@ -108,9 +108,33 @@
 	#goods_info tr td{
 		border-bottom: 1px solid #E5E5E5;
 	}
+	
 	#types a{
 		margin-left: 5px;
 		font-size: 14px;
+	}
+	
+	.prices_ul{
+		list-style: none;
+		padding: 0;
+		border: 1px solid #CCCCCC;
+		width: 125px;
+		padding: 5px;
+	}
+	
+	.prices_ul font{
+		font-weight: bold;
+		color: white;
+	}
+	
+	#pifa_ul{
+		list-style: none;
+		padding: 0;
+	}
+	
+	#pifa_ul>li{
+		float: left;
+		margin-left: 3px;
 	}
 </style>
 	
@@ -130,10 +154,16 @@
 			<img id="thum" alt="" width="400px" height="400px" />
 		</div>
 		<a style="width: 1px;height: 100%;background: #DDDDDD;float: left;"></a>
-		<div style="width: 500px;height: 450px;float: left;">
+		<div style="width: 500px;height: 600px;float: left;">
 			<table style="width: 100%;margin-left: 30px;margin-top: 10px;" id="goods_info">
 				<tr><td colspan="2" style="height: 80px;" id="goods_name_ly"><font id="goods_name"></font></td></tr>
 				<tr><td class="table_th" style="height: 55px;">单价:</td><td><a style="font-size: 12px;color: #027cff;margin-right: 5px;">￥</a><font style="font-size:30px;line-height:50px;color:#027cff;" id="price"></font><font style="font-size: 12px;color:black;margin-left:5px;" id="units"></font></td></tr>
+				<tr id="pifa_ly" style="display: none;"><td class="table_th" style="height: 55px;">批发价:</td>
+					<td id="pifa" style="padding-top: 20px;">
+						<ul id="pifa_ul">
+						</ul>
+					</td>
+				</tr>
 				<tr><td class="table_th" style="height: 55px;">运费:</td><td><a style="font-size: 12px;" id="freight"></a></td></tr>
 				<tr><td class="table_th" style="height: 55px;">所属分类:</td><td id="types"></td></tr>
 				<tr><td class="table_th" style="height: 55px;">卖家:</td><td id="supplier_ly"><a style="font-size: 12px;margin-right: 10px;" id="supplier"></a></td></tr>
@@ -175,6 +205,7 @@ var id = getUrlParam("id");
 		}
 	});
 	
+	var goods;
 	function getGoodsById(){
 		$.AMUI.progress.start();
 		$.ajax({
@@ -185,6 +216,7 @@ var id = getUrlParam("id");
 				$.AMUI.progress.done();
 				if (result.result == "ok") {
 					result = result.data;
+					goods = result;
 					$("#thum").attr("src",result.thum);
 					$("#goods_name").html(result.name);
 					$("#goods_name_ly").append("<img style='margin-left:10px;' src='<%=basePath%>assets/images/icon_self.png' />");
@@ -198,11 +230,31 @@ var id = getUrlParam("id");
 					$("#supplier").html(result.user.name);
 					$("#supplier").attr("href","<%=basePath%>pc/supplier.jsp?id="+result.user.id+"");
 					$("#supplier_ly").append(getLevel("<%=basePath%>",result.user.credit_supplier));
-					$("#contact_me").append("<a id='contact_me_a' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
+					$("#contact_me").append("<a id='contact_me_a' href='javascript:toChat();' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
 					$("#buy_submit").click(function(){
 						location.href="<%=basePath%>pc/buy.jsp?id="+result.id;
 					});
-					document.getElementById("contact_me_a").click();
+					if(result.priceModel != null){
+						$("#pifa_ly").show();
+						var start = result.priceModel.startCount.split(",");
+						var end = result.priceModel.endCount.split(",");
+						var price = result.priceModel.price.split(",");
+						for(var i=0;i<start.length;i++){
+							var startC = start[i];
+							var endC = end[i];
+							//endC+result.units+
+							var showCount = "";
+							if(startC == "") {
+								showCount = "≤"+endC;
+							}else if(endC == ""){
+								showCount = "≥"+startC;
+							}else{
+								showCount = startC+"-"+endC;
+							}
+							$('#pifa_ul').append("<li><ul class='prices_ul' style='background: #FFA155;'><li><div><font>"+showCount+result.units+"</font></div></li><li><font>￥"+price[i]+"</font></li></ul></li>");
+						}
+					}
+					//document.getElementById("contact_me_a").click();
 				}else{
 					alert("错误的商品ID号");
 					window.close();
@@ -225,6 +277,14 @@ var id = getUrlParam("id");
 	        }
 	    }
 	    return flag;
+	}
+	
+	function toChat(){
+		var iHeight = 575;
+		var iWidth = 900;
+		var iTop = (window.screen.height-30-iHeight)/2; //获得窗口的垂直位置;  
+		var iLeft = (window.screen.width-10-iWidth)/2; //获得窗口的水平位置;  
+		window.open("<%=basePath%>chat/pc/index.jsp?chat="+goods.user.id,'newindow','height='+iHeight+',width='+iWidth+',top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,top='+iTop+',left='+iLeft);
 	}
 	
 	function getUrlParam(name) {

@@ -10,7 +10,7 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <title>注册到 阿里健 - 淘资源</title>
+  <title>注册到 阿里健 - 大健康产业链</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="format-detection" content="telephone=no">
@@ -34,7 +34,7 @@
 <body>
 <div class="header">
   <div class="am-g">
-    <h1>阿里健 - 淘资源</h1>
+    <h1>阿里健 - 大健康产业链</h1>
     <p>打造健康产业中的<br/>阿里巴巴</p>
   </div>
   <hr />
@@ -47,7 +47,7 @@
 
     <form id="myform" method="post" class="am-form" data-am-validator>
       <label for="email">账户:</label>
-      <input type="text" id="username"  minlength="6" required >
+      <input type="text" id="username" >
       <br>
       <label for="password">密码:</label>
       <input type="password" id="password" minlength="6" required >
@@ -60,7 +60,7 @@
       </div>
     </form>
     <hr>
-    <p>© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
+    <p>© 2015 <a href="#" target="_blank">阿里健 - 大健康产业链.</a> Powered by Frankie.</p>
   </div>
 </div>
 
@@ -76,13 +76,26 @@
 				return false;
 			}
 		});
+		
 	});
+	
+	function getUrlParam(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		var r = window.location.search.substr(1).match(reg); //匹配目标参数
+		if (r != null)
+			return unescape(r[2]);
+		return null; //返回参数值
+	}
 	
 	function toSubmit(){
 		$.AMUI.progress.start();
 		
 		var username = $("#username").val();
 		var password = $("#password").val();
+		if(username == ""){
+			alert("请输入用户名");
+			return;
+		}
 		
 		var data = '{"username":"'+username+'","password":"'+password+'"}';
 		var path = "<%=basePath%>regUser";
@@ -97,7 +110,29 @@
 				$.AMUI.progress.done();
 				if (result.result == "ok") {
 					alert("恭喜你，已成功成为阿里健会员!");
-					window.location.replace("login.jsp");
+					$.ajax({
+						type : 'POST',
+						dataType : "json",
+						contentType : "application/json ; charset=utf-8",
+						data : '{"username":"'+username+'","password":"'+password+'"}',
+						url : "<%=basePath%>login",
+						success : function(result) {
+							$.AMUI.progress.done();
+							if (result.result == "ok") {
+								result = result.data;
+								if(history.length > 1){
+									location.href = getUrlParam("href");
+								}else{
+									//没有历史
+									window.location.href="<%=basePath%>welcome.jsp";
+								}
+							} else {
+								alert(result.data);
+							}
+						},
+						dataType : "json"
+					});
+					
 				} else {
 					alert(result.data);
 				}

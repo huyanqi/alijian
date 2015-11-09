@@ -13,7 +13,7 @@
   <meta name="description" content=""></meta>
   <meta name="keywords" content=""></meta>
   <meta name="viewport"  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
-  <title>阿里健 - 淘资源</title>
+  <title>阿里健 - 大健康产业链</title>
 
   <!-- Set render engine for 360 browser -->
   <meta name="renderer" content="webkit"></meta>
@@ -238,7 +238,6 @@ $("#iframe1").css("width",($(document).width() - 980)/2);
 $("#iframe2").css("width",($(document).width() - 980)/2);
 
 	$(document).ready(function(){
-		
 		getGoods("");
 		getSupplier("");
 		getLecturer("");
@@ -315,7 +314,7 @@ $("#iframe2").css("width",($(document).width() - 980)/2);
 		$.ajax({
 			type : 'POST',
 			url : "<%=basePath%>getGoods",
-			data : {"pageNum":1,"pageSize":8,"types":types,"keyword":"","type":0},
+			data : {"pageNum":1,"pageSize":8,"types":types,"keyword":"","type":0,"supplierid":0},
 			success : function(result) {
 				$.AMUI.progress.done();
 				$("#goods_ly").empty();

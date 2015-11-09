@@ -124,8 +124,8 @@ ath.intl = {
 	},
 
 	zh_cn: {
-		ios: '阿里健-淘资源主屏幕,请点击%icon, 然后<strong>添加到主屏幕</strong>',
-		android: '点击顶部的右方菜单图标 %icon - "<strong>添加到主屏幕</strong>"就可以把 阿里健-淘资源 添加到手机桌面。</small>'
+		ios: '阿里健-大健康产业链主屏幕,请点击%icon, 然后<strong>添加到主屏幕</strong>',
+		android: '点击顶部的右方菜单图标 %icon - "<strong>添加到主屏幕</strong>"就可以把 阿里健-大健康产业链 添加到手机桌面。</small>'
 	},
 
 	zh_tw: {

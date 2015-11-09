@@ -1,8 +1,25 @@
 package com.alijian.front.service.impl;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import net.sf.json.JSONObject;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,13 +28,18 @@ import com.alijian.front.dao.AdminDao;
 import com.alijian.front.dao.BaseDao;
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.BuyModel;
+import com.alijian.front.model.ChatList;
+import com.alijian.front.model.ChatModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
+import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
+import com.alijian.util.BaseData;
+import com.alijian.util.SHA1;
 
 @Service("baseService")
 @Transactional(rollbackFor = Exception.class)
@@ -72,12 +94,17 @@ public class BaseServiceImpl implements BaseService {
 				typeList.add(typeModel);
 		}
 		model.setTypeList(typeList);
+		if(model.getPrice_id() != 0){
+			//有价格区间
+			PriceModel price = baseDao.getPriceModelById(model.getPrice_id());
+			model.priceModel = price;
+		}
 		return model;
 	}
 
 	@Override
-	public List<GoodsModel> getGoods(int pageNum,int pageSize,String types,String keyword,int type) {
-		return adminDao.getGoods(pageNum,pageSize,types,keyword,type);
+	public List<GoodsModel> getGoods(int pageNum,int pageSize,String types,String keyword,int type,int supplier_id) {
+		return adminDao.getGoods(pageNum,pageSize,types,keyword,type,supplier_id);
 	}
 
 	@Override
@@ -165,6 +192,143 @@ public class BaseServiceImpl implements BaseService {
 	@Override
 	public List<BuyModel> getBuyModels(int pageNum) {
 		return baseDao.getBuyModels(pageNum);
+	}
+
+	@Override
+	public UserModel getUserByUsernameAndToken(HttpServletRequest request) {
+		//通过username和accesstoen，获取用户信息
+		Cookie[] cookies = request.getCookies();
+		String username = null;
+		String accesstoken = null;
+		for (Cookie c : cookies) {
+			if(c.getName().equals("username")){
+				username = c.getValue();
+				continue;
+			}
+			if(c.getName().equals("accesstoken")){
+				accesstoken = c.getValue();
+				continue;
+			}
+		}
+		if(username == null || accesstoken == null){
+			return null;
+		}
+		
+		return baseDao.getUserByUsernameAndToken(username,accesstoken);
+		
+	}
+
+	@Override
+	public String getWXSignature(String host, Long timestamp, String noncestr) {
+		//先检查之前存的ticket是否已经过期，过期才重新获取
+		if(BaseData.WX_Expires_DATE != null){
+			Date timeOut = BaseData.WX_Expires_DATE;
+			if(timeOut.after(new Date())){
+				//没有过期
+				String string1 = "jsapi_ticket="+BaseData.WX_Ticket+"&noncestr="+noncestr+"&timestamp="+timestamp+"&url="+host;
+				string1 = new SHA1().getDigestOfString(string1.getBytes());
+				return string1.toLowerCase();
+			}
+		}
+		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxd12014470a8088bc&secret=a02c97d0854bde422b4b4757dd0207de";
+		HttpGet request = new HttpGet(url);
+		try {
+			HttpResponse response = HttpClients.createDefault().execute(request);
+			if (response.getStatusLine().getStatusCode() == 200) {
+				JSONObject result = JSONObject.fromObject(EntityUtils.toString(response.getEntity()));
+				String access_token = result.getString("access_token");
+				url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+access_token+"&type=jsapi";
+				request = new HttpGet(url);
+				response = HttpClients.createDefault().execute(request);
+				if (response.getStatusLine().getStatusCode() == 200) {
+					result = JSONObject.fromObject(EntityUtils.toString(response.getEntity()));
+					String ticket = result.getString("ticket");
+					//全局缓存ticket
+					BaseData.WX_Ticket = ticket;
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(new Date());
+					calendar.add(Calendar.SECOND, result.getInt("expires_in"));
+					BaseData.WX_Expires_DATE = calendar.getTime();
+					
+					String string1 = "jsapi_ticket="+ticket+"&noncestr="+noncestr+"&timestamp="+timestamp+"&url="+host;
+					string1 = new SHA1().getDigestOfString(string1.getBytes());
+					return string1.toLowerCase();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean saveOrUpdate(ChatModel model) {
+		try{
+			baseDao.saveOrUpdateModel(model);
+			return true;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public HttpResponse getIMToken(UserModel user) {
+		String url = "https://api.cn.ronghub.com/user/getToken.json";
+		String noncestr = (Math.random()*100)+"";//生成随机数
+		Long timestamp = new Date().getTime()/1000;
+		String temp = "fmOLJHHFve8yx"+noncestr+timestamp;
+		String signature = new SHA1().getDigestOfString(temp.getBytes()); 
+		
+		HttpPost request = new HttpPost(url);
+		request.addHeader("App-Key", "n19jmcy59ovm9");
+		request.addHeader("Nonce",noncestr);
+		request.addHeader("Timestamp",timestamp+"");
+		request.addHeader("Signature",signature);
+		
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+		nameValuePairs.add(new BasicNameValuePair("userId", user.getId()+""));
+		nameValuePairs.add(new BasicNameValuePair("name", user.getName() != null ? user.getName() : user.getUsername()));
+		try {
+			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
+			HttpResponse response = HttpClients.createDefault().execute(request);
+			return response;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean saveOrUpdateModel(Object object) {
+		String result = baseDao.saveOrUpdateModel(object);
+		if("".equals(result)) return true;
+		return false;
+	}
+
+	@Override
+	public ChatList getChatListByIDs(int targetid, int id) {
+		return baseDao.getChatListByIDs(targetid,id);
+	}
+
+	@Override
+	public List<ChatList> getUserList(int userid) {
+		List<ChatList> list = baseDao.getUserList(userid);
+		for(ChatList chat : list){
+			UserModel model = baseDao.getUserById(chat.getTargetId());
+			chat.setTargetModel(model);
+		}
+		return list;
+	}
+
+	@Override
+	public List<ChatModel> getchathistory(int id) {
+		return baseDao.getchathistory(id);
 	}
 	
 }

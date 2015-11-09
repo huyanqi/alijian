@@ -6,9 +6,12 @@ import org.springframework.stereotype.Component;
 
 import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.BuyModel;
+import com.alijian.front.model.ChatList;
+import com.alijian.front.model.ChatModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
+import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 
@@ -52,5 +55,15 @@ public interface BaseDao {
 	String saveOrUpdateModel(Object object);
 
 	List<BuyModel> getBuyModels(int pageNum);
+
+	PriceModel getPriceModelById(int price_id);
+
+	UserModel getUserByUsernameAndToken(String username, String accesstoken);
+
+	ChatList getChatListByIDs(Object userid, int id);
+
+	List<ChatList> getUserList(int userid);
+
+	List<ChatModel> getchathistory(int id);
 
 }

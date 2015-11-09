@@ -13,7 +13,7 @@
   <meta name="description" content=""></meta>
   <meta name="keywords" content=""></meta>
   <meta name="viewport"  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
-  <title>阿里健 - 淘资源</title>
+  <title>阿里健 - 大健康产业链</title>
 
   <!-- Set render engine for 360 browser -->
   <meta name="renderer" content="webkit"></meta>
@@ -102,7 +102,7 @@
 	<header class="am-topbar am-topbar-fixed-top">
 	  <div class="am-container">
 	    <h1 class="am-topbar-brand">
-	      <a href="#">阿里健 - 淘资源</a>
+	      <a href="#">阿里健 - 大健康产业链</a>
 	    </h1>
 	
 	    <div class="am-collapse am-topbar-collapse" id="collapse-head">
@@ -138,7 +138,7 @@
 	<!-- 内容 -->
 	
 	<footer class="footer">
-	  <p>© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
+	  <p>© 2015 <a href="#" target="_blank">阿里健 - 大健康产业链.</a> Powered by Frankie.</p>
 	</footer>
 	
 <script src="font/amazeui/js/jquery.min.js"></script>
@@ -157,7 +157,7 @@ var uid;
 			var cookieRole = getCookie("role");
 			if(cookieRole == "1"){
 				role = "供应商";
-				$("#username").attr("href","supplier/supplier_controller.jsp");
+				$("#username").attr("href","supplier/supplier_controller_new.jsp");
 			}else if(cookieRole == "2"){
 				role = "采购商";
 				$("#username").attr("href","user_controller.jsp");

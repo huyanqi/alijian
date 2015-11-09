@@ -158,7 +158,7 @@ function getGoods(){
 	$.ajax({
 		type : 'POST',
 		url : "<%=basePath%>getGoods",
-		data : {"pageNum":pageNum,"pageSize":pageSize,"types":types,"keyword":keyword,"type":goodsType},
+		data : {"pageNum":pageNum,"pageSize":pageSize,"types":types,"keyword":keyword,"type":goodsType,"supplierid":0},
 		success : function(result) {
 			$.AMUI.progress.done();
 			if(pageNum == 1){
@@ -167,7 +167,7 @@ function getGoods(){
 			if (result.result == "ok") {
 				$.each(result.data, function(n, value) {
 					var url = "goods_m.jsp?id="+value.id;
-					$("#result_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' alt='"+value.name+"' width='88px' height='88px' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"</div><div class='am-list-item-text base_info' style=''>"+"销量:"+value.sales_volume+"</div></div></li>");
+					$("#result_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' alt='"+value.name+"' width='88px' height='88px' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"</div><div class='am-list-item-text base_info' style=''>"+"成交:"+value.sales_volume+"笔</div></div></li>");
 				});
 				$("img.lazy").lazyload({effect: "fadeIn"});
 				myScroll.refresh();
@@ -256,7 +256,7 @@ function getBusiness(){
 							});
 							if(types.length > 0)
 								types = types.substring(0, types.length-1);
-							$('#result_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-top'><div class='am-list-thumb am-u-sm-12'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' width='100%' alt='"+value.name+"' /></a></div><div class=' am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='' style='margin-left:10px;'>"+value.name+"</a></h3><div class='am-list-item-text' style='padding-left:10px;'>"+"所属分类:"+types+"</div></div></li>");
+							$('#result_ly').append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' width='88px' height='102px' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+"领域:"+types+"</div></div></li>");
 						});
 						$("img.lazy").lazyload({effect: "fadeIn"});
 						myScroll.refresh();

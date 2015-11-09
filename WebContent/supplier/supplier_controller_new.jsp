@@ -58,14 +58,13 @@
     <!-- / demo -->
     <link href='<%=basePath%>assets/stylesheets/demo.css' media='all' rel='stylesheet' type='text/css' />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>
-<body class='contrast-red '>
+<body class='contrast-red main-nav-closed'>
 <header>
     <div class='navbar'>
         <div class='navbar-inner'>
             <div class='container-fluid'>
-                <a class='brand' href='index.html'>
-                    <i class='icon-heart-empty'></i>
-                    <span class='hidden-phone'>Flatty</span>
+                <a class='brand' href='javascript:history.back();' style="font-size: 12px;">
+                    	返回
                 </a>
                 <a class='toggle-nav btn pull-left' href='#'>
                     <i class='icon-reorder'></i>
@@ -73,6 +72,9 @@
                 <ul class='nav pull-right'>
                     <li class='user-menu'>
                         <a>欢迎<span id="name"></span></a>
+                    </li>
+                    <li class='user-menu'>
+                        <a href="javascript:logout();">退出登录</a>
                     </li>
                 </ul>
             </div>
@@ -85,12 +87,30 @@
 <div class='navigation'>
 <ul class='nav nav-stacked'>
 <li class=''>
-    <a class='dropdown-collapse' href='#'>
+	<a href='javascript:toChat();'>
+        <i class='icon-smile'></i>
+        <span>登录聊天系统</span>
+    </a>
+</li>
+<li class=''>
+	<a href='javascript:updateUserInfo();'>
+        <i class='icon-user'></i>
+        <span>修改资料信息</span>
+    </a>
+</li>
+<li class=''>
+	<a href='javascript:frameLink("goods/CartList.jsp")'>
+        <i class='icon-shopping-cart'></i>
+        <span>采购列表</span>
+    </a>
+</li>
+<li class=''>
+    <a class='dropdown-collapse' href='#' onclick="openOrClose();">
         <i class='icon-edit'></i>
         <span>商品管理</span>
         <i class='icon-angle-down angle-down'></i>
     </a>
-    <ul class='nav nav-stacked in'>
+    <ul class='nav nav-stacked'>
         <li class=''>
             <a href='javascript:frameLink("goods/GoodsInsertOrUpdate.jsp")'>
                 <i class='icon-caret-right'></i>
@@ -104,7 +124,7 @@
             </a>
         </li>
         <li class=''>
-            <a href='javascript:frameLink("type/TypeManage.jsp?type=2")'>
+            <a href='javascript:frameLink("order/SoldList.jsp")'>
                 <i class='icon-caret-right'></i>
                 <span>待发货/收款列表</span>
             </a>
@@ -112,12 +132,12 @@
     </ul>
 </li>
 <li>
-    <a class='dropdown-collapse ' href='#'>
+    <a class='dropdown-collapse ' href='#' onclick="openOrClose();">
         <i class='icon-tint'></i>
         <span>商业模式</span>
         <i class='icon-angle-down angle-down'></i>
     </a>
-    <ul class='nav nav-stacked in'>
+    <ul class='nav nav-stacked'><!-- 加in 则是打开 -->
         <li class=''>
             <a href='javascript:frameLink("business/BusinessInsertOrUpdate.jsp")'>
                 <i class='icon-caret-right'></i>
@@ -248,6 +268,7 @@
 <script src='<%=basePath%>assets/javascripts/demo/inplace_editing.js' type='text/javascript'></script>
 <script src='<%=basePath%>assets/javascripts/demo/charts.js' type='text/javascript'></script>
 <script src='<%=basePath%>assets/javascripts/demo/demo.js' type='text/javascript'></script>
+<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
 <script type="text/javascript">
 
 	$(document).ready(function(){
@@ -256,30 +277,75 @@
 	});
 	
 	function getSession(){
-		$.ajax({
-			type : 'POST',
-			url : "<%=basePath%>getSession",
-			success : function(result) {
-				if (result.result == "ok") {
-					$("#name").html(result.data.name);
-				}else{
-					window.close();
-				}
-			},
-			dataType : "json"
-		});
+		
+		var cookie = $.AMUI.utils.cookie;
+		if(cookie.get("accesstoken") != null){
+			//已登录
+			$("#name").html(cookie.get("name"));
+		}else{
+			//未登录
+			window.close();
+		}
+		
 	}
 
 	function frameLink(page){
 		$("#myframe").attr("src",page);
 	}
 	
-	function getCookie(name) { 
-	    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-	    if(arr=document.cookie.match(reg))
-	        return unescape(arr[2]); 
-	    else 
-	        return null; 
+	function openOrClose(){
+		var hasClose = $("body").hasClass("main-nav-closed");
+		//是关闭的状态，则打开
+		//先删除关闭class,再插入打开class
+		if(hasClose){
+			$("body").removeClass("main-nav-closed");
+			$("body").addClass("main-nav-opened");
+		}
+	}
+	
+	function logout(){
+		$.ajax({
+			type : 'POST',
+			dataType : "json",
+			contentType : "application/json ; charset=utf-8",
+			url : "<%=basePath%>logout",
+			success : function(result) {
+				if (result.result == "ok") {
+					window.location = "<%=basePath%>welcome.jsp";
+				}
+			},
+			dataType : "json"
+		});
+	}
+	
+	function toChat(){
+		if (!IsPC()) {
+			window.open("<%=basePath%>chat/pc/index.jsp",'newindow');
+		}else{
+			var iHeight = 575;
+			var iWidth = 900;
+			var iTop = (window.screen.height-30-iHeight)/2; //获得窗口的垂直位置;  
+			var iLeft = (window.screen.width-10-iWidth)/2; //获得窗口的水平位置;  
+			window.open("<%=basePath%>chat/pc/index.jsp",'newindow','height='+iHeight+',width='+iWidth+',top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,top='+iTop+',left='+iLeft);
+		}
+	}
+	
+	function updateUserInfo(){
+		$("#myframe").attr("src","<%=basePath%>back/supplier/supplier_update.jsp?uid="+$.AMUI.utils.cookie.get("uid"));
+	}
+	
+	function IsPC() {
+		var userAgentInfo = navigator.userAgent;
+		var Agents = [ "Android", "iPhone", "SymbianOS", "Windows Phone",
+				"iPad", "iPod" ];
+		var flag = true;
+		for (var v = 0; v < Agents.length; v++) {
+			if (userAgentInfo.indexOf(Agents[v]) > 0) {
+				flag = false;
+				break;
+			}
+		}
+		return flag;
 	}
 </script>
 </body>

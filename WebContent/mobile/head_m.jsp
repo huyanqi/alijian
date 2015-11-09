@@ -39,17 +39,12 @@
 <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/amazeui.min.css"></link>
 <link rel="stylesheet" href="<%=basePath%>font/amazeui/css/app.css"></link>
 
-<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
-<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
-<script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script>
-
 </head>
 <body>
 
 	<header data-am-widget="header" class="am-header am-header-default am-header-fixed">
 		<div class="am-header-left am-header-nav">
-			<a href="index_m.jsp" class=""> <i
-				class="am-header-icon am-icon-home"></i>
+			<a href="index_m.jsp" class=""> 首页
 			</a>
 			
 			<a href="<%=basePath%>supplier_join.jsp" class="" style="font-size: 12px;" id="supplier_join">我要开店</a>
@@ -58,7 +53,7 @@
 		<h1 class="am-header-title">阿里健</h1>
 	
 		<div class="am-header-right am-header-nav">
-			<a href="#user-link" class="" id="userinfo"> <font id="login_user">登录</font><i id="icon_user" class="am-header-icon am-icon-user"></i></a> 
+			<a href="#user-link" class="" id="userinfo"> <font id="login_user">登录</font></a> 
 			<a href="search_m.jsp" target="_blank" > <i class="am-header-icon am-icon-search"></i>
 			</a>
 		</div>
@@ -66,35 +61,24 @@
 	
 	<script src="<%=basePath%>font/amazeui/js/jquery.min.js"></script>
 	<script src="<%=basePath%>font/amazeui/js/amazeui.min.js"></script>
+	<script src="<%=basePath%>font/amazeui/js/amazeui.lazyload.js"></script> 
 	<script>
-	$(document).ready(function(){
-		getSession();
-	});
 	
-	function getSession() { 
-		$.AMUI.progress.start();
-		$.ajax({
-			type : 'POST',
-			dataType : "json",
-			contentType : "application/json ; charset=utf-8",
-			url : "<%=basePath%>getSession",
-			success : function(result) {
-				$.AMUI.progress.done();
-				if (result.result == "ok") {
-					//已登录
-					$("#userinfo").attr("href","<%=basePath%>supplier/supplier_controller_new.jsp");
-					$("#login_user").hide();
-					$("#icon_user").show();
-					$("#supplier_join").hide();//"我要开店"按钮
-				}else{
-					//未登录
-					$("#userinfo").attr("href","<%=basePath%>login.jsp");
-					$("#login_user").show();
-					$("#icon_user").hide();
-					$("#supplier_join").show();
-				}
-			}
-		});
+	getSession();
+	
+	function getSession() {
+		var cookie = $.AMUI.utils.cookie;
+		if(cookie.get("accesstoken") != null){
+			//已登录
+			$("#userinfo").attr("href","<%=basePath%>supplier/supplier_controller_new.jsp");
+			$("#login_user").html("已登录");
+			$("#supplier_join").hide();//"我要开店"按钮
+		}else{
+			//未登录
+			$("#userinfo").attr("href","<%=basePath%>login.jsp");
+			$("#login_user").html("未登录");
+			$("#supplier_join").show();
+		}
 	}
 	
 	function logout(){

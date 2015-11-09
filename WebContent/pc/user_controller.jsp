@@ -96,6 +96,15 @@
 	});
 	
 	function getSession(){
+		var cookie = $.AMUI.utils.cookie;
+		if(cookie.get("accesstoken") != null){
+			//已登录
+			$("#name").html(cookie.get("name"));
+		}else{
+			//未登录
+			window.close();
+		}
+		
 		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
@@ -103,9 +112,9 @@
 			success : function(result) {
 				$.AMUI.progress.done();
 				if (result.result == "ok") {
-					$("#name").html(result.data.username);
+					
 				}else{
-					window.close();
+					
 				}
 			},
 			dataType : "json"
@@ -116,13 +125,6 @@
 		$("#myframe").attr("src",page);
 	}
 	
-	function getCookie(name) { 
-	    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-	    if(arr=document.cookie.match(reg))
-	        return unescape(arr[2]); 
-	    else 
-	        return null;
-	}
 </script>
 </body>
 </html>

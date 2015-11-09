@@ -26,8 +26,9 @@
 </div>
 
 <footer class="footer">
-  <p style="text-align: center;font-size: 12px;">© 2015 <a href="#" target="_blank">阿里健 - 淘资源.</a> Powered by Frankie.</p>
+  <p style="text-align: center;font-size: 12px;">© 2015 <a href="#" target="_blank">阿里健 - 大健康产业链.</a> Powered by Frankie.</p>
   <p style="text-align: center;font-size: 12px;margin-top: 0;"><a href="<%=basePath%>about_us.jsp">关于我们</a></p>
+  <p style="text-align: center;font-size: 12px;margin-top: 0;"><a href="tel:02885728456">阿里健客服热线: 028-85728456</a></p>
 </footer>
 <script>
 	$(document).ready(function(){

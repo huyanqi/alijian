@@ -9,7 +9,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>阿里健 - 淘资源</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+<meta name="description" content=""></meta>
+<meta name="keywords" content=""></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
+<title>阿里健 - 大健康产业链</title>
 
 <style>
 .my_at {
@@ -86,36 +90,35 @@
 </style>
 
 </head>
-<body class="am-with-topbar-fixed-top">
-
+<body>
 	<jsp:include page="head_m.jsp" flush="true" />
+	
+	<img id="thum" alt="" style="max-width:100%; min-height: 301px;" />
 
-	<img id="thum" alt="" width="100%" />
+	<div style="margin: 10px 10px 10px 10px;">
 
-<div style="margin: 10px 10px 10px 10px;">
-
-	<table id="goods_info" style="width: 100%;">
-		<tr>
-			<td colspan="2" style="height: 50px;" id="goods_name_ly"><font
-				id="goods_name"></font></td>
-		</tr>
-		<tr>
-			<td colspan="2" style="height: 50px;"><font id="birth"></font></td>
-		</tr>
-		<tr>
-			<td class="table_th" style="height: 50px;">擅长领域:</td>
-			<td id="types"></td>
-		</tr>
-		<tr>
-			<td colspan="2" style="border-bottom: 0px;" id="contact_me"></td>
-		</tr>
-	</table>
-</div>
+		<table id="goods_info" style="width: 100%;">
+			<tr>
+				<td colspan="2" style="height: 50px;" id="goods_name_ly"><font
+					id="goods_name"></font></td>
+			</tr>
+			<tr>
+				<td colspan="2" style="height: 50px;"><font id="birth"></font></td>
+			</tr>
+			<tr>
+				<td class="table_th" style="height: 50px;">擅长领域:</td>
+				<td id="types"></td>
+			</tr>
+			<tr>
+				<td colspan="2" style="border-bottom: 0px;" id="contact_me"></td>
+			</tr>
+		</table>
+	</div>
 
 	<header class="am-topbar">
-		<h1 class="am-topbar-brand">
-			<a href="#">讲师介绍</a>
-		</h1>
+	<h1 class="am-topbar-brand">
+		<a href="#">讲师介绍</a>
+	</h1>
 	</header>
 	<div class="am-container" style="margin-top: 10px;" id="description">
 
@@ -124,7 +127,8 @@
 	<jsp:include page="footer_m.jsp" flush="true" />
 
 	<script>
-var id;
+	
+	var id;
 	$(document).ready(function(){
 		id = getUrlParam("id");
 		if(id == null){
@@ -144,17 +148,14 @@ var id;
 			success : function(result) {
 				if (result.result == "ok") {
 					result = result.data;
-					$("#thum").attr("src",result.thum);
+					$("#thum").attr("src","<%=basePath%>"+result.thum);
 					$("#goods_name").html(result.name);
 					$("#birth").html("出生年月:"+result.birth);
 					$("#description").html(result.description);
 					$("#description img").css("height","").css("width","100%");
 					$.each(result.typeModels, function(n, value) {
-						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+ value.id + "'>"+ value.name + "</a>");
-								});
-								$("#contact_me")
-										.append(
-												"<a target='_blank' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
+						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+ value.id + "'>"+ value.name + "</a>");});
+								//$("#contact_me").append("<a target='_blank' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");
 							} else {
 								alert("错误的讲师ID号");
 								window.close();
