@@ -1,5 +1,6 @@
 package com.alijian.util;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,13 +8,19 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.UserModel;
+import com.alipay.config.AlipayConfig;
+import com.alipay.sign.MD5;
+import com.alipay.util.AlipayCore;
 
 public class Tools {
 
@@ -115,9 +122,20 @@ public class Tools {
 	    for (int i = 0; i < 20; i++) {   
 	        int number = random.nextInt(base.length());   
 	        sb.append(base.charAt(number));   
+	    }
+	    return sb.toString() + new Date().getTime();   
+	} 
+	
+	public static String getRandomString(int length) { //length表示生成字符串的长度
+	    String base = "abcdefghijklmnopqrstuvwxyz0123456789";   
+	    Random random = new Random();   
+	    StringBuffer sb = new StringBuffer();   
+	    for (int i = 0; i < length; i++) {   
+	        int number = random.nextInt(base.length());   
+	        sb.append(base.charAt(number));   
 	    }   
 	    return sb.toString();   
-	 } 
+	 }  
 	
 	/**
      * 用SHA1算法生成安全签名
@@ -199,4 +217,45 @@ public class Tools {
 			return new BigDecimal(totalprice);
 	}
 	
+	/**
+     * 从request对象中获取客户端真实的ip地址
+     * @param request request对象
+     * @return 客户端的IP地址
+     */
+    public static String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknow".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
+
+    public static String getWXSign(Map<String, String> Params, String key) {
+    	//过滤空值、sign与sign_type参数
+    	Map<String, String> sParaNew = AlipayCore.paraFilter(Params);
+        //获取待签名字符串
+        String preSignStr = AlipayCore.createLinkString(sParaNew);
+        //生成簽名后的字符串
+        preSignStr = preSignStr + "&key="+key;
+    	String mysign = DigestUtils.md5Hex(getContentBytes(preSignStr, "utf-8"));
+    	return mysign;
+    }
+    
+    private static byte[] getContentBytes(String content, String charset) {
+        if (charset == null || "".equals(charset)) {
+            return content.getBytes();
+        }
+        try {
+            return content.getBytes(charset);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("MD5签名过程中出现错误,指定的编码集不对,您目前指定的编码集是:" + charset);
+        }
+    }
+    
 }

@@ -71,7 +71,7 @@ public class OrderController extends BaseData {
 		if(pay_method == 0){
 			html = orderService.createALiPayOrder(request,payOrder.getOrders_no(),"阿里健-批发货物",payOrder.getPrice(),"payOrder id:"+payOrder.getId(),show_url,is_mobile);//返回付款url
 		}else{
-			html = "";//创建微信付款url
+			html = orderService.createWXOrder(request,payOrder.getOrders_no(),"阿里健-批发货物",payOrder.getPrice(),"payOrder id:"+payOrder.getId(),show_url,is_mobile);//返回付款url;//创建微信付款url
 		}
 		jObj.put(RESULT, OK);
 		jObj.put(DATA, html);

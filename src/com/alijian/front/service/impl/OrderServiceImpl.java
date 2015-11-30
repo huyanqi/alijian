@@ -435,6 +435,22 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 	public OrdersSetModel getOrdersSetByOrderNo(String orderno) {
 		return orderDao.getOrdersSetByOrderNo(orderno);
 	}
+
+	@Override
+	public String createWXOrder(HttpServletRequest request, String orders_no, String string, double price,String string2, String show_url, int is_mobile) {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("appid", "wxd12014470a8088bc");
+		params.put("body", string);
+		params.put("mch_id", "1233504302");
+		params.put("nonce_str", Tools.getRandomString(32));
+		params.put("notify_url", is_mobile == 1 ? "JSAPI":"");
+		params.put("out_trade_no", orders_no);
+		params.put("spbill_create_ip", Tools.getIpAddr(request));//ÓÃ‘ôµÄIPµØÖ·
+		params.put("total_fee", price * 100 +"");
+		params.put("sign", Tools.getWXSign(params,"-------------key-------------"));
+		
+		return null;
+	}
 	
 
 }
