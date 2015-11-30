@@ -85,13 +85,25 @@ a{
 <body>
 
 	<jsp:include page="head_m.jsp" flush="true" />
-	<img src="<%=basePath%>font/amazeui/i/favicon.png" width="1" height="1"/>
+	<img src="<%=basePath%>font/amazeui/i/favicon.png" width="1" height="1" style="display: none;"/>
+	<div data-am-widget="slider" class="am-slider am-slider-a1" data-am-slider='{"controlNav":"","directionNav":false}' id="top_ly">
+	  <ul class="am-slides">
+		  <li>
+	        	<img src="<%=basePath%>font/ad/top2.jpg"/>
+	      </li>
+	      <li>
+	        	<img src="<%=basePath%>font/ad/top1.jpg"/>
+	      </li>
+	      <li>
+	        	<img src="<%=basePath%>font/ad/top0.jpg"/>
+	      </li>
+	  </ul>
+	</div>
 	<div id="container" style="display: inline-block;height: 39px;margin-bottom: 0px;">
-	
 	<div class="am-form-group am-form-select" style="float: left;border: 0px;border: 1px solid #E6E6E6;height: 39px;line-height: 39px;">
 		<select name="select-native-3" id="type_selector" style="border: 0px;background: transparent;">
 			<option value="3">产品</option>
-			<option value="1">厂家</option>
+			<option value="1">商家</option>
 			<option value="2">讲师</option>
 			<option value="0">模式</option>
 		</select>
@@ -139,7 +151,7 @@ a{
 			<!--带更多链接-->
 			<a href="search_result.jsp?type=3&keyword="><h2 style="color: #0e90d2">1F 产品</h2></a> 
 			<span class="am-list-news-more am-fr">
-			<a href="search_result.jsp?type=1&keyword=">厂家</a>
+			<a href="search_result.jsp?type=1&keyword=">商家</a>
 			<a href="search_result.jsp?type=2&keyword=">讲师</a>
 			<a href="search_result.jsp?type=0&keyword=">模式</a>
 			<a href="buy_m.jsp">供求</a>
@@ -164,7 +176,7 @@ a{
 		<div class="am-list-news-hd am-cf">
 			<!--带更多链接-->
 			<a href="search_result.jsp?type=1&keyword=" target="_blank" class="">
-				<h2>2F 厂家</h2> <span class="am-list-news-more am-fr">更多&raquo;</span>
+				<h2>2F 商家</h2> <span class="am-list-news-more am-fr">更多&raquo;</span>
 			</a>
 		</div>
 
@@ -175,7 +187,7 @@ a{
 		</div>
 		
 		<div style="text-align: center;">
-			<a href="search_result.jsp?type=1&keyword=">查看更多厂家</a>
+			<a href="search_result.jsp?type=1&keyword=">查看更多商家</a>
 		</div>
 
 	</div>
@@ -232,7 +244,7 @@ a{
 		<div class="OnlineService_Box">
 			<a target="_blank" href="buy_m.jsp"><button class="am-btn am-btn-primary am-btn-xs">找求购</button></a>
 			<a target="_blank" href="search_result.jsp?type=3&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找产品</button></a>
-			<a target="_blank" href="search_result.jsp?type=1&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找厂家</button></a>
+			<a target="_blank" href="search_result.jsp?type=1&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找商家</button></a>
 			<a target="_blank" href="search_result.jsp?type=2&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找讲师</button></a>
 			<a target="_blank" href="search_result.jsp?type=0&keyword="><button class="am-btn am-btn-secondary am-btn-xs">找模式</button></a>
 			<div data-am-widget="gotop">
@@ -259,6 +271,11 @@ a{
 			getLecturer("");
 			getBusiness("");
 			initSearch();
+			$('#top_ly').flexslider({
+				  // options
+				slideshowSpeed:1000,
+				touch:false
+			});
 		});
 		
 		var type = 3;
@@ -294,8 +311,8 @@ a{
 					$("#goods_ly").empty();
 					if (result.result == "ok") {
 						$.each(result.data, function(n, value) {
-							var url = "goods_m.jsp?id="+value.id;
-							$("#goods_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' width='88px' height='88px' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"<a style='float:right;'>已成交"+value.sales_volume+"笔</a></div></div></li>");
+							var url = "<%=basePath%>goods/"+value.id;
+							$("#goods_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img class='lazy' data-original='"+value.thum+"' width='88px' height='88px' alt='"+value.name+"' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.show_price+"元/"+value.units+"<a style='float:right;'>已成交"+value.sales_volume+"笔</a></div></div></li>");
 						});
 						$("img.lazy").lazyload({effect: "fadeIn"});
 					}

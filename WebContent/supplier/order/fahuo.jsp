@@ -34,12 +34,13 @@
 	<h3 style="text-align: center;">阿里健发货单确认</h3>
 	<table style="width: 100%;margin-top: 10px;" id="goods_info">
 		<tr><td><img alt="" src="" width="120px" height="120px" id="thum"/></td><td style="height: 80px;" id="goods_name_ly"><font id="goods_name"></font></td></tr>
+		<tr id="type_ly" style="display: none;"><td class="table_th" style="height: 55px;">类型:</td><td><font id="type"></font></td></tr>
 		<tr><td class="table_th" style="height: 55px;">数量:</td><td><font id="amout"></font></td></tr>
 		<tr><td class="table_th" style="height: 55px;">邮寄地址:</td><td><font id="address"></font></td></tr>
 		<tr><td class="table_th" style="height: 55px;">收货人:</td><td><font id="user_name"></font></td></tr>
 		<tr><td class="table_th" style="height: 55px;">收货人手机号:</td><td><font id="user_mobile"></font></td></tr>
 		<tr><td class="table_th" style="height: 55px;">备注:</td><td><font id="remark"></font></td></tr>
-		<tr><td class="table_th" style="height: 55px;">发货单号:</td><td><input type="text" id="cnumber"></font></td></tr>
+		<tr><td class="table_th" style="height: 55px;">物流公司名称及物流单号:</td><td><input type="text" id="cnumber"></font></td></tr>
 		<tr><td colspan="2" align="right" style="height: 55px;border-bottom: 0px;"><button type="button" id="submitbtn" class="am-btn am-radius am-btn-primary am-disabled" onclick="formsubmit();">确认发货</button></td></tr>
 	</table>
 </div>
@@ -103,6 +104,10 @@
 					$("#user_name").html(result.name);
 					$("#user_mobile").html(result.mobile);
 					$("#remark").html(result.remark);
+					if(result.goods_type != ""){
+						$("#type").html(result.goods_type);
+						$("#type_ly").show();
+					}
 				}else{
 					alert("错误的订单号");
 					window.close();

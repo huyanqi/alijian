@@ -63,6 +63,20 @@
       <input accept="image/jpeg" type="file" name="upload" id="shenfenzhengfanmian" style="visibility: hidden;">
       <a style="display: inline-block;" href="javascript:$('#shenfenzhengfanmian').trigger('click');"><img id="sfzfm" src="<%=basePath%>font/imgs/sfz_fm.jpg" width="400px" height="300px" /></a>
       <br>
+      <label for="email">办公室照片(选填):</label>
+      <input accept="image/jpeg" type="file" name="upload" id="bangongshizhaopian" style="visibility: hidden;">
+      <a style="display: inline-block;" href="javascript:$('#bangongshizhaopian').trigger('click');">
+      	<img id="bgszp" src="" width="400px" height="300px" style="display: none;"/>
+      </a>
+      <button type="button" class="am-btn am-btn-primary" onclick="$('#bangongshizhaopian').trigger('click');" id="bgszpbtn">点击上传办公室照片</button>
+      <br>
+      <label for="email">仓库照片(选填):</label>
+      <input accept="image/jpeg" type="file" name="upload" id="cangkuzhaopian" style="visibility: hidden;">
+      <a style="display: inline-block;" href="javascript:$('#cangkuzhaopian').trigger('click');">
+      	<img id="ckzp" src="" width="400px" height="300px" style="display: none;"/>
+      </a>
+      <button type="button" class="am-btn am-btn-primary" onclick="$('#cangkuzhaopian').trigger('click');" id="ckzpbtn">点击上传仓库照片</button>
+      <br>
       <label for="email">所属领域(按住ctrl可多选):</label>
       <div class="controls">
           <select id="inputSelectMulti" multiple="multiple">
@@ -165,6 +179,34 @@
 		        }
 		    }
 		});
+		$("#bangongshizhaopian").fileupload({
+		    url:"<%=basePath%>fileupload",
+		    done:function(e,result){
+		        var obj = eval('(' + result.result + ')');
+		        if(obj.result == "ok"){
+		        	$("#bgszp").attr("src",obj.data);
+		        	$("#bgszp").attr("alt",obj.data);
+		        	$("#bgszp").show();
+		        	$("#bgszpbtn").hide();
+		        }else{
+		        	alert(obj.data);
+		        }
+		    }
+		});
+		$("#cangkuzhaopian").fileupload({
+		    url:"<%=basePath%>fileupload",
+		    done:function(e,result){
+		        var obj = eval('(' + result.result + ')');
+		        if(obj.result == "ok"){
+		        	$("#ckzp").attr("src",obj.data);
+		        	$("#ckzp").attr("alt",obj.data);
+		        	$("#ckzp").show();
+		        	$("#ckzpbtn").hide();
+		        }else{
+		        	alert(obj.data);
+		        }
+		    }
+		});
 		getTypeModelByType();
 	});
 	
@@ -181,12 +223,14 @@
 		var yyzz = $("#yyzz").attr("alt");
 		var sfzzm = $("#sfzzm").attr("alt");
 		var sfzfm = $("#sfzfm").attr("alt");
+		var bgszp = $("#bgszp").attr("alt");
+		var ckzp = $("#ckzp").attr("alt");
 		var group_list = "";
 		$('#inputSelectMulti option:selected').each(function(){
 			group_list += $(this).val()+",";
 		});
 		
-		var data = JSON.stringify({username:username,password:password,name:name,address:address,mobile:mobile,type:1,types:group_list,yyzz:yyzz,sfzzm:sfzzm,sfzfm:sfzfm,contact_name:contact_name,contact_tel:contact_tel});
+		var data = JSON.stringify({username:username,password:password,name:name,address:address,mobile:mobile,type:1,types:group_list,yyzz:yyzz,sfzzm:sfzzm,sfzfm:sfzfm,contact_name:contact_name,contact_tel:contact_tel,bgszp:bgszp,ckzp:ckzp});
 		var path = "<%=basePath%>regUser";
 		var data = data;
 		$.ajax({

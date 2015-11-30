@@ -129,6 +129,25 @@
 			dataType : "json"
 		});
 	}
+	
+	function downModel(id){
+		if(!confirm("确定要进行此操作吗？")){return;}
+		var path = "<%=basePath%>downOrUpGoods";
+		var data = {"goodsid":id};
+		$.ajax({
+			type : 'POST',
+			data : data,
+			url : path,
+			success : function(result) {
+				if(result.result = "ok"){
+					refresh();
+				}else{
+					alert(result.data);
+				}
+			},
+			dataType : "json"
+		});
+	}
 
 	function getMyGoods(){
 		$.AMUI.progress.start();
@@ -147,8 +166,13 @@
 					$("#thread").show();
 					$.each(result.data, function(n, value) {
 						var update_time = moment(value.update_time.time).format("lll");
-						$("#list_content").append("<tr><td>"+value.id+"</td><td>"+value.name+"</td><td>"+value.price+"</td><td>"+value.freight+"</td><td>"+update_time+"</td><td><div class='text-right'><a class='btn btn-success btn-mini' href='javascript:editModel("+value.id+")'> <i class='icon-edit'></i></a> <a class='btn btn-danger btn-mini' href='javascript:deleteModel("+value.id+")'> <i class='icon-remove'></i></a></div></td></tr>");
-						//$("#list_content").append("<tr><td>Pattie Jenkins</td><td>meaghan@yahoo.com</td><td><span class='label label-warning'>Warning</span></td><td>meaghan@yahoo.com</td><td>meaghan@yahoo.com</td><td><div class='text-right'><a class='btn btn-success btn-mini' href='#'><i class='icon-ok'></i></a><a class='btn btn-danger btn-mini' href='#'><i class='icon-remove'></i></a></div></td></tr>");
+						var option = "";
+						if(value.status == 0){
+							option = "<a class='btn btn-danger btn-mini' href='javascript:downModel("+value.id+")'>下架</a>";
+						}else{
+							option = "<a class='btn btn-success btn-mini' href='javascript:downModel("+value.id+")'>上架</a>";
+						}
+						$("#list_content").append("<tr><td>"+value.id+"</td><td><a target='_blank' href='<%=basePath%>goods/"+value.id+"'>"+value.name+"</a></td><td>"+value.price+"</td><td>"+value.freight+"</td><td>"+update_time+"</td><td><div class='text-right'><a class='btn btn-success btn-mini' href='javascript:editModel("+value.id+")'>编辑</a> <a class='btn btn-danger btn-mini' href='javascript:deleteModel("+value.id+")'>删除</a> "+option+"</div></td></tr>");
 					});
 					if(pageNum == 1){
 						$("#pageselect").empty();

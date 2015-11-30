@@ -1,6 +1,5 @@
 package com.alijian.front.dao.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -14,9 +13,12 @@ import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.ChatList;
 import com.alijian.front.model.ChatModel;
+import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
+import com.alijian.front.model.MyTypeModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
@@ -283,7 +285,61 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 
 	@Override
 	public List<ChatModel> getchathistory(int id) {
-		return (List<ChatModel>) getHibernateTemplate().find("FROM ChatModel model WHERE model.myid = ?",id);
+		return (List<ChatModel>) getHibernateTemplate().find("FROM ChatModel model WHERE model.myid = ? ORDER BY model.time ASC",id);
+	}
+
+	@Override
+	public List<ChatModel> getChatModelByIds(String targetid, int myid,int ismy, String content) {
+		return (List<ChatModel>) getHibernateTemplate().find("FROM ChatModel model WHERE model.targetid = ? AND model.myid = ? AND model.ismy = ? AND model.content = ?",targetid,myid,ismy,content);
+	}
+
+	@Override
+	public PageModel getMyComments(int uid, int pageNum) {
+		final PageModel model = new PageModel();
+		final int starts = (pageNum-1)*PAGE_SIZE;
+		String hql = "SELECT COUNT(*) FROM CommentsModel model WHERE model.touser = "+uid;
+		long total = ((Long)getHibernateTemplate().iterate(hql).next()).intValue();
+		model.setPageCount(Tools.getPageCount(total, PAGE_SIZE));
+		final String queryString = "FROM CommentsModel model WHERE model.touser = "+uid+" ORDER BY model.update_time DESC";
+		return getHibernateTemplate().execute(new HibernateCallback<PageModel>() {
+			@Override
+			public PageModel doInHibernate(Session session) throws HibernateException {
+				model.setModels(session.createQuery(queryString).setFirstResult(starts).setMaxResults(PAGE_SIZE).list());
+				return model;
+			}
+		});
+	}
+
+	@Override
+	public List<MyTypeModel> getMyTypeByUid(int uid) {
+		return (List<MyTypeModel>) getHibernateTemplate().find("FROM MyTypeModel model WHERE model.userid = ? ORDER BY update_time DESC", uid);
+	}
+
+	@Override
+	public MyTypeModel getMyTypeById(int id) {
+		List<MyTypeModel> list = (List<MyTypeModel>) getHibernateTemplate().find("FROM MyTypeModel model WHERE model.id = ?", id);
+		if(list.size() > 0) return list.get(0);
+		return null;
+	}
+
+	@Override
+	public String removeMyTypeById(MyTypeModel model) {
+		getHibernateTemplate().delete(model);
+		return "";
+	}
+
+	@Override
+	public List<GoodsModel> getGoodsByMyType(final int mytype,int pageNum,int pageSize) {
+		final int size = Tools.getPageSize(pageSize);
+		final int starts = (pageNum-1)*pageSize;
+		return (List<GoodsModel>) getHibernateTemplate().execute(new HibernateCallback<List<GoodsModel>>() {
+			@Override
+			public List<GoodsModel> doInHibernate(Session session) throws HibernateException {
+				String sql = "SELECT * FROM goods WHERE FIND_IN_SET("+mytype+",mytypes)";
+				List<GoodsModel> list = session.createSQLQuery(sql).addEntity(GoodsModel.class).setFirstResult(starts).setMaxResults(size).list();;
+				return list;
+			}
+		});
 	}
 
 }

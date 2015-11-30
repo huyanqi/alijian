@@ -166,8 +166,8 @@ function getGoods(){
 			}
 			if (result.result == "ok") {
 				$.each(result.data, function(n, value) {
-					var url = "goods_m.jsp?id="+value.id;
-					$("#result_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' alt='"+value.name+"' width='88px' height='88px' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.price+"元/"+value.units+"</div><div class='am-list-item-text base_info' style=''>"+"成交:"+value.sales_volume+"笔</div></div></li>");
+					var url = "<%=basePath%>goods/"+value.id;
+					$("#result_ly").append("<li class='am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left'><div class='am-u-sm-4 am-list-thumb'><a href='"+url+"' target='_blank' class=''> <img src='"+value.thum+"' alt='"+value.name+"' width='88px' height='88px' /></a></div><div class=' am-u-sm-8 am-list-main'><h3 class='am-list-item-hd'><a href='"+url+"' target='_blank' class='title_name' >"+value.name+"</a></h3><div class='am-list-item-text base_info' style='color:red;'>"+value.show_price+"元/"+value.units+"</div><div class='am-list-item-text base_info' style=''>"+"成交:"+value.sales_volume+"笔</div></div></li>");
 				});
 				$("img.lazy").lazyload({effect: "fadeIn"});
 				myScroll.refresh();

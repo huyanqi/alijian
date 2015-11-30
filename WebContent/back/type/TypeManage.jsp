@@ -67,7 +67,7 @@
 <script src="<%=basePath%>assets/amazeui/assets/js/amazeui.min.js"></script> 
 
 <script type="text/javascript">
-	var typeName = [ "模式", "厂家", "讲师", "产品" ];
+	var typeName = [ "模式", "商家", "讲师", "产品" ];
 	var type = getUrlParam("type");
 	$(document).ready(function() {
 

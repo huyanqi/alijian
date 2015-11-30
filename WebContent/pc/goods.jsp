@@ -193,11 +193,8 @@
 <script>
 
 var id = getUrlParam("id");
+alert("this is goods.jsp");
 	$(document).ready(function(){
-		if(!IsPC()){
-			window.location.href='<%=basePath%>mobile/goods_m.jsp?id='+id;
-			return;
-		}
 		if(id == null){
 			window.close();
 		}else{
@@ -225,7 +222,7 @@ var id = getUrlParam("id");
 					$("#freight").html(result.freight);
 					$("#description").html(result.description);
 					$.each(result.typeList, function(n, value) {
-						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'>"+value.name+"</a>");
+						$("#types").append("<a target='_blank' href='<%=basePath%>goods/"+value.id+"'>"+value.name+"</a>");
 					});
 					$("#supplier").html(result.user.name);
 					$("#supplier").attr("href","<%=basePath%>pc/supplier.jsp?id="+result.user.id+"");
@@ -264,27 +261,12 @@ var id = getUrlParam("id");
 		});
 	}
 	
-	function IsPC() {
-	    var userAgentInfo = navigator.userAgent;
-	    var Agents = ["Android", "iPhone",
-	                "SymbianOS", "Windows Phone",
-	                "iPad", "iPod"];
-	    var flag = true;
-	    for (var v = 0; v < Agents.length; v++) {
-	        if (userAgentInfo.indexOf(Agents[v]) > 0) {
-	            flag = false;
-	            break;
-	        }
-	    }
-	    return flag;
-	}
-	
 	function toChat(){
 		var iHeight = 575;
 		var iWidth = 900;
 		var iTop = (window.screen.height-30-iHeight)/2; //获得窗口的垂直位置;  
 		var iLeft = (window.screen.width-10-iWidth)/2; //获得窗口的水平位置;  
-		window.open("<%=basePath%>chat/pc/index.jsp?chat="+goods.user.id,'newindow','height='+iHeight+',width='+iWidth+',top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,top='+iTop+',left='+iLeft);
+		window.open("<%=basePath%>chat/chat.jsp?chat="+goods.user.id,'newindow','height='+iHeight+',width='+iWidth+',top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,top='+iTop+',left='+iLeft);
 	}
 	
 	function getUrlParam(name) {

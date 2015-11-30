@@ -11,8 +11,9 @@ import org.springframework.stereotype.Repository;
 import com.alijian.front.dao.OrderDao;
 import com.alijian.front.model.CommentModel;
 import com.alijian.front.model.OrdersModel;
+import com.alijian.front.model.OrdersSetModel;
 import com.alijian.front.model.PageModel;
-import com.alijian.front.model.UserModel;
+import com.alijian.front.model.PayOrder;
 import com.alijian.util.Tools;
 
 @Repository("orderDao")
@@ -30,8 +31,8 @@ public class OrderDaoImpl extends HibernateDaoSupport implements OrderDao {
 	}
 
 	@Override
-	public OrdersModel getOrderByOutTradeNo(String out_trade_no) {
-		List<OrdersModel> list = (List<OrdersModel>) getHibernateTemplate().find("FROM OrdersModel model WHERE model.orders_no = ?", out_trade_no);
+	public OrdersSetModel getOrderSetByOutTradeNo(String out_trade_no) {
+		List<OrdersSetModel> list = (List<OrdersSetModel>) getHibernateTemplate().find("FROM OrdersSetModel model WHERE model.orders_no = ?", out_trade_no);
 		if(list.size() > 0)
 			return list.get(0);
 		return null;
@@ -44,7 +45,8 @@ public class OrderDaoImpl extends HibernateDaoSupport implements OrderDao {
 	 */
 	@Override
 	public void addCredit(int type, OrdersModel order) {
-		if(type == 0){
+		return;
+		/*if(type == 0){
 			//查询出买家信息
 			List<UserModel> list = (List<UserModel>) getHibernateTemplate().find("FROM UserModel model WHERE model.id = ?", order.getBuyer());
 			if(list.size() > 0){
@@ -55,7 +57,7 @@ public class OrderDaoImpl extends HibernateDaoSupport implements OrderDao {
 			}
 		}else if(type == 1){
 			//查询出所买商品
-			/*String[] ids = order.getGoods_ids().split(",");
+			String[] ids = order.getGoods_ids().split(",");
 			for(String goodId:ids){
 				List<GoodsModel> goods = (List<GoodsModel>)getHibernateTemplate().find("FROM GoodsModel model WHERE model.id = ?", goodId);
 				if(goods.size() > 0){
@@ -63,18 +65,18 @@ public class OrderDaoImpl extends HibernateDaoSupport implements OrderDao {
 					//获得
 					//先把价格区间做出来，再做此功能
 				}
-			}*/
-		}
+			}
+		}*/
 	}
 
 	@Override
 	public PageModel getMySell(int id,int pageNum) {
 		final PageModel model = new PageModel();
 		final int starts = (pageNum-1)*20;
-		String hql = "SELECT COUNT(*) FROM OrdersModel model WHERE model.saller = "+id;
+		String hql = "SELECT COUNT(*) FROM OrdersModel model WHERE model.saller = "+id+" AND model.status = 0 OR model.status = 1";
 		long total = ((Long)getHibernateTemplate().iterate(hql).next()).intValue();
 		model.setPageCount(Tools.getPageCount(total, 20));
-		final String queryString = "FROM OrdersModel model WHERE model.saller = "+id+" ORDER BY model.update_time DESC";
+		final String queryString = "FROM OrdersModel model WHERE model.saller = "+id+" AND model.status = 0 ORDER BY model.update_time DESC";
 		return getHibernateTemplate().execute(new HibernateCallback<PageModel>() {
 			@Override
 			public PageModel doInHibernate(Session session) throws HibernateException {
@@ -96,10 +98,10 @@ public class OrderDaoImpl extends HibernateDaoSupport implements OrderDao {
 	public PageModel getMyBy(int id, int pageNum) {
 		final PageModel model = new PageModel();
 		final int starts = (pageNum-1)*20;
-		String hql = "SELECT COUNT(*) FROM OrdersModel model WHERE model.buyer = "+id;
+		String hql = "SELECT COUNT(*) FROM OrdersSetModel model WHERE model.buyer = "+id +" AND model.status = 0 ";
 		long total = ((Long)getHibernateTemplate().iterate(hql).next()).intValue();
 		model.setPageCount(Tools.getPageCount(total, 20));
-		final String queryString = "FROM OrdersModel model WHERE model.buyer = "+id+" ORDER BY model.update_time DESC";
+		final String queryString = "FROM OrdersSetModel model WHERE model.buyer = "+id+" AND model.status = 0 ORDER BY model.update_time DESC";
 		return getHibernateTemplate().execute(new HibernateCallback<PageModel>() {
 			@Override
 			public PageModel doInHibernate(Session session) throws HibernateException {
@@ -110,8 +112,8 @@ public class OrderDaoImpl extends HibernateDaoSupport implements OrderDao {
 	}
 
 	@Override
-	public OrdersModel getOrderByOrderId(int orderid) {
-		List<OrdersModel> list = (List<OrdersModel>) getHibernateTemplate().find("FROM OrdersModel model WHERE model.id = ?", orderid);
+	public OrdersSetModel getOrderSetById(int orderid) {
+		List<OrdersSetModel> list = (List<OrdersSetModel>) getHibernateTemplate().find("FROM OrdersSetModel model WHERE model.id = ?", orderid);
 		if(list.size() > 0)
 			return list.get(0);
 		return null;
@@ -138,6 +140,40 @@ public class OrderDaoImpl extends HibernateDaoSupport implements OrderDao {
 				return model;
 			}
 		});
+	}
+
+	@Override
+	public String shanchu(int ordersetid) {
+		try{
+			OrdersSetModel ordersModel = getOrderSetById(ordersetid);
+			ordersModel.setStatus(1);
+			saveOrUpdateModel(ordersModel);
+			return "";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	@Override
+	public PayOrder getPayOrderByOutTradeNo(String out_trade_no) {
+		List<PayOrder> list = (List<PayOrder>) getHibernateTemplate().find("FROM PayOrder model WHERE model.orders_no = ?", out_trade_no);
+		if(list.size() > 0)
+			return list.get(0);
+		return null;
+	}
+
+	@Override
+	public void saveOrUpdateModel(Object object) {
+		getHibernateTemplate().saveOrUpdate(object);
+	}
+
+	@Override
+	public OrdersSetModel getOrdersSetByOrderNo(String orderno) {
+		List<OrdersSetModel> list = (List<OrdersSetModel>) getHibernateTemplate().find("FROM OrdersSetModel model WHERE model.orders_no = ?", orderno);
+		if(list.size() > 0)
+			return list.get(0);
+		return null;
 	}
 
 }

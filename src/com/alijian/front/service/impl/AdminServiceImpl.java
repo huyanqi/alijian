@@ -128,6 +128,7 @@ public class AdminServiceImpl implements AdminService {
 		model.setFddb(user.getFddb());
 		model.setYgrs(user.getYgrs());
 		model.setZycp(user.getZycp());
+		model.setGold(user.getGold());
 		
 		return baseDao.saveOrUpdateUser(model);
 	}

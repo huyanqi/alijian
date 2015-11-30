@@ -176,7 +176,7 @@ public class AdminDaoImpl extends HibernateDaoSupport implements AdminDao {
 				boolean hasWhere = false;
 				for(String type:typesArray){
 					if("".equals(type)) break;
-					findSql += " find_in_set("+type+", types) AND";
+					findSql += " find_in_set("+type+", types) AND ";
 				}
 				if(!"".equals(findSql)){
 					findSql = findSql.substring(0, findSql.length()-3);
@@ -187,22 +187,23 @@ public class AdminDaoImpl extends HibernateDaoSupport implements AdminDao {
 					//默认搜索，需要竞价
 					//规则：先查询出拥有竞价条件的商户个数
 					String supplierSql = supplier_id != 0 ? (" AND g.user = "+supplier_id) : "";
-					sql = "SELECT * FROM (SELECT g.* FROM goods g LEFT JOIN user ON g.user = user.id WHERE user.rank != 0 AND g.name LIKE '%"+keyword+"%' "+supplierSql+" ORDER BY user.rank DESC, g.update_time DESC) AS t1 GROUP BY user";
+					sql = "SELECT * FROM (SELECT g.* FROM goods g LEFT JOIN user ON g.user = user.id WHERE user.rank != 0 AND g.name LIKE '%"+keyword+"%' "+supplierSql+" AND g.status = 0 ORDER BY user.rank DESC, g.update_time DESC) AS t1 GROUP BY user";
 					
 					List<GoodsModel> list =  session.createSQLQuery(sql).addEntity(GoodsModel.class).setFirstResult(starts).setMaxResults(size).list();
 					Collections.reverse(list);
 					if(list.size() < pageSize){
 						//竞价排名商品不够pageSize,则用普通查询填充剩下个数
 						int newpageSize = pageSize-list.size();
-						sql = "SELECT * FROM goods g WHERE g.name LIKE '%"+keyword+"%' "+supplierSql+" ORDER BY g.update_time DESC";
+						sql = "SELECT * FROM goods g WHERE g.name LIKE '%"+keyword+"%' "+supplierSql+" AND g.status = 0 ORDER BY g.update_time DESC";
 						list.addAll(session.createSQLQuery(sql).addEntity(GoodsModel.class).setFirstResult(starts).setMaxResults(newpageSize).list());
 					}
 					return list;
 				}else{
 					String supplierSql = supplier_id != 0 ? (" AND user = "+supplier_id) : "";
 					String orderby = Tools.getOrderBySQL(type);
-					sql = "SELECT * FROM goods "+(hasWhere ? "WHERE":"")+ findSql+" "+ (hasWhere ? "AND ":"WHERE ")+"name LIKE '%"+keyword+"%'"+" " +supplierSql+" "+orderby;
-					return session.createSQLQuery(sql).addEntity(GoodsModel.class).setFirstResult(starts).setMaxResults(size).list();
+					sql = "SELECT * FROM goods g "+(hasWhere ? "WHERE":"")+ findSql+" "+ (hasWhere ? "AND ":"WHERE ")+"name LIKE '%"+keyword+"%'"+" AND g.status = 0 " +supplierSql+" "+orderby;
+					List<GoodsModel> list = session.createSQLQuery(sql).addEntity(GoodsModel.class).setFirstResult(starts).setMaxResults(size).list();;
+					return list;
 				}
 			}
 		});

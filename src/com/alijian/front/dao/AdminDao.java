@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.PageModel;

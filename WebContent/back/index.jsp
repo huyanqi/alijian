@@ -71,7 +71,7 @@
         <li class=''>
             <a href='javascript:frameLink("type/TypeManage.jsp?type=1")'>
                 <i class='icon-caret-right'></i>
-                <span>厂家分类</span>
+                <span>商家分类</span>
             </a>
         </li>
         <li class=''>

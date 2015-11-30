@@ -15,6 +15,8 @@ import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
+import com.alijian.front.model.MyTypeModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.UserModel;
 
 @Component
@@ -67,5 +69,21 @@ public interface BaseService {
 	List<ChatList> getUserList(int userid);
 
 	List<ChatModel> getchathistory(int id);
+
+	PageModel getMyComments(int uid,int pageNum);
+
+	String downOrUpGoods(int goodsid,int userid);
+
+	String setdianzhao(String path, int id);
+
+	String removeDZ(int id, int index);
+
+	List<MyTypeModel> getMyTypeByUid(int uid);
+
+	MyTypeModel getMyTypeById(int id);
+
+	String removeMyTypeById(int id, int id2);
+
+	List<GoodsModel> getGoodsByMyType(int mytype, int pageNum, int pageSize);
 
 }

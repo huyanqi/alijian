@@ -87,6 +87,12 @@ public class UserModel implements Serializable{
 	private String ppmc;//品牌名称
 	
 	@Column
+	private String bgszp;//办公室照片
+	
+	@Column
+	private String ckzp;//仓库照片
+	
+	@Column
 	private String nyye;//年营业额
 	
 	@Column
@@ -119,8 +125,17 @@ public class UserModel implements Serializable{
 	@Column
 	private String imToken;//IM聊天服务器的token
 	
+	@Column
+	private Integer gold;//金牌卖家 0:不是 1:是
+	
+	@Column
+	private String dianzhao;
+	
 	@Transient
 	private List<TypeModel> typeList;
+	
+	@Transient
+	private List<MyTypeModel> myTypesList;
 
 	public int getId() {
 		return id;
@@ -148,6 +163,22 @@ public class UserModel implements Serializable{
 
 	public String getUsername() {
 		return username;
+	}
+
+	public String getBgszp() {
+		return bgszp;
+	}
+
+	public void setBgszp(String bgszp) {
+		this.bgszp = bgszp;
+	}
+
+	public String getCkzp() {
+		return ckzp;
+	}
+
+	public void setCkzp(String ckzp) {
+		this.ckzp = ckzp;
 	}
 
 	public void setUsername(String username) {
@@ -392,6 +423,30 @@ public class UserModel implements Serializable{
 
 	public void setImToken(String imToken) {
 		this.imToken = imToken;
+	}
+
+	public Integer getGold() {
+		return gold;
+	}
+
+	public void setGold(Integer gold) {
+		this.gold = gold;
+	}
+
+	public String getDianzhao() {
+		return dianzhao;
+	}
+
+	public void setDianzhao(String dianzhao) {
+		this.dianzhao = dianzhao;
+	}
+
+	public List<MyTypeModel> getMyTypesList() {
+		return myTypesList;
+	}
+
+	public void setMyTypesList(List<MyTypeModel> myTypesList) {
+		this.myTypesList = myTypesList;
 	}
 
 }

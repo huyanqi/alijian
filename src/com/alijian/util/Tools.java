@@ -1,5 +1,6 @@
 package com.alijian.util;
 
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -10,6 +11,8 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alijian.front.model.GoodsModel;
+import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.UserModel;
 
 public class Tools {
@@ -151,6 +154,49 @@ public class Tools {
 			hexstr.append(shaHex);
 		}
 		return hexstr.toString();
+	}
+	
+	public static BigDecimal getPrice(int amount,GoodsModel goods,PriceModel priceModel){
+		//获取购买总额
+			double totalprice = -1;
+			//获取批发价对象
+			if(priceModel != null){
+				//有批发价,查询批发价对象
+				//计算批发价，查询出这个范围的批发单价
+				String[] startCount = priceModel.startCount.split(",");
+				String[] endCount = priceModel.endCount.split(",");
+				String[] prices = priceModel.price.split(",");
+				for(int i=0;i<prices.length;i++){
+					String start = "";
+					String end = "";
+					if(i <= startCount.length-1){
+						start = startCount[i];
+					}
+					if(i <= endCount.length-1){
+						end = endCount[i];
+					}
+					
+					int startNum = 0;
+					int endNum;
+					if("".equals(start)) startNum = 0;
+					else startNum = Integer.valueOf(start);
+					if("".equals(end)) endNum = 999999999;
+					else endNum = Integer.valueOf(endCount[i]);
+					if(startNum <= amount && amount <= endNum){
+						totalprice = Double.parseDouble(prices[i]) * amount;
+						break;
+					}
+				}
+				
+				if(totalprice == -1){
+					totalprice = amount * goods.getPrice();
+				}
+				
+			}else{
+				totalprice = amount * goods.getPrice();
+			}
+			
+			return new BigDecimal(totalprice);
 	}
 	
 }

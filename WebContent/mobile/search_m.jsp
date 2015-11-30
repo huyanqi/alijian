@@ -41,7 +41,7 @@ a{
 	<div class="am-form-group am-form-select" style="float: left;">
 		<select name="select-native-3" id="type_selector" style="height: 39px;border: 0px;border: 1px solid #E6E6E6;background: transparent;">
 			<option value="3">产品</option>
-			<option value="1">厂家</option>
+			<option value="1">商家</option>
 			<option value="2">讲师</option>
 			<option value="0">模式</option>
 		</select>

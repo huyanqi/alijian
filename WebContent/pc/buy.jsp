@@ -55,12 +55,13 @@
 		<tr><td class="table_th" style="height: 55px;">单价:</td><td><a style="font-size: 12px;color: #027cff;margin-right: 5px;">￥</a><font style="font-size:30px;line-height:50px;color:#027cff;" id="price"></font><font style="font-size: 12px;color:black;margin-left:5px;" id="units">/ 个</font></td></tr>
 		<tr id="pifa_ly" style="display: none;"><td class="table_th" style="height: 55px;">批发价:</td><td><ul id="pifa_ul"></ul></td></tr>
 		<tr><td class="table_th" style="height: 55px;">运费:</td><td><a style="font-size: 12px;" id="freight"></a></td></tr>
-			<tr><td class="table_th" style="height: 55px;">购买数量:</td><td><span id="redu"><a href="#" style="padding: 5px;">-</a></span><input id="add" type="text" value="1" style="width:50px; text-align:center;ime-mode:disabled" onkeypress="return event.keyCode>=48&&event.keyCode<=57" onpaste="return !clipboardData.getData('text').match(/\D/)" ondragenter="return false"/><span id="add1"><a href="#" style="padding: 5px;">+</a></span></td></tr>
-			<tr><td class="table_th" style="height: 55px;">收货地址:</td><td><input id="buyeraddress" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
-			<tr><td class="table_th" style="height: 55px;">联系人:</td><td><input id="buyername" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
-			<tr><td class="table_th" style="height: 55px;">联系人手机号:</td><td><input id="buyermobile" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
-			<tr><td class="table_th" style="height: 55px;">备注:</td><td><input id="remark" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
-			<tr><td colspan="2" align="right" style="height: 55px;border-bottom: 0px;"><a style="color: black;margin-right: 20px;">总价:<font size="8" style="color:#CD0204;" id="totalprice"></font>元</a><button type="button" id="submitbtn" class="am-btn am-radius am-btn-primary am-disabled" onclick="formsubmit();">确认购买</button></td></tr>
+		<tr id="type_ly" style="display: none;"><td class="table_th" style="height: 55px;">选择种类:</td><td><ul class="am-nav am-nav-pills" id="type"></ul></td></tr>
+		<tr><td class="table_th" style="height: 55px;">购买数量:</td><td><span id="redu"><a href="#" style="padding: 5px;">-</a></span><input id="add" type="text" value="1" style="width:50px; text-align:center;ime-mode:disabled" onkeypress="return event.keyCode>=48&&event.keyCode<=57" onpaste="return !clipboardData.getData('text').match(/\D/)" ondragenter="return false"/><span id="add1"><a href="#" style="padding: 5px;">+</a></span></td></tr>
+		<tr><td class="table_th" style="height: 55px;">收货地址:</td><td><input id="buyeraddress" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
+		<tr><td class="table_th" style="height: 55px;">联系人:</td><td><input id="buyername" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
+		<tr><td class="table_th" style="height: 55px;">联系人手机号:</td><td><input id="buyermobile" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
+		<tr><td class="table_th" style="height: 55px;">备注:</td><td><input id="remark" type="text"  style="width:100%;" class="am-form-field"/></td></tr>
+		<tr><td colspan="2" align="right" style="height: 55px;border-bottom: 0px;"><a style="color: black;margin-right: 20px;">总价:<font size="8" style="color:#CD0204;" id="totalprice"></font>元</a><button type="button" id="submitbtn" class="am-btn am-radius am-btn-primary am-disabled" onclick="formsubmit();">确认购买</button></td></tr>
 	</table>
 </div>
 
@@ -121,7 +122,7 @@
 		$('#add').bind('input propertychange', function() {  
 		    $('#result').html($(this).val().length + ' characters');
 		    refreshTotalPrice();
-		});  
+		});
 	}
 	
 	function refreshTotalPrice(){
@@ -131,15 +132,26 @@
 			var startCount = priceModel.startCount.split(",");
 			var endCount = priceModel.endCount.split(",");
 			var prices = priceModel.price.split(",");
+			var totalprice = -1;
 			for(var i=0;i<endCount.length;i++){
 				var start = startCount[i];
-				if(start == "") start = 0;
+				if(start == "") {
+					start = 0;
+				}
 				var end = endCount[i];
-				if(end == "") end = 9999999999;
-				if(start <= amount && amount <= end){
-					$("#totalprice").html("￥"+(prices[i] * amount).toFixed(2));
+				if(end == "") {
+					end = 9999999999;
+				};
+				if(Number(start) <= Number(amount) && Number(amount) <= Number(end)){
+					totalprice = (prices[i] * amount).toFixed(2);
+					break;
 				}
 			}
+			if(totalprice == -1){
+				var price = $("#price").html();
+				totalprice = (price * amount).toFixed(2);
+			}
+			$("#totalprice").html("￥"+totalprice);
 		}else{
 			var price = $("#price").html();
 			$("#totalprice").html("￥"+(price * amount).toFixed(2));
@@ -167,6 +179,7 @@
 		}
 	}
 	
+	var goods;
 	function getGoodsById(){
 		$.AMUI.progress.start();
 		$.ajax({
@@ -178,6 +191,7 @@
 				if (result.result == "ok") {
 					$("#submitbtn").removeClass("am-disabled");
 					result = result.data;
+					goods = result;
 					$("#thum").attr("src",result.thum);
 					$("#goods_name").html(result.name);
 					$("#price").html(result.price);
@@ -185,7 +199,7 @@
 					$("#freight").html(result.freight);
 					$("#description").html(result.description);
 					$.each(result.typeList, function(n, value) {
-						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'>"+value.name+"</a>");
+						$("#types").append("<a target='_blank' href='<%=basePath%>goods/"+value.id+"'>"+value.name+"</a>");
 					});
 					if(result.priceModel != null){
 						priceModel = result.priceModel;
@@ -208,6 +222,14 @@
 							$('#pifa_ul').append("<li><ul class='prices_ul' style='background: #FFA155;'><li><div><font>"+showCount+result.units+"</font></div></li><li><font>￥"+price[i]+"</font></li></ul></li>");
 						}
 					}
+					if(result.goods_type != null && result.goods_type != ""){
+						//显示商品属性
+						var type = "";
+						$.each(result.goods_type.split(","), function(n, value) {
+							$("#type").append("<li id='type"+n+"'><a href='javascript:typeselect("+n+")'>"+value+"</a></li>");
+						});
+						$("#type_ly").show();
+					}
 					refreshTotalPrice();
 				}else{
 					alert("错误的商品ID号");
@@ -216,6 +238,15 @@
 			},
 			dataType : "json"
 		});
+	}
+	
+	var lastselect = -1;
+	function typeselect(id){
+		if(lastselect != -1){
+			$("#type"+lastselect).removeClass("am-active");
+		}
+		$("#type"+id).addClass("am-active");
+		lastselect = id;
 	}
 	
 	function formsubmit(){
@@ -232,10 +263,19 @@
 			alert("请填写完整的收货信息，我们将尽快发货");
 			return;
 		}
+		var goods_type = "";
+		if(goods.goods_type != null && goods.goods_type != ""){
+			//需要判断是否选择商品类型
+			if(lastselect == -1){
+				alert("请选择需要采购的商品种类");
+				return;
+			}
+			goods_type = $("#type"+lastselect).find("a").html();
+		}
 		$.AMUI.progress.start();
 		$.ajax({
 			type : 'POST',
-			data : {"amout":amount,"goods_id":goodsid,"address":buyeraddress,"mobile":buyermobile,"name":buyername,"remark":remark,"is_mobile":isMobile},
+			data : {"amout":amount,"goods_id":goodsid,"address":buyeraddress,"mobile":buyermobile,"name":buyername,"remark":remark,"is_mobile":isMobile,"goods_type":goods_type},
 			url : "<%=basePath%>create_order",
 			success : function(result) {
 				$.AMUI.progress.done();

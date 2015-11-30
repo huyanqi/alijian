@@ -46,6 +46,10 @@
 		width: 65px;
 		height: 65px;
 	}
+	
+	.typeclass{
+		
+	}
 </style>
 </head>
 <body>
@@ -70,6 +74,7 @@
 	                        <input accept="image/jpeg" type="file" name="upload" id="fileupload_input" style="visibility: hidden;"/>
 	                        <a href="javascript:toUpload();"><img id="thum" src="<%=basePath%>assets/images/avatar_default.png" width="260px" height="300px" /></a>
                         </div>
+                        图片建议大小：300px x 300px
                         <div id="thum_ly">
                         </div>
                         <div>
@@ -91,11 +96,25 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label"><a href='javascript:addPrices();'>增加批发价</a></label>
+                            <label class="control-label"><a href='javascript:addPrices("","","");'>增加批发价</a></label>
                             <div class="controls" id="prices_ly" style="border: 1px solid gray;padding: 10px;display: none;">
                             	
                             </div>
                         </div>
+                        <div class="control-group">
+                            <label class="control-label"><a href='javascript:addtypes("");'>增加产品规格</a></label>
+                            <div class="controls" id="types_ly" style="border: 1px solid gray;padding: 10px;display: table;">
+                            	
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label"><a>所属店铺产品分类</a></label>
+                            <div class="controls" id="mytypes_ly" style="border: 1px solid gray;padding: 10px;display: table;">
+                            	
+                            </div>
+                        </div>
+                        
                         <div class="control-group">
                             <label class="control-label">单位</label>
                             <div class="controls">
@@ -138,7 +157,7 @@
                     <div class="text-right">
                         <div class="btn btn-danger btn-large" onclick="save();">
                             <i class="icon-save"></i>
-                            Save
+                            保存
                         </div>
                     </div>
                 </div>
@@ -156,6 +175,9 @@
 <script src="<%=basePath%>assets/javascripts/fileupload/jquery.fileupload.js"></script>
 
 <script type="text/javascript">
+
+	var cookie = $.AMUI.utils.cookie;
+	var goods;
 	var id; 
 	$(document).ready(function() {
 		
@@ -205,6 +227,41 @@
 		
 	});
 	
+	//获取店铺分类列表
+	function getMyType(){
+		$.AMUI.progress.start();
+		var path = "<%=basePath%>getMyTypeByUid";
+		var data = {"uid":cookie.get("uid")};
+		$.ajax({
+			type : 'POST',
+			data : data,
+			url : path,
+			success : function(result) {
+				$.AMUI.progress.done();
+				$("#mytypes_ly").empty();
+				if(result.result == "ok"){
+					$.each(result.data, function(n, value) {
+						var checked = "";
+						if(goods != null){
+							var mytypes = goods.mytypes;
+							if(mytypes != null && mytypes != ""){
+								mytypes = goods.mytypes.split(",");
+								for(var i=0;i<mytypes.length;i++){
+									if(value.id == mytypes[i]){
+										checked = "checked";
+										break;
+									}
+								}
+							}
+						}
+						$("#mytypes_ly").append("<label class='checkbox'><input id='calendar-remove-after-drop' type='checkbox' "+checked+" value='"+value.id+"'>"+value.name+"</label>");
+					});
+				}
+			},
+			dataType : "json"
+		});
+	}
+	
 	var thumCount = 0;
 	function addThum(url){
 		$("#thum_ly").append("<div id='thumly"+thumCount+"'><ul><li><img src="+url+" /></li><li><a href='javascript:deleteThum("+thumCount+")'>删除</a></li></ul></div>");
@@ -228,18 +285,37 @@
 				$.AMUI.progress.done();
 				if (result.result == "ok") {
 					var data = result.data;
+					goods = data;
 					$("#thum").attr("src",data.thum);
 					$("#thum").attr("alt",data.thum);
 					$("#full-name").val(data.name);
 					$("#price").val(data.price);
 					$("#units").val(data.units);
 					$("#freight").val(data.freight);
+					if(data.priceModel != null){
+						//显示批发价
+						var start = data.priceModel.startCount.split(",");
+						var end = data.priceModel.endCount.split(",");
+						var price = data.priceModel.price.split(",");
+						for(var i=0;i<price.length;i++){
+							addPrices(start[i],end[i],price[i]);
+						}
+					}
+					if(data.goods_type != null && data.goods_type != ""){
+						//显示商品属性
+						var types = data.goods_type.split(",");
+						$.each(types, function(n, value) {
+							addtypes(value);							
+						});
+					}
 					
 					CKEDITOR.instances.editor1.setData(data.description);
 					var types = data.types.split(",");
 					$.each(types, function(n, value) {
 						$("#inputSelectMulti").find("option[value="+value+"]").attr("selected",true);
 					});
+					
+					getMyType();
 				} else {
 					alert(result.data);
 				}
@@ -286,6 +362,8 @@
 					
 					if(id != null){
 						getGoodsModelById();
+					}else{
+						getMyType();
 					}
 				}else{
 					$("#nodata").show();
@@ -326,6 +404,8 @@
 		var units = $("#units").val();
 		var freight = $("#freight").val();
 		var stem = CKEDITOR.instances.editor1.getData();
+		var goods_type = getTypesName();
+		var mytypes = "";
 		if(thum == null){
 			alert("请上传商品图片");
 			return;
@@ -372,7 +452,14 @@
 			thums = thums.substring(0,thums.length-1);
 		}
 		
-		var data = JSON.stringify({id:id,name:name,price:price,types:group_list,units:units,freight:freight,thum:thum,description:stem,startsCount:startsCount,endsCount:endsCount,prices:prices,thums:thums});
+		$("#mytypes_ly input").each(function(){
+			if($(this).attr("checked") == "checked"){
+				mytypes += $(this).val()+",";
+			}
+		});
+		if(mytypes.length > 0) mytypes = mytypes.substring(0,mytypes.length-1);
+		
+		var data = JSON.stringify({id:id,name:name,price:price,types:group_list,units:units,freight:freight,thum:thum,description:stem,startsCount:startsCount,endsCount:endsCount,prices:prices,thums:thums,goods_type:goods_type,mytypes:mytypes});
 		$.ajax({
 			type : 'POST',
 			data : data,
@@ -397,14 +484,39 @@
 	}
 	
 	var price_count = 0;
-	function addPrices(){
+	function addPrices(start,end,price){
 		$("#prices_ly").show();
 		if(price_count >= 3){
 			alert("价格区间最多设置3个");
 			return;
 		}
-		$('#prices_ly').append("<ul class='prices_ul'><li><div><input class='span12' style='width: 50px;' id='start"+price_count+"' type='text' placeholder='最小数量' />-<input class='span12' style='width: 50px;' id='end"+price_count+"' type='text' placeholder='最大数量' /></div></li><li><input class='span12' style='width: 115px;' id='price"+price_count+"' type='text' placeholder='价格' /></li></ul>");
+		$('#prices_ly').append("<ul class='prices_ul'><li><div><input class='span12' style='width: 50px;' id='start"+price_count+"' type='text' placeholder='最小数量' value='"+start+"' />-<input class='span12' style='width: 50px;' id='end"+price_count+"' type='text' placeholder='最大数量' value='"+end+"' /></div></li><li><input class='span12' style='width: 115px;' id='price"+price_count+"' type='text' placeholder='价格' value='"+price+"' /></li></ul>");
 		price_count++;
+	}
+	
+	var type_count = 0;
+	function addtypes(type){
+		$("#types_ly").show();
+		$("#types_ly").append("<div style='float:left;margin-right:5px;' class='typediv' id='"+type_count+"'><div style='float:left;'><span class='span12'><input class='span12' style='width: auto;' id='type"+type_count+"' type='text' placeholder='分类名称' value='"+type+"' /></span></div><div style='float:left;'><span class='am-badge am-badge-danger am-round'><a href='javascript:removeType("+type_count+");' style='color:white;'>x</a></span></div></div>");
+		type_count++;
+	}
+	
+	function removeType(typeid){
+		$("#"+typeid).remove();
+	}
+	
+	function getTypesName(){
+		var name = "";
+		$.each($("#types_ly").find(".typediv"), function(n, value) {
+			var id = $(value).attr("id");
+			var val = $("#type"+id).val();
+			if(val != ""){
+				name += val+",";
+			}
+		});
+		if(name.length > 0)
+			name = name.substring(0,name.length-1);
+		return name;
 	}
 	
 </script>

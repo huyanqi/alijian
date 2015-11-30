@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,15 +31,19 @@ import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.ChatList;
 import com.alijian.front.model.ChatModel;
+import com.alijian.front.model.CommentsModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
+import com.alijian.front.model.MyTypeModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
 import com.alijian.util.BaseData;
+import com.alijian.util.MD5Util;
 import com.alijian.util.SHA1;
 
 @Service("baseService")
@@ -71,6 +76,7 @@ public class BaseServiceImpl implements BaseService {
 		if(user == null){
 			if(model.getName() == null)
 				model.setName(model.getUsername());
+			model.setPassword(MD5Util.MD5(model.getPassword()));
 			return baseDao.saveOrUpdateUser(model);
 		}
 		else
@@ -79,6 +85,8 @@ public class BaseServiceImpl implements BaseService {
 
 	@Override
 	public UserModel login(String username, String password) {
+		//MD5加密处理
+		password = MD5Util.MD5(password);
 		return baseDao.login(username,password);
 	}
 
@@ -104,7 +112,18 @@ public class BaseServiceImpl implements BaseService {
 
 	@Override
 	public List<GoodsModel> getGoods(int pageNum,int pageSize,String types,String keyword,int type,int supplier_id) {
-		return adminDao.getGoods(pageNum,pageSize,types,keyword,type,supplier_id);
+		List<GoodsModel> goodsList = adminDao.getGoods(pageNum,pageSize,types,keyword,type,supplier_id);
+		//如果有批发价，则把price改为批发价，方便显示
+		for(GoodsModel model : goodsList){
+			if(model.price_id == 0) continue;
+			PriceModel priceModel = baseDao.getPriceModelById(model.price_id);
+			List<Double> tempList = new ArrayList<Double>();
+			for(String price : priceModel.price.split(",")){
+				tempList.add(Double.parseDouble(price));
+			}
+			model.show_price = Collections.min(tempList);
+		}
+		return goodsList;
 	}
 
 	@Override
@@ -171,6 +190,7 @@ public class BaseServiceImpl implements BaseService {
 				typeList.add(typeModel);
 		}
 		model.setTypeList(typeList);
+		model.setMyTypesList(getMyTypeByUid(uid));
 		return model;
 	}
 
@@ -264,6 +284,10 @@ public class BaseServiceImpl implements BaseService {
 	@Override
 	public boolean saveOrUpdate(ChatModel model) {
 		try{
+			List<ChatModel> exists = baseDao.getChatModelByIds(model.targetid,model.myid,model.ismy,model.content);
+			//存在相同聊天内容，则不保存此次内容
+			if(exists.size() > 0) return true;
+			
 			baseDao.saveOrUpdateModel(model);
 			return true;
 		}catch(Exception e){
@@ -330,5 +354,73 @@ public class BaseServiceImpl implements BaseService {
 	public List<ChatModel> getchathistory(int id) {
 		return baseDao.getchathistory(id);
 	}
-	
+
+	@Override
+	public PageModel getMyComments(int uid, int pageNum) {
+		PageModel model = baseDao.getMyComments(uid,pageNum);;
+		List<CommentsModel> list = (List<CommentsModel>) model.getModels();
+		for(CommentsModel models : list){
+			if(models.fromuser != 0){
+				models.setUserModel(baseDao.getUserById(models.fromuser));
+			}
+		}
+		return model;
+	}
+
+	@Override
+	public String downOrUpGoods(int goodsid,int userid) {
+		GoodsModel goodsModel = getGoodsModelById(goodsid);
+		if(goodsModel.user.getId() != userid) return "非法操作";
+		goodsModel.setStatus(goodsModel.getStatus() == 1 ? 0 : 1);
+		saveOrUpdateModel(goodsModel);
+		return "";
+	}
+
+	@Override
+	public String setdianzhao(String path, int uid) {
+		try{
+			UserModel user = getUserById(uid);
+			user.setDianzhao((user.getDianzhao() != null && !"".equals(user.getDianzhao())) ? (user.getDianzhao() + "," + path) : path);
+			saveOrUpdateUser(user);
+			return "";
+		}catch(Exception e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	@Override
+	public String removeDZ(int id, int index) {
+		UserModel user = getUserById(id);
+		String[] dzs = user.getDianzhao().split(",");
+		user.setDianzhao("");
+		for(int i=0;i<dzs.length;i++){
+			if(index == i) continue;
+			user.setDianzhao((user.getDianzhao() != null && !"".equals(user.getDianzhao())) ? user.getDianzhao()+","+dzs[i] : dzs[i]);
+		}
+		saveOrUpdateUser(user);
+		return "";
+	}
+
+	@Override
+	public List<MyTypeModel> getMyTypeByUid(int uid) {
+		return baseDao.getMyTypeByUid(uid);
+	}
+
+	@Override
+	public MyTypeModel getMyTypeById(int id) {
+		return baseDao.getMyTypeById(id);
+	}
+
+	@Override
+	public String removeMyTypeById(int id, int uid) {
+		MyTypeModel model = baseDao.getMyTypeById(id);
+		if(model.getUserid() != uid) return "非法操作，你没有删除此分类的权限";
+		return baseDao.removeMyTypeById(model);
+	}
+
+	@Override
+	public List<GoodsModel> getGoodsByMyType(int mytype,int pageNum,int pageSize) {
+		return baseDao.getGoodsByMyType(mytype,pageNum,pageSize);
+	}
 }

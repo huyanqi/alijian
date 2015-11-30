@@ -141,7 +141,7 @@
 	<div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
 		<header class="am-topbar">
 			<h1 class="am-topbar-brand">
-				<a href="#">厂家介绍</a>
+				<a href="#">商家介绍</a>
 			</h1>
 		</header>
 		<div class="am-container" style="margin-top: 10px;" id="description">
@@ -182,7 +182,7 @@ var id;
 					$("#goods_name").html(result.name);
 					$("#address").html("地址:"+result.address);
 					$.each(result.typeList, function(n, value) {
-						$("#types").append("<a target='_blank' href='<%=basePath%>goods.jsp?id="+value.id+"'>"+value.name+"</a>");
+						$("#types").append("<a target='_blank' href='<%=basePath%>goods/"+value.id+"'>"+value.name+"</a>");
 					});
 					$("#description").html(result.description);
 					$("#contact_me").append("<a target='_blank' href='tencent://message/?uin=375377612&amp;Site=阿里健&amp;Menu=yes' class='content-btn' title='在线咨询'> <img border='0' src='http://wpa.qq.com/pa?p=2:375377612:42' alt='点击这里给我发消息' title='点击这里给我发消息'></a>");

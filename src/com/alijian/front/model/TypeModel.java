@@ -25,7 +25,7 @@ public class TypeModel {
 	public String name;		//名称
 	
 	@Column
-	public int type;		//账户类型:0 模式分类 1厂家分类 2讲师分类 3产品分类  4求购信息分类
+	public int type;		//账户类型:0 模式分类 1商家分类 2讲师分类 3产品分类  4求购信息分类
 
 	public int getId() {
 		return id;

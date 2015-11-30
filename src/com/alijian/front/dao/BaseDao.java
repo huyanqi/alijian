@@ -8,9 +8,12 @@ import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.ChatList;
 import com.alijian.front.model.ChatModel;
+import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
+import com.alijian.front.model.MyTypeModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.TypeModel;
 import com.alijian.front.model.UserModel;
@@ -65,5 +68,18 @@ public interface BaseDao {
 	List<ChatList> getUserList(int userid);
 
 	List<ChatModel> getchathistory(int id);
+
+	List<ChatModel> getChatModelByIds(String targetid, int myid, int ismy,
+			String content);
+
+	PageModel getMyComments(int uid, int pageNum);
+
+	List<MyTypeModel> getMyTypeByUid(int uid);
+
+	MyTypeModel getMyTypeById(int id);
+
+	String removeMyTypeById(MyTypeModel model);
+
+	List<GoodsModel> getGoodsByMyType(int mytype, int pageNum, int pageSize);
 
 }

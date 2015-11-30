@@ -173,7 +173,7 @@
 							//无可操作项
 							
 						}
-						$("#list_content").append("<tr><td>"+value.id+"</td><td><a target='_blank' href='<%=basePath%>pc/goods.jsp?id="+value.goods.id+"'>"+value.goods.name+"</a></td><td>"+value.amout+"</td><td>"+value.prices+"</td><td>"+update_time+"</td><td>"+state+"</td><td><div class='text-right'>"+opition+"</div></td></tr>");
+						$("#list_content").append("<tr><td>"+value.id+"</td><td><a target='_blank' href='<%=basePath%>goods/"+value.goods.id+"'>"+value.goods.name+"</a></td><td>"+value.amout+"</td><td>"+value.prices+"</td><td>"+update_time+"</td><td>"+state+"</td><td><div class='text-right'>"+opition+"</div></td></tr>");
 					});
 					if(pageNum == 1){
 						$("#pageselect").empty();

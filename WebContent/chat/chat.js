@@ -9,7 +9,23 @@ $(document).ready(function(){
     RongIMClient.init("n19jmcy59ovm9");
     
     initIMToken();
-	    
+    
+    $("#fileupload_input").fileupload({
+        url: server+"fileupload",//文件上传地址，当然也可以直接写在input的data-url属性内
+        //formData:{"name":"p1","age":2},//如果需要额外添加参数可以在这里添加
+        done:function(e,result){
+            //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
+            //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
+            //返回的数据在result.result中，假设我们服务器返回了一个json对象
+            var obj = eval('(' + result.result + ')');
+            if(obj.result == "ok"){
+            	sendImg(obj.data);
+            }else{
+            	alert(obj.data);
+            }
+        }
+    });
+    
 });
 
 function initIMToken(){
@@ -25,15 +41,20 @@ function initIMToken(){
 			     RongIMClient.getInstance().setOnReceiveMessageListener({
 			        // 接收到的消息
 			        onReceived: function (message) {
+			        	document.getElementById('im_ring').play();
+			        	showRedPoint(message.getSenderUserId());
 			            // 判断消息类型
 			            switch(message.getMessageType()){
 			                case RongIMClient.MessageType.TextMessage:
 			                    // do something...
-			                	addLeftTextMsg(message.getSenderUserId(),message.getContent());
-			                	savechathistory(message.getSenderUserId(),1,message.getContent(),0);
+			                	addLeftTextMsg(message.getSenderUserId(),message.getContent(),message.getSentTime());
+			                	savechathistory(message.getSenderUserId(),1,message.getContent(),0,message.getSentTime());
 			                    break;
 			                case RongIMClient.MessageType.ImageMessage:
-			                    // do something...
+			                	var url = server + message.getContent();
+								var html = '<img style="max-width: 300px;" src="'+message.getImageUri()+'"/>';
+								addLeftTextMsg(message.getSenderUserId(),html,message.getSentTime());
+								savechathistory(message.getSenderUserId(), 2, message.getExtra(), 0,message.getSentTime());								
 			                    break;
 			                case RongIMClient.MessageType.VoiceMessage:
 			                    // do something...
@@ -157,77 +178,132 @@ function initIMToken(){
 		                }
 		            });
 			}else{
+				$.AMUI.progress.done();
 				alert(result.data);
-				window.close();
 			}
 		},
 		dataType : "json"
 	});
 }
 
-function sendText(){
-	var content = $("#im_send_content").html();
-	if(content == "") return;
+function sendText() {
+	var content = $("#im_send_content").val();
+	if (content == "")
+		return;
 	var msg = RongIMClient.TextMessage.obtain(content);
 	var conversationtype = RongIMClient.ConversationType.PRIVATE; // 私聊
 	var targetId = currenttargetId; // 目标 Id
-	RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, null, {
-        // 发送消息成功
-        onSuccess: function () {
-            console.log("Send successfully");
-            addRightTextMsg(targetId,content);
-            $("#im_send_content").empty();
-            savechathistory(targetId,1,content,1);
-        },
-        onError: function (errorCode) {
-            var info = '';
-            switch (errorCode) {
-                case RongIMClient.callback.ErrorCode.TIMEOUT:
-                    info = '超时';
-                    break;
-                case RongIMClient.callback.ErrorCode.UNKNOWN_ERROR:
-                    info = '未知错误';
-                    break;
-                case RongIMClient.SendErrorStatus.REJECTED_BY_BLACKLIST:
-                    info = '在黑名单中，无法向对方发送消息';
-                    break;
-                case RongIMClient.SendErrorStatus.NOT_IN_DISCUSSION:
-                    info = '不在讨论组中';
-                    break;
-                case RongIMClient.SendErrorStatus.NOT_IN_GROUP:
-                    info = '不在群组中';
-                    break;
-                case RongIMClient.SendErrorStatus.NOT_IN_CHATROOM:
-                    info = '不在聊天室中';
-                    break;
-                default :
-                    info = x;
-                    break;
-            }
-            console.alert('发送失败:' + info);
-        }
-    }
-);
+	RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg,
+			null, {
+				// 发送消息成功
+				onSuccess : function() {
+					console.log("Send successfully");
+					addRightTextMsg(targetId, content);
+					$("#im_send_content").val("");
+					savechathistory(targetId, 1, content, 1, new Date().getTime());
+				},
+				onError : function(errorCode) {
+					var info = '';
+					switch (errorCode) {
+					case RongIMClient.callback.ErrorCode.TIMEOUT:
+						info = '超时';
+						break;
+					case RongIMClient.callback.ErrorCode.UNKNOWN_ERROR:
+						info = '未知错误';
+						break;
+					case RongIMClient.SendErrorStatus.REJECTED_BY_BLACKLIST:
+						info = '在黑名单中，无法向对方发送消息';
+						break;
+					case RongIMClient.SendErrorStatus.NOT_IN_DISCUSSION:
+						info = '不在讨论组中';
+						break;
+					case RongIMClient.SendErrorStatus.NOT_IN_GROUP:
+						info = '不在群组中';
+						break;
+					case RongIMClient.SendErrorStatus.NOT_IN_CHATROOM:
+						info = '不在聊天室中';
+						break;
+					default:
+						info = x;
+						break;
+					}
+					alert("发送失败:"+info);
+				}
+			});
+}
+
+function sendImg(url) {
+	var htmlUrl = server+url;
+	var image = new RongIMClient.ImageMessage({"content":"","imageUri":htmlUrl,"extra":url});
+	var conversationtype = RongIMClient.ConversationType.PRIVATE; // 私聊
+	var targetId = currenttargetId; // 目标 Id
+	RongIMClient.getInstance().sendMessage(conversationtype, targetId, image,
+			null, {
+				// 发送消息成功
+				onSuccess : function() {
+					console.log("Send successfully");
+					var html = '<img style="max-width: 300px;" src="'+htmlUrl+'"/>';
+					addRightTextMsg(targetId, html);
+					savechathistory(targetId, 2, url, 1,new Date().getTime());
+				},
+				onError : function(errorCode) {
+					var info = '';
+					switch (errorCode) {
+					case RongIMClient.callback.ErrorCode.TIMEOUT:
+						info = '超时';
+						break;
+					case RongIMClient.callback.ErrorCode.UNKNOWN_ERROR:
+						info = '未知错误';
+						break;
+					case RongIMClient.SendErrorStatus.REJECTED_BY_BLACKLIST:
+						info = '在黑名单中，无法向对方发送消息';
+						break;
+					case RongIMClient.SendErrorStatus.NOT_IN_DISCUSSION:
+						info = '不在讨论组中';
+						break;
+					case RongIMClient.SendErrorStatus.NOT_IN_GROUP:
+						info = '不在群组中';
+						break;
+					case RongIMClient.SendErrorStatus.NOT_IN_CHATROOM:
+						info = '不在聊天室中';
+						break;
+					default:
+						info = x;
+						break;
+					}
+					console.alert('发送失败:' + info);
+				}
+			});
 }
 
 function getUrlParam(name) {
-	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-	var r = window.location.search.substr(1).match(reg); //匹配目标参数
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 构造一个含有目标参数的正则表达式对象
+	var r = window.location.search.substr(1).match(reg); // 匹配目标参数
 	if (r != null)
 		return unescape(r[2]);
-	return null; //返回参数值
+	return null; // 返回参数值
 }
 
 /**
  * 添加别人发送的消息到列表中
- * @param userid 对方ID
- * @param content 文本内容
+ * 
+ * @param userid
+ *            对方ID
+ * @param content
+ *            文本内容
  */
-function addLeftTextMsg(userid,content){
+function addLeftTextMsg(userid,content,timestamp){
+	if(timestamp != null){
+		timestamp = moment(timestamp).format("YYYY MMMM Do h:mm:ss");
+	}
+	
 	var user = getLocalUser(userid);
+	if(content.indexOf("<img ") != 0){
+		content = text2emoji(content);
+	}
 	if(user != null){
 		//存在有这个用户
-		var html = "<li class='im_left'><div class='user_name'>"+user.name+":</div><div>"+content+"</div></li>";
+		var html = "<li class='im_left'><div class='user_name'>"+user.name+":</div><div style='margin-top:5px;'>"+content+"</div><div style='margin-top:5px;'>"+timestamp+"</div></li>";
 		insertChatMap(userid,html);
 	}else{
 		var path = server+"getUserById";
@@ -239,10 +315,11 @@ function addLeftTextMsg(userid,content){
 			success : function(result) {
 				if (result.result == "ok") {
 					var user = result.data;
-					var html = "<li class='im_left'><div class='user_name'>"+user.name+":</div><div>"+content+"</div></li>";
+					var html = "<li class='im_left'><div class='user_name'>"+user.name+":</div><div style='margin-top:5px;'>"+content+"</div><div style='margin-top:5px;'>"+timestamp+"</div></li>";
+					addUserListToServer(user.id);
 					insertChatMap(userid,html);
 					if(getLocalUser(userid) == null){
-						userList.push(user);
+						insertUserListFromObject(user);
 					}
 				}
 			},
@@ -258,8 +335,10 @@ function addLeftTextMsg(userid,content){
  */
 function addRightTextMsg(userid,content){
 	var myname = "我";
-	var html = "<li class='im_right'><div class='user_name'>:"+myname+"</div><div style='clear: both;'/><div class='content_right'>"+content+"</div></li><div style='clear: both;'/>";
-	//$("#show_ly").append();
+	if(content.indexOf("<img ") != 0){
+		content = text2emoji(content);
+	}
+	var html = "<li class='im_right'><div class='user_name'>:"+myname+"</div><div style='clear: both;'/><div class='content_right' style='margin-top:5px;'>"+content+"</div></li><div style='clear: both;'/>";
 	insertChatMap(userid,html);
 }
 
@@ -285,6 +364,7 @@ function initUserList(){
  * @param UserModel
  */
 function insertUserListFromServer(toid){
+	if(toid == null) return;
 	var path = server+"getUserById";
 	var data = {"uid":toid};
 	$.ajax({
@@ -294,8 +374,7 @@ function insertUserListFromServer(toid){
 		success : function(result) {
 			if (result.result == "ok") {
 				result = result.data;
-				userList.push(result);
-				$("#user_list_ly").append("<li><a id='user_"+result.id+"' onclick='javascript:selectUser("+result.id+")'>"+result.name+"</a></li>");
+				insertUserListFromObject(result);
 			}
 		},
 		dataType : "json"
@@ -303,8 +382,10 @@ function insertUserListFromServer(toid){
 }
 
 function insertUserListFromObject(userObject){
-	userList.push(userObject);
-	$("#user_list_ly").append("<li><a id='user_"+userObject.id+"' onclick='javascript:selectUser("+userObject.id+")'>"+userObject.name+"</a></li>");
+	if(getLocalUser(userObject.id) != null) return;
+	userList.unshift(userObject);
+	//userList.push(userObject);
+	$("#user_list_ly").append("<li><a id='user_"+userObject.id+"' onclick='javascript:selectUser("+userObject.id+")'><img id='dot"+userObject.id+"' style='margin-right:10px;display:none;' src='"+server+"chat/dot_red.png' />"+userObject.name+"</a></li>");
 }
 
 function getLocalUser(userid){
@@ -321,25 +402,7 @@ function getLocalUser(userid){
  * @param userid
  */
 function addUserListToServer(userid){
-	var path = server+"saveUserList";
-	var data = {"userid":userid};
-	$.ajax({
-		type : 'POST',
-		data : data,
-		url : path,
-		success : function(result) {
-			if (result.result == "ok") {
-				//聊天列表已保存
-			}
-		},
-		dataType : "json"
-	});
-}
-
-/**
- * 获取聊天列表
- */
-function getUserList(){
+	if(userid == null) return;
 	var path = server+"saveUserList";
 	var data = {"userid":userid};
 	$.ajax({
@@ -363,6 +426,8 @@ function selectUser(userid){
 	$("#content_title").html(getLocalUser(userid).name);
 	//刷新界面右侧栏的聊天内容
 	showUserMsg(userid);
+	//隐藏小红点
+	hideRedPoint(userid);
 }
 
 /**
@@ -371,10 +436,11 @@ function selectUser(userid){
  * @param type 消息类型
  * @param content 消息内容
  * @param ismy 是否是我发送的 0:不是 1:是我发送的
+ * @param senttime 消息发送时间戳
  */
-function savechathistory(targetid,type,content,ismy){
+function savechathistory(targetid,type,content,ismy,senttime){
 	var path = server+"savechathistory";
-	var data = '{"targetid":"'+targetid+'","type":'+type+',"ismy":'+ismy+',"content":"'+content+'"}';
+	var data = '{"targetid":"'+targetid+'","type":'+type+',"ismy":'+ismy+',"content":"'+content+'","sentTime":'+senttime+'}';
 	$.ajax({
 		type : 'POST',
 		dataType : "json",
@@ -407,9 +473,17 @@ function getchathistory(){
 					}*/
 					if(value.type == 1){
 						if(value.ismy == 0){
-							addLeftTextMsg(value.targetid,value.content);
+							addLeftTextMsg(value.targetid,value.content,value.sentTime);
 						}else{
 							addRightTextMsg(value.targetid,value.content);
+						}
+					}else if(value.type == 2){
+						var url = server + value.content;
+						var html = '<img style="max-width: 300px;" src="'+url+'"/>';
+						if(value.ismy == 0){
+							addLeftTextMsg(value.targetid,html,value.sentTime);
+						}else{
+							addRightTextMsg(value.targetid,html);
 						}
 					}
 				});
@@ -464,6 +538,32 @@ function insertChatMap(userid,html){
 function showUserMsg(userid){
 	$("#show_ly").empty();
 	$("#show_ly").append(chatmap.get(userid));
+	$("#show_ly").scrollTop($("#show_ly")[0].scrollHeight);
+}
+
+/**
+ * 文本转表情的img标签
+ */
+function text2emoji(str){
+	str = str.replace(/\</g,'&lt;');
+	str = str.replace(/\>/g,'&gt;');
+	str = str.replace(/\n/g,'<br/>');
+	str = str.replace(/\[em_([0-9]*)\]/g,'<img src="'+server+'font/emoji/face/$1.gif" border="0" />');
+	return str;
+}
+
+/**
+ * 显示小红点
+ * @param userid
+ */
+function showRedPoint(userid){
+	//alert("显示用户"+userid+"的小红点");
+	if(currenttargetId != userid)
+		$("#dot"+userid).show();
+}
+
+function hideRedPoint(userid){
+	$("#dot"+userid).hide();
 }
 
 function HashMap(){

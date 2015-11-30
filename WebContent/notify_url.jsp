@@ -53,7 +53,7 @@
 		//////////////////////////////////////////////////////////////////////////////////////////
 		//请在这里加上商户的业务逻辑程序代码
 		//——请根据您的业务逻辑来编写程序（——
-		if(new OrderController().changeOrderState(out_trade_no, trade_no, trade_status) == 1){
+		if(new OrderController().changeOrderState(out_trade_no, trade_no, trade_status) == "1"){
 			out.println("success");	//请不要修改或删除
 		}
 

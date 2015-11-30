@@ -67,7 +67,17 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="control-group" id="work_type_ly">
+                        
+                        <div class="control-group" id="gold_type_ly">
+                            <div class="controls">
+                                <label class="checkbox inline">
+                                    <input id="gold_type" type="checkbox">
+                                    诚信通卖家
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- <div class="control-group" id="work_type_ly">
                             <div class="controls">
                                 <label class="checkbox inline">
                                     <input id="work_type" type="checkbox">
@@ -80,7 +90,7 @@
                             <div class="controls">
                                 <input class="span12" id="commission" type="text">
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </fieldset>
                 <hr class="hr-normal">
@@ -188,8 +198,9 @@
 		var cookie = $.AMUI.utils.cookie;
 		var role = cookie.get("role");
 		if(role == 1 || role == 2){
-			$("#work_type_ly").hide();
-			$("#commission_ly").hide();
+			/* $("#work_type_ly").hide();
+			$("#commission_ly").hide(); */
+			$("#gold_type_ly").remove();
 		}
 		if(role == 2){
 			$("#user_detail_ly").hide();
@@ -246,7 +257,7 @@
 					$("#full-name").val(data.name);
 					$("#address").val(data.address);
 					$("#mobile").val(data.mobile);
-					$("#work_type").attr("checked",data.work_type == 1?true:false);
+					$("#gold_type").attr("checked",data.gold == 1?true:false);
 					$("#commission").val(data.commission);
 					$("#jyms").val(data.jyms);
 					$("#ppmc").val(data.ppmc);
@@ -328,19 +339,19 @@
 		
 		var stem = CKEDITOR.instances.editor1.getData();
 		/* if(thum == null){
-			alert("请上传厂家照片");
+			alert("请上传商家照片");
 			return;
 		} */
 		if(name == ""){
-			alert("请输入厂家名字");
+			alert("请输入商家名字");
 			return;
 		}
 		if(address == ""){
-			alert("请输入厂家地址");
+			alert("请输入商家地址");
 			return;
 		}
 		if(mobile == ""){
-			alert("请输入厂家联系方式");
+			alert("请输入商家联系方式");
 			return;
 		}
 		var group_list = "";
@@ -350,15 +361,23 @@
 		if(group_list != ""){
 			group_list = group_list.substring(0, group_list.length - 1);
 		}
-		var work_type = $("#work_type").attr('checked');
+		/* var work_type = $("#work_type").attr('checked');
 		if(work_type == "checked"){
 			work_type = 1;
 		}else{
 			work_type = 0;
-		}
-		var commission = $("#commission").val();
+		} */
 		
-		var data = JSON.stringify({id:uid,name:name,address:address,mobile:mobile,types:group_list,thum:thum,description:stem,work_type:work_type,commission:commission,jyms:jyms,ppmc:ppmc,nyye:nyye,xsqy:xsqy,khqt:khqt,zcd:zcd,fddb:fddb,ygrs:ygrs,zycp:zycp});
+		var gold_type = $("#gold_type").attr('checked');
+		if(gold_type == "checked"){
+			gold_type = 1;
+		}else{
+			gold_type = 0;
+		}
+		
+		//var commission = $("#commission").val();
+		
+		var data = JSON.stringify({id:uid,name:name,address:address,mobile:mobile,types:group_list,thum:thum,description:stem,jyms:jyms,ppmc:ppmc,nyye:nyye,xsqy:xsqy,khqt:khqt,zcd:zcd,fddb:fddb,ygrs:ygrs,zycp:zycp,gold:gold_type});
 		$.ajax({
 			type : 'POST',
 			data : data,

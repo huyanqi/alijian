@@ -32,6 +32,9 @@ public class GoodsModel {
 	@Column
 	public double price;	//单价
 	
+	@Transient
+	public double show_price;//在列表中显示的单价
+	
 	@Column
 	public String units;	//单位
 	
@@ -49,6 +52,9 @@ public class GoodsModel {
 	
 	@Column
 	public String description;
+	
+	@Column
+	public String goods_type;//产品属性，如：黑色、白色
 	
 	@Column
 	public Date update_time = new Date();
@@ -77,6 +83,12 @@ public class GoodsModel {
 	
 	@Column
 	public int price_id;
+	
+	@Column
+	public int status;//0:正常可见 1:已下架
+	
+	@Column
+	public String mytypes;//在我店铺中的分类 ，隔开
 
 	public int getId() {
 		return id;
@@ -220,6 +232,38 @@ public class GoodsModel {
 
 	public void setThums(String thums) {
 		this.thums = thums;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public String getGoods_type() {
+		return goods_type;
+	}
+
+	public void setGoods_type(String goods_type) {
+		this.goods_type = goods_type;
+	}
+
+	public double getShow_price() {
+		return show_price;
+	}
+
+	public void setShow_price(double show_price) {
+		this.show_price = show_price;
+	}
+
+	public String getMytypes() {
+		return mytypes;
+	}
+
+	public void setMytypes(String mytypes) {
+		this.mytypes = mytypes;
 	}
 
 }

@@ -152,6 +152,33 @@
         </li>
     </ul>
 </li>
+<li>
+    <a class='dropdown-collapse ' href='#' onclick="openOrClose();">
+        <i class='icon-tag'></i>
+        <span>店铺管理</span>
+        <i class='icon-angle-down angle-down'></i>
+    </a>
+    <ul class='nav nav-stacked'><!-- 加in 则是打开 -->
+        <li class=''>
+            <a href='javascript:frameLink("user/SetDianZhao.jsp")'>
+                <i class='icon-caret-right'></i>
+                <span>设置店招</span>
+            </a>
+        </li>
+        <li class=''>
+            <a href='javascript:frameLink("user/TypeManage.jsp")'>
+                <i class='icon-caret-right'></i>
+                <span>产品分类</span>
+            </a>
+        </li>
+    </ul>
+</li>
+<li class=''>
+	<a href='javascript:frameLink("user/CommentsList.jsp")'>
+        <i class='icon-comments-alt'></i>
+        <span>收到的留言</span>
+    </a>
+</li>
 </ul>
 </div>
 </nav>
@@ -320,13 +347,13 @@
 	
 	function toChat(){
 		if (!IsPC()) {
-			window.open("<%=basePath%>chat/pc/index.jsp",'newindow');
+			window.open("<%=basePath%>chat/chat.jsp",'newindow');
 		}else{
 			var iHeight = 575;
 			var iWidth = 900;
 			var iTop = (window.screen.height-30-iHeight)/2; //获得窗口的垂直位置;  
 			var iLeft = (window.screen.width-10-iWidth)/2; //获得窗口的水平位置;  
-			window.open("<%=basePath%>chat/pc/index.jsp",'newindow','height='+iHeight+',width='+iWidth+',top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,top='+iTop+',left='+iLeft);
+			window.open("<%=basePath%>chat/chat.jsp",'newindow','height='+iHeight+',width='+iWidth+',top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,top='+iTop+',left='+iLeft);
 		}
 	}
 	

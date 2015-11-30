@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -19,6 +21,7 @@ import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,13 +32,17 @@ import com.alijian.front.model.BusinessModel;
 import com.alijian.front.model.BuyModel;
 import com.alijian.front.model.ChatList;
 import com.alijian.front.model.ChatModel;
+import com.alijian.front.model.CommentsModel;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.KeywordsModel;
 import com.alijian.front.model.LecturerModel;
 import com.alijian.front.model.LinkModel;
+import com.alijian.front.model.MyTypeModel;
+import com.alijian.front.model.PageModel;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
 import com.alijian.util.BaseData;
+import com.alijian.util.HttpRequestDeviceUtils;
 import com.alijian.util.MD5Util;
 import com.alijian.util.Tools;
 
@@ -45,13 +52,6 @@ public class BaseController extends BaseData {
 
 	@Autowired
 	private BaseService baseService;
-
-	@RequestMapping(value = "/test")
-	public ModelAndView test() {
-		ModelAndView view = new ModelAndView("/json");
-		System.out.println("test");
-		return view;
-	}
 
 	@RequestMapping(value = "/fileupload")
 	public ModelAndView fileupload(@RequestParam("upload") MultipartFile file,
@@ -259,7 +259,6 @@ public class BaseController extends BaseData {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
 		GoodsModel goods = baseService.getGoodsModelById(id);
-		goods.user.setPassword("");
 		if (goods != null) {
 			obj.put(RESULT, OK);
 			obj.put(DATA, goods);
@@ -287,8 +286,7 @@ public class BaseController extends BaseData {
 	 * @return
 	 */
 	@RequestMapping(value = "/getGoods")
-	public ModelAndView getGoods(int pageNum, int pageSize, String types,
-			String keyword, int type, int supplierid) {
+	public ModelAndView getGoods(int pageNum, int pageSize, String types,String keyword, int type, int supplierid) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
 		List<GoodsModel> goods = baseService.getGoods(pageNum, pageSize, types,
@@ -323,7 +321,6 @@ public class BaseController extends BaseData {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
 		UserModel user = baseService.getUserById(uid);
-		user.setPassword("");
 		if (user != null) {
 			obj.put(RESULT, OK);
 			obj.put(DATA, user);
@@ -357,7 +354,6 @@ public class BaseController extends BaseData {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject obj = new JSONObject();
 		BusinessModel model = baseService.getBusinessById(id);
-		model.user.setPassword("");
 		if (model != null) {
 			obj.put(RESULT, OK);
 			obj.put(DATA, model);
@@ -369,7 +365,7 @@ public class BaseController extends BaseData {
 	}
 
 	/**
-	 * 搜索厂家
+	 * 搜索商家
 	 * 
 	 * @param pageSize
 	 *            每页大小
@@ -534,6 +530,7 @@ public class BaseController extends BaseData {
 		}
 		
 		model.setMyid(user.getId());
+		model.setTime(new Date(model.getSentTime()));
 		boolean result = baseService.saveOrUpdate(model);
 		if(result){
 			jObj.put(RESULT, OK);
@@ -695,6 +692,305 @@ public class BaseController extends BaseData {
 			jObj.put(DATA, targetList);
 		}else{
 			jObj.put(RESULT, NO);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/insertComments")
+	public ModelAndView insertComments(@RequestBody CommentsModel commentsModel,HttpSession session,HttpServletRequest request) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			user = baseService.getUserByUsernameAndToken(request);
+		}
+		
+		if(user != null)
+			commentsModel.fromuser = user.getId();
+		
+		boolean result = baseService.saveOrUpdateModel(commentsModel);
+		if(result){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getMyComments")
+	public ModelAndView getMyComments(HttpSession session,HttpServletRequest request,int pageNum) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
+				jObj.put(RESULT, NO);
+				jObj.put(MODELS, "用户失效，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
+			}
+		}
+		
+		PageModel pageModel = baseService.getMyComments(user.getId(),pageNum);
+		if(pageModel != null && pageModel.getModels().size() > 0){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, pageModel.getModels());
+			jObj.put("pageCount", pageModel.getPageCount());
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, "无数据");
+		}
+		
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	/**
+	 * 下架或上架商品
+	 * @param goodsid
+	 * @param session
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/downOrUpGoods")
+	public ModelAndView downOrUpGoods(int goodsid,HttpSession session,HttpServletRequest request) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
+				jObj.put(RESULT, NO);
+				jObj.put(MODELS, "用户失效，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
+			}
+		}
+		
+		String result = baseService.downOrUpGoods(goodsid,user.getId());
+		if("".equals(result)){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+
+	
+	@RequestMapping(value = "/goods/{id}")
+	public ModelAndView goodsView(HttpServletRequest request ,@PathVariable("id") int id) {
+		ModelAndView view = new ModelAndView("/pc/goods");
+		if(HttpRequestDeviceUtils.isMobileDevice(request)){
+			view = new ModelAndView("/mobile/goods_m");
+		}
+		
+		
+		GoodsModel model = baseService.getGoodsModelById(id);
+		view.addObject("goods", model);
+		return view;
+	}
+	
+	@RequestMapping(value = "/buy/{id}")
+	public ModelAndView buy(@PathVariable("id") String id) {
+		ModelAndView view = new ModelAndView("/pc/buy");
+		String[] ids = id.split(",");
+		List<GoodsModel> goods = new ArrayList<GoodsModel>();
+		for(String idstr:ids){
+			if("".equals(idstr)) continue;
+			goods.add(baseService.getGoodsModelById(Integer.parseInt(idstr)));
+		}
+		view.addObject("goods", goods);
+		return view;
+	}
+	
+	@RequestMapping(value = "/setdianzhao")
+	public ModelAndView setdianzhao(HttpSession session,HttpServletRequest request,String path) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
+				jObj.put(RESULT, NO);
+				jObj.put(DATA, "用户失效，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
+			}
+		}
+		
+		String result = baseService.setdianzhao(path,user.getId());
+		if("".equals(result)){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getMine")
+	public ModelAndView getMine(HttpSession session,HttpServletRequest request) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
+				jObj.put(RESULT, NO);
+				jObj.put(DATA, "用户失效，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
+			}
+		}
+		
+		user = baseService.getUserById(user.getId());
+		if(user != null){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, user);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, "用户不存在");
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	/*
+	 * 删除店招
+	 */
+	@RequestMapping(value = "/removeDZ")
+	public ModelAndView removeDZ(HttpSession session,HttpServletRequest request,int index) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
+				jObj.put(RESULT, NO);
+				jObj.put(DATA, "用户失效，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
+			}
+		}
+		
+		String result = baseService.removeDZ(user.getId(),index);
+		if("".equals(result)){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/insertOrUpdateMyType")
+	public ModelAndView insertOrUpdateMyType(HttpSession session,HttpServletRequest request,@RequestBody MyTypeModel model) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
+				jObj.put(RESULT, NO);
+				jObj.put(DATA, "用户失效，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
+			}
+		}
+		
+		model.setUserid(user.getId());
+		boolean result = baseService.saveOrUpdateModel(model);
+		if(result){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getMyTypeByUid")
+	public ModelAndView getMyTypeByUid(int uid) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		List<MyTypeModel> list = baseService.getMyTypeByUid(uid);
+		if(list != null){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, list);
+		}else{
+			jObj.put(RESULT, NO);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getMyTypeById")
+	public ModelAndView getMyTypeById(int id) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		MyTypeModel result = baseService.getMyTypeById(id);
+		if(result != null){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, result);
+		}else{
+			jObj.put(RESULT, NO);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/removeMyTypeById")
+	public ModelAndView removeMyTypeById(HttpSession session,HttpServletRequest request,int id) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		
+		UserModel user = (UserModel) session.getAttribute(SESSION_USER);
+		if(user == null){
+			user = baseService.getUserByUsernameAndToken(request);
+			if(user == null){
+				//用户失效
+				jObj.put(RESULT, NO);
+				jObj.put(DATA, "用户失效，请重新登录");
+				view.addObject(MODELS,jObj);
+				return view;
+			}
+		}
+		
+		String result = baseService.removeMyTypeById(id,user.getId());
+		if("".equals(result)){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+		}
+		view.addObject(MODELS, jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/getGoodsByMyType")
+	public ModelAndView getGoodsByMyType(HttpSession session,HttpServletRequest request,int mytype,int pageNum,int pageSize) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		List<GoodsModel> result = baseService.getGoodsByMyType(mytype,pageNum,pageSize);
+		if(result.size() > 0){
+			jObj.put(RESULT, OK);
+			jObj.put(DATA, result);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, "无数据");
 		}
 		view.addObject(MODELS, jObj);
 		return view;

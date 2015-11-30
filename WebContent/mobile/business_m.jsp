@@ -126,6 +126,10 @@ var id;
 				dataType : "json"
 			});
 		}
+	
+		function toChat(userid){
+			window.location.href = "<%=basePath%>chat/chat.jsp?chat="+userid;
+		}
 
 		function getUrlParam(name) {
 			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象

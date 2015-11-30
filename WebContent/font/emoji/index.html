@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="keywords" content="jquery,QQ表情">
+<meta name="description" content="Helloweba演示平台，演示XHTML、CSS、jquery、PHP案例和示例">
+<title>分享一款基于jQuery的QQ表情插件</title>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="jquery.qqFace.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.emotion').qqFace({
+		id : 'facebox', //表情盒子的ID
+		assign:'saytext', //给那个控件赋值
+		path:'face/'	//表情存放的路径
+	});
+	$(".sub_btn").click(function(){
+		var str = $("#saytext").val();
+		$("#show").html(replace_em(str));
+	});
+});
+//查看结果
+function replace_em(str){
+	str = str.replace(/\</g,'&lt;');
+	str = str.replace(/\>/g,'&gt;');
+	str = str.replace(/\n/g,'<br/>');
+	str = str.replace(/\[em_([0-9]*)\]/g,'<img src="face/$1.gif" border="0" />');
+	return str;
+}
+</script>
+<style>
+</style>
+</head>
+
+<body>
+     <div id="show"></div>
+     <div class="com_form">
+     	<textarea class="input" id="saytext" name="saytext"></textarea>
+     	<p><input type="button" class="sub_btn" value="提交"><span class="emotion">表情</span></p>
+     </div>
+</body>
+</html>

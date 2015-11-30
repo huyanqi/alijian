@@ -1,9 +1,14 @@
 package com.alijian.front.controller;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,11 +19,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alijian.front.model.CommentModel;
 import com.alijian.front.model.OrdersModel;
+import com.alijian.front.model.OrdersSetModel;
 import com.alijian.front.model.PageModel;
+import com.alijian.front.model.PayOrder;
 import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
 import com.alijian.front.service.OrderService;
 import com.alijian.util.BaseData;
+import com.alijian.util.HttpRequestDeviceUtils;
 
 @Controller
 @RequestMapping
@@ -30,8 +38,16 @@ public class OrderController extends BaseData {
 	@Autowired
 	private BaseService baseService;
 	
+	/**
+	 * 创建订单
+	 * @param request
+	 * @param session
+	 * @param orders
+	 * @param pay_method 支付方式 0:支付宝 1:微信
+	 * @return
+	 */
 	@RequestMapping(value = "/create_order")
-	public ModelAndView create_order(HttpServletRequest request,HttpSession session,OrdersModel model) {
+	public ModelAndView create_order(HttpServletRequest request,HttpSession session,@RequestBody List<OrdersModel> orders,int pay_method) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
 		UserModel buyer = (UserModel) session.getAttribute("user");
@@ -40,19 +56,25 @@ public class OrderController extends BaseData {
 			if(buyer == null){
 				//用户失效
 				jObj.put(RESULT, NO);
-				jObj.put(MODELS, "welcome");
+				jObj.put(DATA, "用户信息过期，请重新登录");
 				view.addObject(MODELS,jObj);
 				return view;
 			}
 		}
-		model = orderService.saveOrUpdateOrder(model,buyer);
-		if(model != null){
-			jObj.put(RESULT, OK);
-			String html = orderService.createALiPayOrder(model,false);//返回付款url
-			jObj.put(DATA, html);
-		}else{
-			jObj.put(RESULT, NO);
+		int is_mobile = 0;
+		if(HttpRequestDeviceUtils.isMobileDevice(request)){
+			is_mobile = 1;
 		}
+		PayOrder payOrder = orderService.createOrder(orders,buyer,is_mobile);
+		String show_url = new String("http://"+request.getServerName()+"/goods/"+1);
+		String html = "";
+		if(pay_method == 0){
+			html = orderService.createALiPayOrder(request,payOrder.getOrders_no(),"阿里健-批发货物",payOrder.getPrice(),"payOrder id:"+payOrder.getId(),show_url,is_mobile);//返回付款url
+		}else{
+			html = "";//创建微信付款url
+		}
+		jObj.put(RESULT, OK);
+		jObj.put(DATA, html);
 		view.addObject(MODELS,jObj);
 		return view;
 	}
@@ -140,7 +162,7 @@ public class OrderController extends BaseData {
 	 * @return
 	 */
 	@RequestMapping(value = "/get_my_buy")
-	public ModelAndView getMyBy(HttpServletRequest request,HttpSession session,int pageNum) {
+	public ModelAndView getMyBuy(HttpServletRequest request,HttpSession session,int pageNum) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
 		UserModel user = (UserModel) session.getAttribute("user");
@@ -154,10 +176,16 @@ public class OrderController extends BaseData {
 				return view;
 			}
 		}
-		PageModel model = orderService.getMyBy(user.getId(),pageNum);
+		PageModel model = orderService.getMyBuy(user.getId(),pageNum);
 		if(model.getModels().size() > 0){
 			jObj.put(RESULT, OK);
-			jObj.put(DATA, model.getModels());
+			JsonConfig config = new JsonConfig();  
+			   config.setExcludes(new String[]{//只要设置这个数组，指定过滤哪些字段。 
+			     "payorder", 
+			     "goods",
+			     "orderSetModel"
+			     });
+			   jObj.put(DATA, JSONArray.fromObject(model.getModels(),config));
 			jObj.put("pageCount", model.getPageCount());
 		}else{
 			jObj.put(RESULT, NO);
@@ -172,6 +200,21 @@ public class OrderController extends BaseData {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
 		String result = orderService.fahuo(no,cnumber);
+		if("".equals(result)){
+			jObj.put(RESULT, OK);
+		}else{
+			jObj.put(RESULT, NO);
+			jObj.put(DATA, result);
+		}
+		view.addObject(MODELS,jObj);
+		return view;
+	}
+	
+	@RequestMapping(value = "/shanchu")
+	public ModelAndView shanchu(int orderid) {
+		ModelAndView view = new ModelAndView("/json");
+		JSONObject jObj = new JSONObject();
+		String result = orderService.shanchu(orderid);
 		if("".equals(result)){
 			jObj.put(RESULT, OK);
 		}else{
@@ -216,13 +259,24 @@ public class OrderController extends BaseData {
 	}
 	
 	@RequestMapping(value = "/jixufukuan")
-	public ModelAndView jixufukuan(String orderno) {
+	public ModelAndView jixufukuan(HttpServletRequest request, String orderno, int pay_method) {
 		ModelAndView view = new ModelAndView("/json");
 		JSONObject jObj = new JSONObject();
-		OrdersModel model = orderService.getOrderById(orderno);
-		if(model != null){
+		OrdersSetModel payOrder = orderService.getOrdersSetByOrderNo(orderno);
+		if(payOrder != null){
 			jObj.put(RESULT, OK);
-			String html = orderService.createALiPayOrder(model,true);//返回付款url
+			String html = "";
+			int is_mobile = 0;
+			if(HttpRequestDeviceUtils.isMobileDevice(request)){
+				is_mobile = 1;
+			}
+			if(pay_method == 0){
+				double price = payOrder.getPrices().setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+				String show_url = new String("http://"+request.getServerName()+"/goods/"+payOrder.getGoods().get(0).getGoods_id());
+				html = orderService.createALiPayOrder(request,payOrder.getOrders_no(),"阿里健-批发货物",price,"payOrder id:"+payOrder.getId(),show_url,is_mobile);//返回付款url
+			}else{
+				html = "";//创建微信付款url
+			}
 			jObj.put(DATA, html);
 		}else{
 			jObj.put(RESULT, NO);

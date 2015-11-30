@@ -21,11 +21,8 @@
   <!-- No Baidu Siteapp-->
   <meta http-equiv="Cache-Control" content="no-siteapp"/></meta>
 
-  <link rel="icon" type="image/png" href="<%=basePath%>font/amazeui/i/favicon.png"></link>
-
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes"></meta>
-  <link rel="icon" sizes="192x192" href="<%=basePath%>font/amazeui/i/app-icon72x72@2x.png"></link>
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes"></meta>
@@ -147,7 +144,7 @@
 			</div>
 			
 			<div class="am-form-group" style="margin-top: 10px;" id="type1ly">
-			  <label>厂家 ></label>
+			  <label>商家 ></label>
 			  <label class="am-checkbox-inline">
 			    <input type="checkbox"  value="0" data-am-ucheck checked onclick="unselectAll(1);">不限</input>
 			  </label>
@@ -181,7 +178,7 @@
 			<div style="clear:both;"></div>
 			
 			<div class="my_at">
-				<font>2F <a>厂家</a></font>
+				<font>2F <a>商家</a></font>
 				<div class="am-topbar-right">
 			        <a class="am-badge am-badge-primary am-radius">更多</a>
 			    </div>
@@ -294,7 +291,7 @@ $("#iframe2").css("width",($(document).width() - 980)/2);
 		}
 		
 		if(type == 1){
-			//厂家
+			//商家
 			getSupplier(selected);
 		}
 				
@@ -320,7 +317,7 @@ $("#iframe2").css("width",($(document).width() - 980)/2);
 				$("#goods_ly").empty();
 				if (result.result == "ok") {
 					$.each(result.data, function(n, value) {
-						$("#goods_ly").append("<a target='_blank' href='goods.jsp?id="+value.id+"'><div class='item'><img class='supplier_img' src='"+value.thum+"' alt='' /><font class='supplier_name'>"+value.name+"</font></div></a>");
+						$("#goods_ly").append("<a target='_blank' href='<%=basePath%>goods/"+value.id+"'><div class='item'><img class='supplier_img' src='"+value.thum+"' alt='' /><font class='supplier_name'>"+value.name+"</font></div></a>");
 					});
 				}
 			},
@@ -403,6 +400,5 @@ $("#iframe2").css("width",($(document).width() - 980)/2);
 	}
 	
 </script>
-
 </body>
 </html>

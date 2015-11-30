@@ -25,7 +25,14 @@
 
 <!-- amazeui -->
 <link rel="stylesheet" href="<%=basePath%>assets/amazeui/assets/css/amazeui.min.css">
-
+<style>
+#buylist tr{
+	background: #F9F9F9;
+}
+#buylist th{
+	background: white;
+}
+</style>
 </head>
 <body>
 
@@ -38,7 +45,17 @@
                 <Button href="#" class="btn btn-mini btn-link"></Button>
             </div>
         </div>
+        
         <div class="box-content box-no-padding">
+            <div class="responsive-table">
+                <div class="scrollable-area">
+                    <table class="table table-hover table-striped" style="margin-bottom:0;" id="buylist">
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- <div class="box-content box-no-padding">
             <div class="responsive-table">
                 <div class="scrollable-area">
                     <table class="table table-hover table-striped" style="margin-bottom:0;">
@@ -48,24 +65,29 @@
                                 ID
                             </th>
                             <th>
-								商品名称
+								订单号
                             </th>
-                            <th>
+                        </tr>
+                        <tr>
+                        	<td>
 								数量
-                            </th>
-                            <th>
+                            </td>
+                            <td>
 								总价
-                            </th>
-                            <th>
+                            </td>
+                            <td>
+								物流
+                            </td>
+                            <td>
 								订单更新时间
-                            </th>
-                            <th>
+                            </td>
+                            <td>
 								状态
-                            </th>
+                            </td>
                             <th>
 								操作
                             </th>
-                            <th></th>
+                        
                         </tr>
                         </thead>
                         <thead id="nodata">
@@ -87,7 +109,7 @@
 					</ul>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 
@@ -144,20 +166,31 @@
 			url : path,
 			success : function(result) {
 				$.AMUI.progress.done();
-				$("#list_content").empty();
+				$("#buylist").empty();
 				if(result.result == "ok"){
 					hasData = true;
 					$("#nodata").hide();
 					$("#thread").show();
 					datas = result.data;
 					$.each(result.data, function(n, value) {
-						var update_time = moment(value.update_time.time).format("lll");
+						var html = "";
+						var create_time = moment(value.create_time.time).format("lll");
+						html += "<thead><tr><th>订单号："+value.orders_no+"</th><th>订单创建时间:"+create_time+"</th></tr></thead>";
+						$.each(value.goodsList,function(n0,value0){
+							var type = "默认";
+							if(value.goods_type != null){
+								type = value.goods_type;
+							}
+							html += "<tbody><tr><td><img width='50' height='50' src='<%=basePath%>"+value0.goodsModel.thum+"'/></td><td><a target='_blank' href='<%=basePath%>goods/"+value0.goodsModel.id+"'>"+value0.goodsModel.name+"</a></td><td>购买数量:"+value0.amout+"</td><td>规格:"+type+"</td><td>价格:"+value0.prices+"</td></tr></tbody>";
+						});
+						
 						var state;
-						var opition = "";
+						var opition = "";//<a href='javascript:showdetail("+n+")'>订单详情</a> 
+						var wuliu = "无";
 						if(value.state == 0){
 							state = "<font color='color'>等待买家付款</font>";
 							//提供付款按钮
-							opition = "<a href='javascript:jixufukuan("+n+")'>继续付款</a>";
+							opition += "<a href='javascript:jixufukuan("+n+")'>继续付款</a> &emsp;&emsp;<a href='javascript:shanchu("+value.id+")'>删除订单</a>";
 						}else if(value.state == 1){
 							state = "<font color='green'>买家已付款，等待卖家发货</font>";
 							//无可操作项
@@ -166,8 +199,9 @@
 							state = "<font color='black'>交易成功</font>";
 							if(value.comment_id == 0){
 								//还没评论
-								opition = "<a href='javascript:pingjia("+value.id+")'>评价此商品</a>";
+								opition += "<a href='javascript:pingjia("+value.id+")'>评价此商品</a>";
 							}
+							wuliu = value.cnumber;
 						}else if(value.state == 3){
 							state = "<font color='yellow'>已退款</font>";
 							//无可操作项
@@ -175,9 +209,44 @@
 						}else if(value.state == 4){
 							state = "<font color='blue'>卖家已发货</font>";
 							//提供确认收货按钮
-							opition = "<a href='javascript:querenshouhuo("+n+")'>确认收货</a>";
+							opition += "<a href='javascript:querenshouhuo("+n+")'>确认收货</a>";
+							wuliu = value.cnumber;
 						}
-						$("#list_content").append("<tr><td>"+value.id+"</td><td><a target='_blank' href='<%=basePath%>pc/goods.jsp?id="+value.goods.id+"'>"+value.goods.name+"</a></td><td>"+value.amout+"</td><td>"+value.prices+"</td><td>"+update_time+"</td><td>"+state+"</td><td><div class='text-right'>"+opition+"</div></td></tr>");
+						
+						html += "<tr><td colspan='2'></td><td><font color='green'>订单总额："+value.prices+"元</font></td><td colspan='2'>"+state+"  "+opition+"</td></tr>";
+						
+						$("#buylist").append(html);
+						<%-- var update_time = moment(value.update_time.time).format("lll");
+						var state;
+						var opition = "<a href='javascript:showdetail("+n+")'>订单详情</a> ";
+						var wuliu = "无";
+						if(value.state == 0){
+							state = "<font color='color'>等待买家付款</font>";
+							//提供付款按钮
+							opition += "<a href='javascript:jixufukuan("+n+")'>继续付款</a> &emsp;&emsp;<a href='javascript:shanchu("+value.id+")'>删除订单</a>";
+						}else if(value.state == 1){
+							state = "<font color='green'>买家已付款，等待卖家发货</font>";
+							//无可操作项
+							
+						}else if(value.state == 2){
+							state = "<font color='black'>交易成功</font>";
+							if(value.comment_id == 0){
+								//还没评论
+								opition += "<a href='javascript:pingjia("+value.id+")'>评价此商品</a>";
+							}
+							wuliu = value.cnumber;
+						}else if(value.state == 3){
+							state = "<font color='yellow'>已退款</font>";
+							//无可操作项
+							
+						}else if(value.state == 4){
+							state = "<font color='blue'>卖家已发货</font>";
+							//提供确认收货按钮
+							opition += "<a href='javascript:querenshouhuo("+n+")'>确认收货</a>";
+							wuliu = value.cnumber;
+						}
+						
+						$("#buylist").append("<tr><td>"+value.id+"</td><td><a target='_blank' href='<%=basePath%>goods"+value.goods.id+"'>"+value.goods.name+"</a></td><td>"+value.amout+"</td><td>"+value.prices+"</td><td>"+wuliu+"</td><td>"+update_time+"</td><td>"+state+"</td><td><div>"+opition+"</div></td></tr>"); --%>
 					});
 					if(pageNum == 1){
 						$("#pageselect").empty();
@@ -198,6 +267,28 @@
 	
 	function pingjia(id){
 		window.location.href="Comment.jsp?id="+id;
+	}
+	
+	function shanchu(id){
+		if(!confirm("确定要删除吗？")){return;}
+		$.AMUI.progress.start();
+		var path = "<%=basePath%>shanchu";
+		var data = {"orderid":id};
+		$.ajax({
+			type : 'POST',
+			data : data,
+			url : path,
+			success : function(result) {
+				$.AMUI.progress.done();
+				if(result.result == "ok"){
+					alert("订单已删除");
+					refresh();
+				}else{
+					alert(result.data);
+				}
+			},
+			dataType : "json"
+		});
 	}
 	
 	function jixufukuan(index){
@@ -221,6 +312,7 @@
 	}
 	
 	function querenshouhuo(index){
+		if(!confirm("确定要确认收货吗？")){return;}
 		var path = "<%=basePath%>querenshouhuo";
 		var data = {"no":datas[index].orders_no};
 		$.ajax({

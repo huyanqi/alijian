@@ -22,6 +22,7 @@
 .table_left {
 	color: #9D9D9D;
 	padding-right: 20px;
+	width:30%;
 }
 </style>
 
@@ -87,8 +88,7 @@
 					</tr>
 				</table>
 				
-				<div style="background: white;margin-top: 10px;border: solid 1px #D3D3D3;padding: 10px;">
-					<font id="description"></font>
+				<div style="background: white;margin-top: 10px;border: solid 1px #D3D3D3;padding: 10px;" id="description">
 				</div>
 			</div>
 			<div data-tab-panel-1="" class="am-tab-panel">
@@ -152,7 +152,13 @@
 								$("#lxrsj")
 										.attr("href", "tel:" + result.mobile);
 
-								$("#description").html(result.description);
+								if(result.bgszp != null){
+									$("#description").append("办公室照片:<img src=<%=basePath%>"+result.bgszp+" />");
+								}
+								if(result.ckzp != null){
+									$("#description").append("仓库照片:<img src=<%=basePath%>"+result.ckzp+" />");
+								}
+								$("#description").append(result.description);
 								$("#description img").css("height", "").css(
 										"width", "100%");
 								

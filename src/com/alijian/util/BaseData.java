@@ -17,8 +17,6 @@ public class BaseData {
 	public static final String WX_TOKEN = "huyanqi";
 	public static final String WX_AESKEY = "zXtdoUDou0EJf8OKFFRrXNECyWABOwuOSzmPfZNGjlM";
 	
-	public static final String LOCAL = "http://www.alijiank.com/";
-	
 	public static final String YUNTONGXUN_IM_APPID = "8a48b5514ff923b4014ffa403f410481";
 	public static final String YUNTONGXUN_IM_APPTOKEN = "463fa0b58be0d6fe47503e0e8c9ed11c";
 	

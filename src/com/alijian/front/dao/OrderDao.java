@@ -4,14 +4,16 @@ import org.springframework.stereotype.Component;
 
 import com.alijian.front.model.CommentModel;
 import com.alijian.front.model.OrdersModel;
+import com.alijian.front.model.OrdersSetModel;
 import com.alijian.front.model.PageModel;
+import com.alijian.front.model.PayOrder;
 
 @Component
 public interface OrderDao {
 
 	OrdersModel saveOrUpdateOrder(OrdersModel model);
 
-	OrdersModel getOrderByOutTradeNo(String out_trade_no);
+	OrdersSetModel getOrderSetByOutTradeNo(String out_trade_no);
 
 	void addCredit(int i, OrdersModel order);
 
@@ -21,10 +23,18 @@ public interface OrderDao {
 
 	PageModel getMyBy(int id, int pageNum);
 
-	OrdersModel getOrderByOrderId(int orderid);
+	OrdersSetModel getOrderSetById(int orderid);
 
 	CommentModel saveOrUpdateComment(CommentModel model);
 
 	PageModel getComment(int goods_id, int pageNum);
+
+	String shanchu(int orderid);
+
+	PayOrder getPayOrderByOutTradeNo(String out_trade_no);
+
+	void saveOrUpdateModel(Object object);
+
+	OrdersSetModel getOrdersSetByOrderNo(String orderno);
 
 }

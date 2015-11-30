@@ -71,7 +71,7 @@
 		if(cookie.get("accesstoken") != null){
 			//已登录
 			$("#userinfo").attr("href","<%=basePath%>supplier/supplier_controller_new.jsp");
-			$("#login_user").html("已登录");
+			$("#login_user").html("个人中心");
 			$("#supplier_join").hide();//"我要开店"按钮
 		}else{
 			//未登录
