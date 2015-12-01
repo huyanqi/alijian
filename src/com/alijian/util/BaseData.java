@@ -20,6 +20,10 @@ public class BaseData {
 	public static final String YUNTONGXUN_IM_APPID = "8a48b5514ff923b4014ffa403f410481";
 	public static final String YUNTONGXUN_IM_APPTOKEN = "463fa0b58be0d6fe47503e0e8c9ed11c";
 	
+	public static final String WX_PAY_APPID = "wxd12014470a8088bc";
+	public static final String WX_PAY_MCHID = "1233504302";
+	public static final String WX_PAY_KEY = "baisuitangxinyaoshihetao14725836";
+	
 	public static Date WX_Expires_DATE = null;
 	public static String WX_Ticket = null;
 	

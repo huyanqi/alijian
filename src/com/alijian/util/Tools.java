@@ -18,8 +18,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import com.alijian.front.model.GoodsModel;
 import com.alijian.front.model.PriceModel;
 import com.alijian.front.model.UserModel;
-import com.alipay.config.AlipayConfig;
-import com.alipay.sign.MD5;
 import com.alipay.util.AlipayCore;
 
 public class Tools {
@@ -236,15 +234,15 @@ public class Tools {
         return ip;
     }
 
-    public static String getWXSign(Map<String, String> Params, String key) {
+    public static String getWXSign(Map<String, String> Params) {
     	//过滤空值、sign与sign_type参数
     	Map<String, String> sParaNew = AlipayCore.paraFilter(Params);
         //获取待签名字符串
         String preSignStr = AlipayCore.createLinkString(sParaNew);
         //生成簽名后的字符串
-        preSignStr = preSignStr + "&key="+key;
+        preSignStr = preSignStr + "&key="+BaseData.WX_PAY_KEY;
     	String mysign = DigestUtils.md5Hex(getContentBytes(preSignStr, "utf-8"));
-    	return mysign;
+    	return mysign.toUpperCase();
     }
     
     private static byte[] getContentBytes(String content, String charset) {

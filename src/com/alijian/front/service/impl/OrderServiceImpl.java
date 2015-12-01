@@ -1,5 +1,6 @@
 package com.alijian.front.service.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,9 @@ import com.alijian.front.model.UserModel;
 import com.alijian.front.service.BaseService;
 import com.alijian.front.service.OrderService;
 import com.alijian.util.BaseData;
+import com.alijian.util.NetTools;
 import com.alijian.util.Tools;
+import com.alijian.util.XmlUtils;
 import com.alipay.config.AlipayConfig;
 import com.alipay.util.AlipayNotify;
 import com.alipay.util.AlipaySubmit;
@@ -127,7 +131,7 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 		String payment_type = "1";
 		//必填，不能修改
 		//服务器异步通知页面路径
-		String notify_url = LOCAL+"change_order_state";//notify_url.jsp
+		String notify_url = LOCAL+"change_order_state";
 		//需http://格式的完整路径，不能加?id=123这类自定义参数
 		//页面跳转同步通知页面路径
 		String return_url = LOCAL+"return_url.jsp";
@@ -380,7 +384,7 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 		String payment_type = "1";
 		//必填，不能修改
 		//服务器异步通知页面路径 
-		String notify_url = "http://"+request.getServerName()+"/change_order_state";//notify_url.jsp
+		String notify_url = "http://"+request.getServerName()+"/change_order_state";
 		//需http://格式的完整路径，不能加?id=123这类自定义参数
 		//页面跳转同步通知页面路径
 		String return_url = "http://"+request.getServerName()+"/return_url.jsp";
@@ -437,19 +441,67 @@ public class OrderServiceImpl extends BaseData implements OrderService {
 	}
 
 	@Override
-	public String createWXOrder(HttpServletRequest request, String orders_no, String string, double price,String string2, String show_url, int is_mobile) {
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("appid", "wxd12014470a8088bc");
+	public HashMap<String,String> createWXOrder(HttpServletRequest request, String orders_no, String string, double price,String string2, String show_url, int is_mobile) {
+		HashMap<String,String> returnMap = new HashMap<String,String>();
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("appid", BaseData.WX_PAY_APPID);
 		params.put("body", string);
-		params.put("mch_id", "1233504302");
+		params.put("mch_id", BaseData.WX_PAY_MCHID);
 		params.put("nonce_str", Tools.getRandomString(32));
-		params.put("notify_url", is_mobile == 1 ? "JSAPI":"");
+		params.put("notify_url", "http://"+request.getServerName()+"/change_order_state_wx");
+		params.put("trade_type", is_mobile == 1 ? "JSAPI":"NATIVE");
 		params.put("out_trade_no", orders_no);
 		params.put("spbill_create_ip", Tools.getIpAddr(request));//用戶的IP地址
 		params.put("total_fee", price * 100 +"");
-		params.put("sign", Tools.getWXSign(params,"-------------key-------------"));
+		params.put("sign", Tools.getWXSign(params));
 		
-		return null;
+		/*HashMap<String, String> netparams = new HashMap<String, String>();
+		netparams.put("xml", XmlUtils.map2xmlBody(params,"xml"));*/
+		
+		String result = new NetTools().sendPostRequest("https://api.mch.weixin.qq.com/pay/unifiedorder", params);
+		try {
+			Map<String,String> resultMap = XmlUtils.xmlBody2map(result, "xml");
+			//取返回值
+			String resultCode = resultMap.get("return_code");
+			returnMap.put("result", resultCode);
+			if("SUCCESS".equals(resultCode)){
+				if("SUCCESS".equals(resultMap.get("result_code"))){
+					if(is_mobile == 0){
+						//支付类型为NATIVE
+						
+					}
+				}else{
+					returnMap.put("result", "FAIL");
+					returnMap.put("msg", "err_code:"+resultMap.get("err_code")+",err_code_des:"+resultMap.get("err_code_des"));
+				}
+			}else{
+				//获取错误原因
+				String returnMsg = resultMap.get("return_msg");
+				returnMap.put("msg", returnMsg);
+			}
+			
+		} catch (DocumentException e) {
+			e.printStackTrace();
+			System.out.println("XML转HashMap异常:"+e.getMessage());
+		}
+		
+		return returnMap;
+	}
+
+	@Override
+	public String changeOrderStateWX(HttpServletRequest request) {
+		try {
+			String result = new String(NetTools.loadInputStream(request.getInputStream()));
+			Map<String,String> param = XmlUtils.xmlBody2map(result, "xml");
+			if("SUCCESS".equals(param.get("return_code"))){
+				
+			}
+		} catch (IOException | DocumentException e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		 
+		return "";
 	}
 	
 

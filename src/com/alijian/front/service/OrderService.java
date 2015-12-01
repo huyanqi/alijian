@@ -1,5 +1,6 @@
 package com.alijian.front.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,8 +48,10 @@ public interface OrderService {
 
 	OrdersSetModel getOrdersSetByOrderNo(String orderno);
 
-	String createWXOrder(HttpServletRequest request, String orders_no, String string, double price, String string2,
+	HashMap<String,String> createWXOrder(HttpServletRequest request, String orders_no, String string, double price, String string2,
 			String show_url, int is_mobile);
+
+	String changeOrderStateWX(HttpServletRequest request);
 
 
 }

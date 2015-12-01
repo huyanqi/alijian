@@ -1,6 +1,7 @@
 package com.alijian.front.controller;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -71,7 +72,16 @@ public class OrderController extends BaseData {
 		if(pay_method == 0){
 			html = orderService.createALiPayOrder(request,payOrder.getOrders_no(),"阿里健-批发货物",payOrder.getPrice(),"payOrder id:"+payOrder.getId(),show_url,is_mobile);//返回付款url
 		}else{
-			html = orderService.createWXOrder(request,payOrder.getOrders_no(),"阿里健-批发货物",payOrder.getPrice(),"payOrder id:"+payOrder.getId(),show_url,is_mobile);//返回付款url;//创建微信付款url
+			HashMap<String,String> wxResult = orderService.createWXOrder(request,payOrder.getOrders_no(),"阿里健-批发货物",payOrder.getPrice(),"payOrder id:"+payOrder.getId(),show_url,is_mobile);//返回付款url;//创建微信付款url
+			if("SUCCESS".equals(wxResult.get("result"))){
+				html = "";
+			}else{
+				jObj.put(RESULT, NO);
+				jObj.put(DATA, wxResult.get("msg"));
+				view.addObject(MODELS,jObj);
+				return view;
+			}
+			
 		}
 		jObj.put(RESULT, OK);
 		jObj.put(DATA, html);
@@ -119,6 +129,11 @@ public class OrderController extends BaseData {
 	@RequestMapping(value = "/change_order_state")
 	public @ResponseBody String changeOrderState(HttpServletRequest request,String out_trade_no,String trade_no,String trade_status) {
 		return orderService.changeOrderState(request,out_trade_no,trade_no,trade_status);
+	}
+	
+	@RequestMapping(value = "/change_order_state_wx")
+	public @ResponseBody String changeOrderStateWX(HttpServletRequest request) {
+		return orderService.changeOrderStateWX(request);
 	}
 	
 	/**
